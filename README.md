@@ -1,3 +1,5 @@
 Capstone Project
 ==========
-Group 76
+Group 59
+
+September 18, 2014 - Exported existing files from the last year's capstone project.
