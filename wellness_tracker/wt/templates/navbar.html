@@ -1,0 +1,36 @@
+{% load wt_extras %}
+<nav class="navbar navbar-{% if user|is_physician %}inverse{% else %}default{% endif %}" role="navigation">
+  <!-- Brand and toggle get grouped for better mobile display -->
+  <div class="navbar-header">
+    {% if user.is_authenticated %}
+    <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+      <span class="sr-only">Toggle navigation</span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+      <span class="icon-bar"></span>
+    </button>
+    {% endif %}
+    <a class="navbar-brand brand" href="{% if user|is_physician %}{% url 'patient_list' %}{% else %}{% url 'home' %}{% endif %}">
+        <span class="blue">Wellness</span><span class="green">Tracker</span>
+    </a>
+  </div>
+  {% if user.is_authenticated %}
+  <div class="collapse navbar-collapse navbar-ex1-collapse">
+    <ul class="nav navbar-nav">
+      {% if user|is_physician %}
+      <li><a href="{% url 'patient_list' %}">Patients</a></li>
+      {% else %}
+      <li><a href="{% url 'graph' %}">Graph</a></li>
+      <li><a href="{% url 'questions' %}">Questions</a></li>
+      {% endif %}
+    </ul>
+    <ul class="nav navbar-nav navbar-right">
+      <li><a href="#">[ {{ user.username }} ]</a></li>
+      {% if user|is_physician %}
+      <li><a href="{% url 'admin:index' %}">admin</a></li>
+      {% endif %}
+      <li><a href="{% url 'logout' %}">logout</a></li>
+    </ul>
+  </div><!-- /.navbar-collapse -->
+  {% endif %}
+</nav>

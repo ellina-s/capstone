@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WellnessTracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="new_question.css">
+    <script src="jquery/jquery.js"></script>
+    <script>
+      $(function() {
+        $( "#type" ).change(function() {
+          $(".conditional-questions > div").hide();
+          $(".conditional-questions #" + $(this).val()).show();
+        });
+        $("#type").prop('selectedIndex', -1);
+      });
+      function add_category() {
+        var num = $("#cat-list > input").length + 1;
+        $("#cat-list").append('<input type="text" id="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+        $("#cat-list > input").last().focus();
+      }
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-inverse" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">WellnessTracker</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="doctor-list.html">Patient List</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">[Dr. Smith]</a></li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+
+    <div id="content" class="container">
+      <h2>New Question</h2>
+      <hr />
+      <form class="form-horizontal col-md-6 col-md-offset-3" role="form">
+        <div class="form-group">
+          <label for="question" class="col-sm-2 control-label">Question</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="question" placeholder="How is...">
+            <p class="help-block">Type the question that you would like to appear to the user.</p>
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="question" class="col-sm-2 control-label">Description</label>
+          <div class="col-sm-10">
+            <input type="text" class="form-control" id="question" placeholder="Answer on a scale of 1-10">
+          </div>
+        </div>
+        <div class="form-group">
+          <label for="question" class="col-sm-2 control-label">Type</label>
+          <div class="col-sm-10">
+            <select id="type" class="form-control">
+              <option value="slider">Slider</option>
+              <option value="category">Category</option>
+              <option value="boolean">Yes / No</option>
+              <option value="integer">Numerical</option>
+            </select>
+          </div>
+        </div>
+        <div class="conditional-questions">
+          <div id="slider" class="form-group" style="display: none;">
+            <p class="help-block">Give the upper and lower bound for the slider, as well as the increment.</p>
+            <div class="row text-center">
+              <div class="col-sm-4">
+                <label for="slider-from">Lower Bound</label>
+                <input type="text" id="slider-from" class="form-control text-center" value="0">
+              </div>
+              <div class="col-sm-4">
+                <label for="slider-to">Uppper Bound</label>
+                <input type="text" id="slider-to" class="form-control text-center" value="100">
+              </div>
+              <div class="col-sm-4">
+                <label for="slider-inc">Increment</label>
+                <input type="text" id="slider-inc" class="form-control text-center" value="5">
+              </div>
+            </div>
+          </div>
+          <div id="category" class="form-group" style="display: none;">
+            <p class="help-block">Add categories for this question</p>
+            <div id="cat-list">
+              <input type="text" id="cat1" class="form-control" placeholder="Category 1">
+            </div>
+            <div class="text-center">
+              <a href="#" onClick="add_category()" class="btn btn-default text-center"><i class="glyphicon glyphicon-plus text-success"></i> Add Category</a>
+            </div>
+          </div>
+          <div id="integer" class="form-group" style="display: none;">
+            <label for="units" class="col-sm-2 control-label">Units</label>
+            <div class="col-sm-10">
+              <input type="text" class="form-control" id="units" placeholder="Kg, Hours, Snacks...">
+            </div>
+          </div>
+        </div>
+        <div class="form-group submit">
+          <button type="submit" class="btn btn-success">Submit</button>
+        </div>
+      </form>
+    </div>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

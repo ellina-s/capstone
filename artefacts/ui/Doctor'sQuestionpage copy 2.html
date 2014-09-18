@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>WellnessTracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+   <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <script src="jquery/jquery.js"></script>
+     </head>
+  
+  <body>
+  <nav class="navbar navbar-default" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">WellnessTracker</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="graph.html">Graph</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">Take a Test <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Test 1</a></li>
+              <li><a href="#">Test 2</a></li>
+            </ul>
+          </li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li><a href="#">Link</a></li>
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">[Username] <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Account Information</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+  
+  
+<div style="center" class="container">
+    <h2>Doctor's Question Page: Add your Questions here !</h2>
+    <hr />
+  <div class="row question">
+    <div  class="text-center col col-md-6 col-md-push-6">
+      <h3>Weight loss</h3>
+         <p class="description text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+    </div>
+  </div>
+     
+  <div class="row question">
+    <div class="text-center col col-md-6 col-md-push-6">
+      <h3>Add Your Own Questions Here!</h3>
+          <p class="description text-muted">
+              Type your question here !
+          </p>
+    </div>
+  <div class="text-center col col-md-6 col-md-pull-6 control-container">
+          <input type="Text" class="control-textbox"/>
+          <span class="units text-muted">Questions</span>
+  </div>
+</div>
+  <div class="row question">
+    <div class="text-center col col-md-6 col-md-push-6">
+      <h3>Write a description </h3>
+        <p class="description text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+           </p>
+    </div>
+      <div class="text-center col col-md-6 col-md-pull-6 control-container">
+          <input type="text" class="control-textbox"/>
+          <span class="units text-muted">Description</span>
+      </div>
+    </div> 
+    
+    <div class="text-center col col-md-6 col-md-push-6">
+          <h3>Select The Form of Question</h3>
+    </div>
+    <div class="text-center col col-md-6 col-md-pull-6 control-container">
+          <input type="radio" name="optionsRadios" class="control-category" value="test" id="test" checked=checked>
+          <label class="radio" for="test">Sliders</label>
+          <input type="radio" name="optionsRadios" class="control-category" value="test2" id="test2">
+          <label class="radio" for="test2">Categories</label>
+          <input type="radio" name="optionsRadios" class="control-category" value="test" id="test3">
+          <label class="radio" for="test3">Text-box</label>
+          <input type="radio" name="optionsRadios" class="control-category" value="test" id="test4">
+          <label class="radio" for="test4">Yes/No</label>
+    </div> 
+    
+    
+    
+    <div class="text-center col col-md-6 col-md-push-6">
+          <h3>Choose the max-min and Increment of the sliders</h3>
+    </div>
+    <div  class="text-center col col-md-2 col-md-pull-3 control-container">
+         
+          <input type="number" class="control-textbox" />
+          <span style="font-size:20px" class="units text-muted ">minimum</span>
+          <input type="number" class="control-textbox" />
+          <span style="font-size:20px" class="units text-muted">maximum</span>
+          <input type="number" class="control-textbox" />
+          <span style="font-size:20px" class="units text-muted">increment</span>
+    </div>
+        
+    <div class="text-center col col-md-6 col-md-push-6">
+          <h3>Add Categories</h3>
+   </div>
+<div class="text-center col col-md-4 col-md-pull-4 control-container">
+          <input type="text" class="control-textbox" />
+          <span style="font-size:20px" class="units text-muted">Add Categories</span>
+          <div style="font-size:10px" class="categories text-center">
+         <button type="button" >add more</button>
+        </div>
+    
+    <div class="submit text-center">
+        <button type="button" class="btn btn-lg btn-success">Submit!</button>
+    </div>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+      </body>
+      </html>

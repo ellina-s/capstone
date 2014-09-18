@@ -1,0 +1,16 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ block.super }} - Page not found{% endblock %}
+
+{% block script %}
+{{ block.super }}
+<meta http-equiv="refresh" content="5; url={% url 'home' %}" />
+{% endblock %}
+
+
+{% block content %} 
+<h1>500 - Server Error</h2>
+<hr />
+<h3>Page not found.  Redirecting to home page...</h3>
+{% endblock %}

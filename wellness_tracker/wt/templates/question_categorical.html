@@ -1,0 +1,6 @@
+<div class="category">
+{% for category in question.categories.all %}
+  <input type="radio"  name="{{ prefix }}-value" value="{{ category.value }}" id="cat-{{question.pk}}-{{ forloop.counter }}" {% if forloop.first %}checked='checked'{% endif %} />
+  <label class="radio" name="{{ prefix }}-value" for="cat-{{question.pk}}-{{ forloop.counter }}" value="{{ forloop.counter }}">{{ category.name }}</label>
+{% endfor %}
+</div>

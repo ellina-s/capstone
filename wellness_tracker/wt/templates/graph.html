@@ -1,0 +1,300 @@
+{% extends "base.html" %}
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - Graph{% endblock %}
+
+{% block script %}
+  <meta name="viewport" content="width=device-width; initial-scale = 1.0; maximum-scale=1.0; user-scalable=no" />
+  <script type="text/javascript" src="{% static 'd3/d3.v3/d3.v3.js' %}"></script>
+  <script type="text/javascript" src="{% static 'jquery/jquery.js' %}"></script>
+  <script type="text/javascript" src="{% static 'bootstrap/bootstrap-switch/static/js/bootstrap-switch.min.js' %}"></script>
+  <script type="text/javascript">
+	// Hack for personalizing popover/modal popup for when doctor users are viewing the graph
+	var isDoctor = false;
+    {% for group in user.groups.all %}
+        {% if group.name = 'Doctors' %}
+          isDoctor = true;
+        {% endif %}
+    {% endfor %}
+    var userName = "{% firstof graph_user.get_full_name graph_user.username %}"
+    $(document).ready(function () {
+      // Symptom Colours
+      var allcolors = [
+              "#3498db",
+              "#e74c3c",
+              "#16a085",
+              "#bdc3c7",
+              "#8e44ad",
+              "#e67e22",
+              "#34495e",
+              "#2ecc71",
+              "#2980b9",
+              "#58FAF4",
+              "#F5A9D0",
+              "#8A4B08",
+              ];
+      var datatypes = {'FREEFORM': 'F', 'CATEGORICAL': 'C', 'OTHER': 'O'};
+      // User Symptoms
+      var symptoms = {{ symptoms|json }};
+      var data = {{ data|json }};
+      // Symptom Data
+      var titles = []; // list of symptom names (i.e. titles)
+      var dataset = [];  // list of answers for a single question for the patient
+      var datasets = []; // list of dataset (contains all data for patient)
+      var goals = [];    // list of goals for each question
+      var numSymptoms = data.length;
+      var colors = [];   // list of colours related to each symptom
+      var ans = [];      // list of all answers to all questions 
+      var types = [];
+
+      for ( var i = 0; i < numSymptoms; i++ ) {
+        console.log( "> Question is: " + symptoms[ i ].title );
+        colors.push( allcolors[ i ] );
+        titles.push( symptoms[ i ].title );
+        goals.push( symptoms[ i ].target );
+        ans.push( data[ i ] );
+        if( symptoms[i].categories != null ) {
+          types.push(datatypes.CATEGORICAL);
+   		}
+    	else if( symptoms[i].units != null ) {
+        	types.push(datatypes.FREEFORM);
+    	} else {
+    		types.push(datatypes.OTHER);
+    	}
+    
+        dataset = [];
+        for( var j = 0; j < ans[ i ].length; j++ ) {
+          var temp = ans[ i ][ j ].date;          // NOTE: Should probably use REGEX here instead!!
+          temp = temp.split("-");
+          if( temp[ 1 ][ 0 ] == "0" ) {
+            temp[1] = temp[ 1 ].replace("0", "");
+          }
+          var date = temp[0] + '/' + temp[1] + '/' + temp[2]; 
+          console.log(date);
+          
+          var val = ans[ i ][ j ].value;
+          if( symptoms[i].categories != null ) {
+            var categories = symptoms[i].categories;
+            var categoryName = getCategoryName(categories, val);
+            dataset.push( [ date, val, categoryName ] );
+            console.log("[" + date + "] " + val.toString() + " = " + categoryName);
+          }
+          else if( symptoms[i].units != null ) {
+            var units = symptoms[i].units;
+            dataset.push( [ date, val, units ] );
+            console.log("[" + date + "] " + val.toString() + " " + units);
+          }
+          else {
+            dataset.push( [ date, val ] );
+            console.log("[" + date + "] " + val.toString());
+          }
+        }
+        datasets.push( dataset );
+      }
+      // LEGEND ANCHOR BUTTONS    
+      $('#legend').anchorButton( {
+        activeColors: colors,
+        titles: titles,
+        data: datasets,
+        goals: goals,
+        types: types, 
+      });
+        {% if user|is_physician %}
+        $('#legend').append('<a href="{% url 'new_question' graph_user.id %}" class="list-group-item"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Symptom</a>');
+        {% endif %}
+        resizeButtons();
+        initGraph();
+
+      // RESIZE
+      $( window ).resize(function() {
+        resizeGraph(); 
+        resizeButtons();
+        $('.popover').toggleClass('in').remove();
+      });
+
+      // SELECT ALL BUTTON
+      $('#selectAll').click(function() {
+        $(".data-analysis").attr("disabled", true);
+        $('.list-group-item').each(function() {
+        if($(this).hasClass('inactive')) {
+          $(this).trigger('click');
+        }
+        });  
+      });
+
+      // RESET ALL BUTTON
+      $('#reset').click(function() {
+        $(".data-analysis").attr("disabled", false);
+        $('.list-group-item').each(function() {
+          if($(this).hasClass('active')) {
+            $(this).trigger('click');
+          }
+        });  
+      });
+      
+      // TIME PERIOD BAR
+      $('.period').each(function() {
+        $(this).click(function() {
+          $('.period').removeClass('selected');
+          $(this).addClass('selected');
+          updateTimePeriod($(this).attr('id'));
+        });
+      });
+      
+      // CHECKBOXES
+      $(".data-analysis").attr("disabled", false);
+      $(".data-analysis").change(function () {
+        updateDataAnalysis($(this).attr("id"));
+      })
+      
+     $('.close').click(function() {
+        $('#my-modal-title').empty();
+        $('#my-modal-body').empty();
+      });
+      // resolve persistent popover on page
+      $(document).mouseup(function(e) { 
+        
+        var popocontainer = jQuery(".popover");
+		if (popocontainer.has(e.target).length === 0) {
+			$('.popover').toggleClass('in').remove();
+		}
+		if (jQuery(".modal").has(e.target).length === 0) {
+			$('#my-modal-title').empty();
+			$('#my-modal-body').empty();
+		}
+      });   
+    }); 
+        
+    function resizeButtons() {
+          if( $(window).width() > 700) {
+        // time period buttons
+        $(".time-period").removeClass("btn-group-sm");
+        $(".time-period").removeClass("btn-group-xs");
+        $(".time-period").removeClass("time-period-sm");
+        $(".time-period").removeClass("time-period-xs");
+        // reset button
+        $("#reset").removeClass("btn-sm");
+        // select all button
+        $("#selectAll").removeClass("btn-sm");
+      }
+      else if( $(window).width() > 525 ) {
+        // time period buttons
+        $(".time-period").addClass("btn-group-sm");
+        $(".time-period").removeClass("btn-group-xs");
+        $(".time-period").addClass("time-period-sm");
+        $(".time-period").removeClass("time-period-xs");
+        // reset button
+        $("#reset").addClass("btn-sm");
+        // select all button
+        $("#selectAll").addClass("btn-sm");
+      }
+      else {
+        // time period buttons
+        $(".time-period").removeClass("btn-group-sm");
+        $(".time-period").addClass("btn-group-xs");
+        $(".time-period").removeClass("time-period-sm");
+        $(".time-period").addClass("time-period-xs");
+        // reset button
+        $("#reset").addClass("btn-sm");
+        // select all button
+        $("#selectAll").addClass("btn-sm");
+        }
+    }
+    function getCategoryName(categories, value) {
+    	for (var i = 0; i < categories.length; i++ ) {
+    		if (categories[i].value == value) {
+    			return categories[i].name;
+    		}
+    	}
+    	console.log(">> ERROR category not found!");
+    	return -1;
+    }
+  </script>
+{% endblock %}
+
+{% block content %} 
+<h2>
+  Wellness Graph
+  {% if user != graph_user %}
+    - {% firstof graph_user.get_full_name graph_user.username|title %}
+  {% endif %}
+</h2>
+<hr />
+{% if data.0 %}
+<div class="row">
+  <div id="graph" class="text-left col-md-9 gui-container">
+    <div class="btn-group-container">
+      <div id="timePeriod" class="btn-group time-period pagination-centered">
+        <button type="button" id="oneWeek" class="btn btn-default period selected">1 Week</button>
+        <!--button type="button" id="twoWeek" class="btn btn-default period">Two Weeks</button-->
+        <button type="button" id="oneMonth" class="btn btn-default period">1 Month</button>
+        <button type="button" id="sixMonth" class="btn btn-default period">6 Month</button>
+        <button type="button" id="oneYear" class="btn btn-default period">1 Year</button>
+        <button type="button" id="allTime" class="btn btn-default period">All Time</button>
+      </div><!-- end btn-group -->
+    </div><!-- end btn-group-container -->
+    <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="graph-container"></svg>
+  </div><!-- end col-md-9 -->
+  <div id="graph-controls" class="col-md-3">
+    {% if symptoms %}
+    <h4>Symptoms Legend</h4>
+    <div id="legend" class="list-group"></div><!-- end list-group -->
+    {% endif %}
+
+    <h4>Data Analysis</h4>
+    <div class="switches well well-sm">
+      <label>Average<input type="checkbox" id="average" class="pull-right data-analysis" checked></label>
+      <label>Best-Fit<input type="checkbox" id="best-fit" class="pull-right data-analysis" checked></label>
+      <label>Target<input type="checkbox" id="goal" class="pull-right data-analysis" checked></label>
+      <label>Stdev<input type="checkbox" id="stdev" class="pull-right data-analysis" checked></label>
+    </div><!-- end well -->
+
+    <div class="btn-group-container clearfix">
+      <div class="btn-container col-sm-4 col-md-12">
+        <a id="selectAll" class="btn btn-success">Select All</a>
+        <a id="reset" class="btn btn-primary">Reset All</a>
+      </div><!-- end btn-container -->
+    </div><!-- end btn-group-container -->
+
+    <hr />
+
+    {% if comments.items %}
+    <h4>Comments</h4>
+    <div id="comments">
+        <dl>
+        {% for date,answrs in comments.items %}
+          <dt>{{ date }}</dt>
+          {% for ans in answrs %}
+          <dd><span class="text-muted">{{ ans.date.time }}</span><br />{{ ans.comment }}</dd>
+          {% endfor %}
+        {% endfor %}
+        </dl>
+    </div>
+    {% endif %}
+  </div><!-- end col-md-3 -->
+
+
+    <!-- Modal -->
+    <div class="modal fade bs-modal-sm" tabindex="-1" role="dialog" aria-labelledby="mySmallModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-sm">
+        <div class="modal-content">
+          <div class="modal-header">
+            <button class="close" aria-hidden="true" data-dismiss="modal" type="button"> × </button>
+            <h4 id="my-modal-title" class="modal-title"></h4>
+          </div>
+          <div id="my-modal-body"class="modal-body"></div>
+        </div>
+      </div>
+    </div>
+  </div>  
+</div><!-- end row -->
+<script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/graph/data-analysis.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/graph/graph.js' %}"></script>
+<script type="text/javascript" src="{% static 'javascript/graph/anchorbutton.js' %}"></script>
+{% else %}
+<span class="help-block">You have no data in WellnessTracker!<br />Please go to the questions page and submit a wellness test.</span>
+{% endif %}
+{% endblock %}
+

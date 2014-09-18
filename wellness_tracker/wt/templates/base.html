@@ -1,0 +1,29 @@
+{% extends 'shell.html' %}
+{% load static %}
+{% block title %}WellnessTracker{% endblock %}
+{% block head %}
+  	<meta charset='UTF-8'>
+  	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    {% block static %}
+      {% block css %}
+      {% include 'static.html' %}
+      {% endblock %}
+
+      <script type="text/javascript" src="{% static 'jquery/jquery.js' %}"></script>
+      {% block script %}{% endblock script%}
+    {% endblock static%}
+{% endblock head %}
+{% block body %}
+  {% block navbar %}
+  {% include 'navbar.html' %}
+  {% endblock %}
+	<div id='content'>
+    <div class="container">
+      {% block content %}
+      {% endblock %}
+    </div>
+  </div>
+  {% block post_content %}
+  <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.min.js' %}"></script>
+  {% endblock post_content %}
+{% endblock body %}

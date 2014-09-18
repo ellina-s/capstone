@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WellnessTracker</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+
+    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="fav/wt-favicon-114.png">
+    <link rel="apple-touch-icon-precomposed" sizes="72x72" href="fav/wt-favicon-72.png">
+    <link rel="apple-touch-icon-precomposed" href="fav/wt-favicon-72.png">
+
+    <script src="jquery/jquery.js"></script>
+    <script src="jquery/jquery-knob/js/jquery.knob.js"></script>
+    <script>
+      $(function() {
+          $(".control-knob").knob({
+            'draw' : function () {
+              $(this.$.parents().find("canvas")).css("margin-bottom", "0");
+              this._carve().init();
+              $(this.$.parents().find("canvas")).css("margin-bottom", "-30px");
+            },
+            // Modify the knob's 'change' method to update the slider
+            'change' : function (v) {
+              this.$.parents('.control-container').find('input.slider').val(this._validate(v));
+            }
+          });
+         
+          $(".slider input.slider").change(function () {
+            $(this).parents(".control-container").find('.control-knob').val($(this).val()).trigger('change');
+          });
+
+          // Hack to get the knob to load the right size
+          for (var i=0; i<15; i++) { $(window).trigger('resize') };
+      });
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">WellnessTracker</a>
+      </div>
+
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+          <li class="active"><a href="#">Home</a></li>
+          <li><a href="graph.html">Graph</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">[Username] <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Account Information</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+
+    <div class="container">
+      <h2>Daily Wellness Test!</h2>
+      <div class="row question">
+        <div class="text-center col col-md-6 col-md-push-6">
+          <h3>On a scale of 1-100, how active was your day?</h3>
+          <p class="description text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </div>
+        <div class="text-center col col-md-6 col-md-pull-6 control-container slider">
+          <div class="slider">
+            <input class="control-knob" type="number" data-fgColor="#66CC66" data-angleOffset=-125 data-angleArc=250 value="50" data-step=5 data-width=50%>
+            <br />
+            <input type="range" class="slider" name="points" min="0" max="100" step="5">
+          </div>
+        </div>
+      </div>
+      <div class="row question">
+        <div class="text-center col col-md-6 col-md-push-6">
+          <h3>Which of the following best describes your hunger?</h3>
+          <p class="description text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </div>
+        <div class="text-center col col-md-6 col-md-pull-6 control-container">
+          <div class="category">
+            <input type="radio" name="group-radio" value="test" id="test" checked=checked>
+            <label class="radio" for="test">Starving</label>
+
+            <input type="radio" name="group-radio" value="test2" id="test2">
+            <label class="radio" for="test2">Hungry</label>
+
+            <input type="radio" name="group-radio" value="test3" id="test3">
+            <label class="radio" for="test3">Neutral</label>
+
+            <input type="radio" name="group-radio" value="test4" id="test4">
+            <label class="radio" for="test4">Full</label>
+
+            <input type="radio" name="group-radio" value="test5" id="test5">
+            <label class="radio" for="test5">Stuffed</label>
+          </div>
+        </div>
+      </div>
+      <div class="row question">
+        <div class="text-center col col-md-6 col-md-push-6">
+          <h3>Have you taken your medication today?</h3>
+          <p class="description text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </div>
+        <div class="text-center col col-md-6 col-md-pull-6 control-container">
+          <div class="yes-no">
+            <input type="radio" name="yes-no-radio" value="yes" id="yn1" checked=checked>
+            <label class="radio col col-xs-6" for="yn1">Yes</label>
+
+            <input type="radio" name="yes-no-radio" value="no" id="yn2">
+            <label class="radio col col-xs-6" for="yn2">No</label>
+          </div>
+        </div>
+      </div>
+      <div class="row question">
+        <div class="text-center col col-md-6 col-md-push-6">
+          <h3>How many snacks did you have today?</h3>
+          <p class="description text-muted">
+            Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.
+            Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
+            Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
+            Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+        </div>
+        <div class="text-center col col-md-6 col-md-pull-6 control-container">
+          <input type="number" class="control-textbox" min=0 />
+          <span class="units text-muted">Snacks</span>
+        </div>
+      </div>
+      <div class="submit text-center">
+        <button type="button" class="btn btn-lg btn-success">Submit!</button>
+      </div>
+    </div>
+    <script src="bootstrap/js/bootstrap.min.js"></script>
+  </body>
+</html>

@@ -1,0 +1,5 @@
+<div class="slider">
+  <input class="control-knob" type="number" data-fgColor="#66CC66" data-angleOffset=-125 data-angleArc=250 value="{{ question.target }}" data-step={{ question.increment }} data-width=50% data-min={{ question.min_value }} data-max={{ question.max_value }}>
+  <br />
+  <input type="range" class="slider" name="{{ prefix }}-value" min="{{ question.min_value }}" max="{{ question.max_value }}" value="{{ question.target }}" step="{{ question.increment }}">
+</div>

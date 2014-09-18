@@ -1,0 +1,60 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - Your Questions{% endblock %}
+
+
+{% block script %}
+  <script src="{% static 'jquery/jquery.js' %}"></script>
+  <script src="{% static 'jquery/jquery-knob/js/jquery.knob.js' %}"></script>
+  <script>
+  $(function() {
+	  $(".control-knob").knob({
+		'draw' : function () {
+		  $(this.$.parents().find("canvas")).css("margin-bottom", "0");
+		  this._carve().init();
+		  $(this.$.parents().find("canvas")).css("margin-bottom", "-30px");
+		},
+		// Modify the knob's 'change' method to update the slider
+		'change' : function (v) {
+		  this.$.parents('.control-container').find('input.slider').val(this._validate(v));
+		}
+	  });
+	 
+	  $(".slider input.slider").change(function () {
+		$(this).parents(".control-container").find('.control-knob').val($(this).val()).trigger('change');
+	  });
+	  
+	  // Hack to get the knob to load the right size
+	  for (var i=0; i<15; i++) { $(window).trigger('resize') };
+  });
+
+  $(function() {
+    $("div.comment a").click(function(){
+      $(this).parent().children("textarea").toggle();
+    })
+  });
+  </script>
+{% endblock %}
+
+{% block content %}
+<h2>Daily Wellness Test!</h2>
+{% if formset.total_form_count %}
+<form id="question-form" action="{% url 'questions' %}" method="post">
+  {% csrf_token %}
+  {{ formset.management_form }}
+  {% for form in formset %}
+    {% with forloop.counter as qi %}
+    {{ form.as_wt }}
+    {% endwith %}
+  {% endfor %}
+  <div class="submit text-center">
+    <input type="submit" class="btn btn-lg btn-success"></input>
+  </div>
+</form>
+{% else %}
+<span class="help-block">You have no questions!<br />Please talk to your doctor about creating some attributes to track.</span>
+{% endif %}
+{% endblock %}

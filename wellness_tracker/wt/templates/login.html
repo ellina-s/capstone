@@ -1,0 +1,35 @@
+{% extends 'base.html' %}
+{% block title %}{{ block.super}} - Login{% endblock %}
+{% block content %}
+<div class="login">
+  <h1 class="text-center">Welcome to <span class="brand blue">Wellness</span><span class="brand green">Tracker!</span></h1>
+  <div class="col-md-5 col-md-push-7">
+    <form action="" class="form-signin" method="post">{% csrf_token %}
+      <h3 class="form-signin-heading text-center">Please log in</h3>
+      {% if form.non_field_errors %}
+          <div class="alert alert-danger">
+            {{ form.non_field_errors|striptags }}
+          </div>
+      {% endif %}
+      <div class="form-group {% if form.username.errors %}has-error{% endif%}">
+        {% for error in form.username.errors %}
+          <label class="control-label" for="id_username">{{ error }}</label>
+        {% endfor %}
+        <input id="id_username" name="username" type="text" class="form-control" placeholder="Username" autofocus>
+      </div>
+      <div class="form-group {% if form.password.errors %}has-error{% endif %}">
+        <input id="id_password" name="password" type="password" class="form-control" placeholder="Password">
+        {% for error in form.password.errors %}
+          <label class="control-label" for="id_password">{{ error }}</label>
+        {% endfor %}
+      </div>
+      <button class="btn btn-lg btn-primary btn-block" type="submit">Login</button>
+    </form>
+  </div>
+  <div id="video" class="col-md-7 col-md-pull-5">
+    <div class="videowrapper">
+	<iframe width="1280" height="720" src="//www.youtube.com/embed/ob7z_YEcChw?rel=0&controls=0&vq=hd720autohide=1&showinfo=0" frameborder="0" allowfullscreen></iframe>
+    </div>
+  </div>
+</div>
+{% endblock %}

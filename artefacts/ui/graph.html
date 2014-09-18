@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>WellnessTracker</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Bootstrap -->
+    <!--
+    <link href='http://fonts.googleapis.com/css?family=Raleway' rel='stylesheet' type='text/css'>
+    -->
+    <!-- Jquery-ui -->
+    <!--
+    <link rel="stylesheet" href="http://code.jquery.com/ui/1.10.3/themes/smoothness/jquery-ui.css" />
+	<script src="http://code.jquery.com/ui/1.10.3/jquery-ui.js"></script>    
+	-->
+    <link rel="stylesheet" href="bootstrap/css/bootstrap.min.css">
+    <link rel="stylesheet" href="bootstrap/bootstrap-switch/static/stylesheets/bootstrap-switch.css">
+    <link rel="stylesheet" href="style.css">
+    
+    <script type="text/javascript" src="d3/d3.v3/d3.v3.js"></script>
+    <script type="text/javascript" src="jquery/jquery.js"></script>
+    <script type="text/javascript" src="bootstrap/bootstrap-switch/static/js/bootstrap-switch.min.js"></script>
+    
+    <script type="text/javascript">
+    $(document).ready(function () {
+      		// Hard coded for now
+			// User Symptoms
+			var symptoms = ["Activity", "Hunger", "Weight", "Snacks"];
+			var numSymptoms = symptoms.length;
+
+			// Symptom Colours
+			var allcolors = [
+							"#3498db",
+							"#e74c3c",
+								  "#16a085",
+							"#bdc3c7",
+							"#8e44ad",
+							"#e67e22",
+							"#34495e",
+							"#2ecc71",
+									"#2980b9",
+							"#58FAF4",
+							"#F5A9D0",
+							"#8A4B08"
+						  ];
+			var colors = [];
+			for (var i = 0; i < numSymptoms; i++) {
+				colors[i] = allcolors[i];
+			}
+			// Symptom Data
+			var dataset = [];
+			var datasets = [];
+			var numDataPoints = 7;
+			var yRange = 0;		
+			var goals = [];
+			for (var i = 0; i < numSymptoms; i++) {
+				
+				var date = new Date();
+				date.setDate(date.getDate() - numDataPoints - i);
+				dataset = [];
+				for (var j = 0; j <= numDataPoints; j++) {
+					var year = date.getFullYear();
+					var month = date.getMonth() + 1;
+					var day = date.getDate();
+					var strDate = year.toString() + "/" + month.toString() + "/" + day.toString();
+					
+					var d = strDate;
+					var val = Math.round(Math.random() * yRange );
+					dataset.push([d, val]);
+					
+					date.setDate(date.getDate() + 1);
+					console.log("[" + d + "] " + val.toString());
+				
+				}
+				datasets.push(dataset);
+				goals.push(yRange - i);
+			}
+			// LEGEND ANCHOR BUTTONS		
+      $('#legend').anchorButton( {
+          activeColors: colors,
+          labels: symptoms,
+          data: datasets,
+          goals: goals 
+      });
+      $('#legend').append('<a href="new_question.html" class="list-group-item"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Symptom</a>');
+			resizeButtons();
+			initGraph();
+
+			// RESIZE
+			$( window ).resize(function() {
+				resizeGraph(); 
+				resizeButtons();
+				$('.popover').toggleClass('in').remove();
+			});
+
+			// SELECT ALL BUTTON
+			$('#selectAll').click(function() {
+				$(".data-analysis").attr("disabled", true);
+				$('.list-group-item').each(function() {
+				if($(this).hasClass('inactive')) {
+					$(this).trigger('click');
+				}
+				});	
+			});
+
+
+			// RESET ALL BUTTON
+			$('#reset').click(function() {
+				$(".data-analysis").attr("disabled", false);
+				$('.list-group-item').each(function() {
+					if($(this).hasClass('active')) {
+						$(this).trigger('click');
+					}
+				});	
+			});
+			
+			// TIME PERIOD BAR
+			$('.period').each(function() {
+				$(this).click(function() {
+					$('.period').removeClass('selected');
+					$(this).addClass('selected');
+					updateTimePeriod($(this).attr('id'));
+				});
+			});
+			
+			// CHECKBOXES
+			$(".data-analysis").attr("disabled", false);
+			$(".data-analysis").change(function () {
+				updateDataAnalysis($(this).attr("id"));
+			})
+			
+			// resolve persistent popover on page
+			$(document).mouseup(function(e){ 
+				var popocontainer = jQuery(".popover");
+				if (popocontainer.has(e.target).length === 0){
+					$('.popover').toggleClass('in').remove();
+				}
+			});       	
+        });
+        
+        function resizeButtons() {
+        	if( $(window).width() > 700) {
+				// time period buttons
+				$(".time-period").removeClass("btn-group-sm");
+				$(".time-period").removeClass("btn-group-xs");
+				$(".time-period").removeClass("time-period-sm");
+				$(".time-period").removeClass("time-period-xs");
+				// reset button
+				$("#reset").removeClass("btn-sm");
+				// select all button
+				$("#selectAll").removeClass("btn-sm");
+			}
+			else if( $(window).width() > 525 ) {
+				// time period buttons
+				$(".time-period").addClass("btn-group-sm");
+				$(".time-period").removeClass("btn-group-xs");
+				$(".time-period").addClass("time-period-sm");
+				$(".time-period").removeClass("time-period-xs");
+				// reset button
+				$("#reset").addClass("btn-sm");
+				// select all button
+				$("#selectAll").addClass("btn-sm");
+			}
+			else {
+				// time period buttons
+				$(".time-period").removeClass("btn-group-sm");
+				$(".time-period").addClass("btn-group-xs");
+				$(".time-period").removeClass("time-period-sm");
+				$(".time-period").addClass("time-period-xs");
+				// reset button
+				$("#reset").addClass("btn-sm");
+				// select all button
+				$("#selectAll").addClass("btn-sm");
+      	}
+    }
+    </script>
+  </head>
+  <body>
+    <nav class="navbar navbar-default" role="navigation">
+      <!-- Brand and toggle get grouped for better mobile display -->
+      <div class="navbar-header">
+        <button type="button" class="navbar-toggle" data-toggle="collapse" data-target=".navbar-ex1-collapse">
+          <span class="sr-only">Toggle navigation</span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+          <span class="icon-bar"></span>
+        </button>
+        <a class="navbar-brand" href="#">WellnessTracker</a>
+      </div>
+      <!-- Collect the nav links, forms, and other content for toggling -->
+      <div class="collapse navbar-collapse navbar-ex1-collapse">
+        <ul class="nav navbar-nav">
+          <li><a href="data_input.html">Home</a></li>
+          <li class="active"><a href="graph.html">Graph</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+          <li class="dropdown">
+            <a href="#" class="dropdown-toggle" data-toggle="dropdown">[Username] <b class="caret"></b></a>
+            <ul class="dropdown-menu">
+              <li><a href="#">Account Information</a></li>
+              <li><a href="#">FAQ</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div><!-- /.navbar-collapse -->
+    </nav>
+    <div class="container">
+      <h2> Wellness Graph </h2>
+      <hr />
+      <div class="row">
+        <div id="graph" class="text-left col-md-9 gui-container">
+          <div class="btn-group-container">
+            <div id="timePeriod" class="btn-group time-period pagination-centered ">
+              <button type="button" id="oneWeek" class="btn btn-default period selected">One Week</button>
+              <button type="button" id="twoWeek" class="btn btn-default period">Two Weeks</button>
+              <button type="button" id="oneMonth" class="btn btn-default period">One Month</button>
+              <button type="button" id="sixMonth" class="btn btn-default period">Six Month</button>
+              <button type="button" id="oneYear" class="btn btn-default period">One Year</button>
+              <button type="button" id="allTime" class="btn btn-default period">All Time</button>
+            </div>
+          </div>
+          <div>
+            <svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" class="graph-container" ></svg>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="row">
+            <div class="col-sm-4 col-md-12">
+              <h4>Symptoms Legend</h4>
+              <div id="legend" class="list-group"></div>
+            </div>
+            <div class="switches col-sm-4 col-md-12">
+              <h4>Data Analysis</h4>
+              <div class="well well-sm">
+                <label>Average<input type="checkbox" id="average" class="pull-right data-analysis" checked></label>
+                <label>Best-Fit<input type="checkbox" id="best-fit" class="pull-right data-analysis" checked></label>
+                <label>Goal<input type="checkbox" id="goal" class="pull-right data-analysis" checked></label>
+                <label>Stdev<input type="checkbox" id="stdev" class="pull-right data-analysis" checked></label>
+              </div>
+            </div>
+            <div class="btn-group-container">
+              <div class="btn-container col-sm-4 col-md-12">
+                <a id="selectAll" class="btn btn-success">Select All</a>
+                <a id="reset" class="btn btn-primary">Reset All</a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="javascript/graph/data-analysis.js"></script>
+    <script type="text/javascript" src="javascript/graph/graph.js"></script>
+    <script type="text/javascript" src="javascript/graph/anchorbutton.js"></script>
+  </body>
+</html>
