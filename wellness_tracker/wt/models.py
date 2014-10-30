@@ -149,7 +149,7 @@ class Answer(models.Model):
                             help_text='An additional comment regarding your answer.')
 
     def __unicode__(self):
-        return u"{question}".format(question='')
+        return u"{question},{answer}".format(question=self.question.title, answer=self.value)
 
     def clean(self, *args, **kwargs):
         question_type = self.question.__class__.__name__.lower()
@@ -167,8 +167,8 @@ class Answer(models.Model):
                     high=self.question.max_value))
 
         elif question_type == 'categorical':
-            if self.value not in range(0,len(self.question.categories.all())):
-                raise ValidationError('Categorical question only has {} categories.'.format(len(self.question.categories.all())))
+            if self.value not in [a.value for a in self.question.categories.all()]:
+                raise ValidationError('{answer} is not an accepted value for this catagorical question.'.format(self.value))
 
         super(Answer, self).clean(*args, **kwargs)
 

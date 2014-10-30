@@ -1,4 +1,5 @@
 import re
+import json
 from datetime import datetime
 from collections import defaultdict
 
@@ -12,10 +13,12 @@ from django.forms.models import modelformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 
+from numpy import mean, std
 from preserialize.serialize import serialize
 
 from wt.models import *
 
+from pprint import pformat as pprint
 
 # Hack for homepage
 def home(request):
@@ -32,6 +35,8 @@ def questions(request):
 
         if formset.is_valid():
             formset.save()
+        else:
+            print formset.errors
 
     # Get questions list
     question_list = Question.objects.filter(patient=request.user)
@@ -46,7 +51,6 @@ def questions(request):
 def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
-
 
 def graph(request, user_id=None):
     try:
@@ -68,55 +72,48 @@ def graph(request, user_id=None):
     question_list = Question.objects.filter(patient=user)
     questions = Question.objects.filter(patient=user).get_real_instances(question_list)
 
-    # Serialize the questions and answers
-    serialized_questions = serialize(questions,
-                                     exclude=['patient',
-                                              'text',
-                                              'question_ptr',
-                                              'description',
-                                              'polymorphic_ctype'])
-
-    answers = Answer.objects.filter(question__in=questions).order_by('date')
-
-    comments = defaultdict(list)
-    for answer in answers:
-        if answer.comment:
-            comments[answer.date.date()].append(answer)
-
-    """  GET MOST RECENT FOR EACH DAY
-    # Get the most recent answer for each day
     latest_datetime = []
-    Answer.objects.extra(
+    latest_datetime = Answer.objects.extra(
             select={'the_date': 'date(date)' }
         ).values_list('the_date').annotate(max_date=Max('date'))
     max_dates = [item[1] for item in latest_datetime]
 
-    serialized_answers = serialize(Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date'),
-                                  fields=['date', 'value'])
-    for i in serialized_answers:
-        i['date'] = str(i['date'].date())
+    answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
 
-    serialized_answers = [serialized_answers]
-    """
-    serialized_answers = []
-    for q in questions:
-        serialized_answers.append(serialize(Answer.objects.filter(question=q).order_by('date'),
-                                                  fields=['date', 'value']))
+    grouped_answers = defaultdict(list)
+    for ans in answers:
+        grouped_answers[ans.question.title].append(ans)
 
-    for j in serialized_answers:
-        for i in j:
-            i['date'] = str(i['date'].date())
 
-    print serialized_answers
+    # Build nvd3 json
+    data = []
+    for k,v in grouped_answers.iteritems():
+        point_list = []
+        for datum in v:
+            point_list.append(
+                {'x': int(datum.date.strftime("%s") + "000"),
+                 'y': datum.value,
+                 'comment':datum.comment,
+                })
 
-    data = serialized_answers
-    symptoms = serialized_questions
+        values = list(point['y'] for point in point_list)
+        avg = mean(values)
+        stdev = std(values)
 
-    return render(request, 'graph.html', {'symptoms': symptoms,
-                                          'data': data,
-                                          'answers' : answers,
-                                          'comments' : dict(comments),
-                                          'graph_user': user})
+        data.append(
+                {'key':k,
+                 'values': point_list,
+                 'disabled': True,
+                 'avg': avg,
+                 'targ': v[0].question.target,
+                 'std1': avg+stdev,
+                 'std2': avg-stdev,
+                 })
+
+    return render(request, "graph.html",
+            {"data_json": json.dumps(data),
+             "data": data,
+             "graph_user": user})
 
 
 @user_passes_test(is_physician)
