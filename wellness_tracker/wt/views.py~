@@ -54,9 +54,6 @@ def patient_list(request):
 
 def create_patient(request):
     return render(request, 'create_patient.html')
-#Goal Attainment Wizard Pages
-def gas_step1(request):
-    return render(request, 'gas_step1.html')
 
 def graph(request, user_id=None):
     try:
