@@ -54,9 +54,34 @@ def patient_list(request):
 
 def create_patient(request):
     return render(request, 'create_patient.html')
-#Goal Attainment Wizard Pages
-def gas_step1(request):
-    return render(request, 'gas_step1.html')
+
+
+#Goal Attainment Wizard Page
+@user_passes_test(is_physician)
+def gas_step1(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        gasgoals_data = {}
+        for k, v in response.items():
+            gasgoals_data[str(k)] = v.pop()
+
+	print gasgoals_data
+	if gasgoals_data['goal1'] == '':
+	    print "There is no data"
+	else:
+            gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
+			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
+			         patient=patient)
+            gas_goals.save()
+        return render(request, 'gas_step1.html', {'patient': patient})
+    else:
+
+        return render(request, 'gas_step1.html', {'patient': patient})
+
 
 def graph(request, user_id=None):
     try:
