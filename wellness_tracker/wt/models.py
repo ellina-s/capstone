@@ -23,6 +23,23 @@ class Patient(models.Model):
     def __unicode__(self):
         return self.user.username
 
+class GASGoals(models.Model):
+    goal1 = models.CharField(max_length=128,
+                             null=False,
+                             blank=False,
+			     help_text='Decription of the Goal')
+
+    environmentalassessment1 = models.CharField(max_length=512,
+						null=False,
+                                  		blank=False,
+						help_text='Describe the Environment')
+    patient = models.ForeignKey(User,
+                                null=False,
+                                blank=False,
+				help_text='The user these goals are intended for.')
+    def __unicode__(self):
+        return self.text
+						
 
 class Question(ShowFieldType, PolymorphicModel):
     title = models.CharField(max_length=32,

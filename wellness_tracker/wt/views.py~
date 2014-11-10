@@ -68,6 +68,11 @@ def create_patient(request):
     #else
     return render(request, 'create_patient.html')
 
+<<<<<<< HEAD
+#Goal Attainment Wizard Pages
+def gas_step1(request):
+    return render(request, 'gas_step1.html')
+=======
 
 #Goal Attainment Wizard Page
 @user_passes_test(is_physician)
@@ -95,6 +100,7 @@ def gas_step1(request, user_id):
 
         return render(request, 'gas_step1.html', {'patient': patient})
 
+>>>>>>> dbf994406312eb502d3550737adf2f67298f9f66
 
 def graph(request, user_id=None):
     try:
