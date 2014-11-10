@@ -52,7 +52,20 @@ def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
 
+#Creating a new patient
 def create_patient(request):
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	
+        newuser = NewPatient(userid=question_data['userid'],
+        		     password=question_data['password'])
+        newuser.save()
+	#return render(request, 'gas_step1.html')
+    #else
     return render(request, 'create_patient.html')
 
 

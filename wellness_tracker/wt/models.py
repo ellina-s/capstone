@@ -216,3 +216,18 @@ def is_physician(user):
         except Physician.DoesNotExist:
             return False
     return False
+
+class NewPatient(models.Model):
+    userid = models.CharField(max_length=16,
+                             null=False,
+                             blank=False,
+			     unique=True,
+                             help_text='A username of a new patient')
+
+    password = models.CharField(max_length=16,
+                            null=False,
+                            blank=False,
+                            help_text='A password for a new patient')
+
+    def __unicode__(self):
+        return self.userid
