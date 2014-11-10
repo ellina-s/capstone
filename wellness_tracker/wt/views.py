@@ -58,6 +58,12 @@ def create_patient(request):
 def gas_step1(request):
     return render(request, 'gas_step1.html')
 
+def planning(request):
+    return render(request, 'planning.html')
+
+def strategies(request):
+    return render(request, 'strategies.html')
+
 def graph(request, user_id=None):
     try:
         physician = Physician.objects.get(user=request.user)
