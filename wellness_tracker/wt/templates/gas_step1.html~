@@ -1,5 +1,4 @@
 {% extends 'base.html' %}
-
 {% load static %}
 {% load wt_extras %}
 
@@ -9,14 +8,29 @@
   {{ block.super }}
 {% endblock %}
 
+{% block script %}
+{{ block.super }}
+<script src="{% static 'jquery/jquery.js' %}"></script>
+<script>
+  $(function() {
+    $( "#type" ).change(function() {
+      $(".conditional-questions > div").hide();
+      $(".conditional-questions #" + $(this).val()).show();
+    });
+    $("#type").prop('selectedIndex', -1);
+  });
+  function add_category() {
+    var num = $("#cat-list > input").length + 1;
+    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+    $("#cat-list > input").last().focus();
+  }
+</script>
+{% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step1
-  {% if user|is_physician %}
-   - {% firstof patient.get_full_name patient.username|title %}
-  {% endif %}
-</h2>
+<h2>Goal Attainment Wizard Step1 - {% firstof patient.get_full_name patient.username|title %}</h2>
 
+<<<<<<< HEAD
 <h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</br></center></h4>
 <form class="form-horizontal col-md-6 col-md-offset-3">
 
@@ -34,6 +48,32 @@
 
 <label for="goal" class="col-sm-3 control-label">Goal#2</label>
 	<div class="col-sm-9">
+=======
+<h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</center></h4>
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_step1' patient.id %}" method="post">
+  {% csrf_token %}
+         <div class="New Patient Information">
+           <div class="form-group">
+           <label for="goal1" class="col-sm-3 control-label">Goal</label>
+           <div class="col-sm-9">
+             <input type="text" name="goal1" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Enter a goal for the patient</a>
+           </div>
+         </div>
+
+        <div class="form-group">
+          <label for="environmentalassessment1" class="col-sm-3 control-label">Environmental Assessment</label>
+          <div class="col-sm-9">
+            <input type="text" name="environmentalassessment1" class="form-control" id="question" placeholder="Placeholder">
+            <p class="help-block">Describe the Enviroment</p>
+          </div>
+         </div>
+
+       <!--  <div class="New Patient Information">
+           <div class="form-group">
+           <label for="goal" class="col-sm-3 control-label">Goal#2</label>
+           <div class="col-sm-9">
+>>>>>>> 542b7d2e47f8da0f8c23e3b6d4968501aad52334
              <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
              <p class="help-block">Enter a goal for the patient</a>
 	</div>
@@ -58,6 +98,7 @@
 	<div class="col-sm-9">
              <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
              <p class="help-block">Enter a goal for the patient</a>
+<<<<<<< HEAD
 	</div>
         <label for="goal" class="col-sm-3 control-label">Environmental Assesment</label>
 	<div class="col-sm-9">
@@ -71,14 +112,27 @@
 
 
  <!-- Drop Down Select Question -->
+=======
+           </div>
+         </div>
+
+        <div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
+          <div class="col-sm-9">
+            <input type="text" name="text" class="form-control" id="question" placeholder="Placeholder">
+            <p class="help-block">Describe the Enviroment</p>
+          </div>
+         </div> --> 
+
+
+<!-- Drop Down Select Question -->
+>>>>>>> 542b7d2e47f8da0f8c23e3b6d4968501aad52334
 <div class="form-group">
-    <label for="question_type" class="col-sm-3 control-label">Select Goal</label>
+    <label for="createanother" class="col-sm-3 control-label">Would you like to create another goal?</label>
     <div class="col-sm-9">
       <select id="type" name="type" class="form-control">
-        <option value="slider">Goal#1</option>
-        <option value="category">Goal#2</option>
-        <option value="boolean">Goal#3</option>
-        <option value="integer">Goal#4</option>
+        <option value="yes">Yes, Create another goal.</option>
+        <option value="no">No, Continue to the next step.</option>
       </select>
     </div>
   </div>

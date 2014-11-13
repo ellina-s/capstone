@@ -23,6 +23,23 @@ class Patient(models.Model):
     def __unicode__(self):
         return self.user.username
 
+class GASGoals(models.Model):
+    goal1 = models.CharField(max_length=128,
+                             null=False,
+                             blank=False,
+			     help_text='Decription of the Goal')
+
+    environmentalassessment1 = models.CharField(max_length=512,
+						null=False,
+                                  		blank=False,
+						help_text='Describe the Environment')
+    patient = models.ForeignKey(User,
+                                null=False,
+                                blank=False,
+				help_text='The user these goals are intended for.')
+    def __unicode__(self):
+        return self.text
+						
 
 class Question(ShowFieldType, PolymorphicModel):
     title = models.CharField(max_length=32,
@@ -199,3 +216,18 @@ def is_physician(user):
         except Physician.DoesNotExist:
             return False
     return False
+
+class NewPatient(models.Model):
+    userid = models.CharField(max_length=16,
+                             null=False,
+                             blank=False,
+			     unique=True,
+                             help_text='A username of a new patient')
+
+    password = models.CharField(max_length=16,
+                            null=False,
+                            blank=False,
+                            help_text='A password for a new patient')
+
+    def __unicode__(self):
+        return self.userid
