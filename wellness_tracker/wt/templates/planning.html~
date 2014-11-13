@@ -55,6 +55,9 @@
          </div>
 </div>
 
+<!--Bootstrap Table, should scale with mobile devices-->
+
+
 <table>
 	<thead>
 	<tr>
@@ -124,7 +127,7 @@
   <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
   {% endfor %} -->
 
-<a href = "/gasstep1">Previous step</t></a> <a href = "/planning">Next Step</a>
+<a href = "/gasstep1">Previous step</t></a> <a href = "/strategies">Next Step</a>
 
 </div>
 <div class="submit text-center">

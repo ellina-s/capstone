@@ -3,22 +3,21 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - GAS Step 2{% endblock %}
+{% block title %}{{ block.super }} - GAS Step 4{% endblock %}
 
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'gas.css' %}">
 {% endblock %}
 
 
 {% block content %}
-<h2>Goal Attainment Wizard Step 2
+<h2>Goal Attainment Wizard Step 4
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
   {% endif %}
 </h2>
 
-<h4><center>Goal's Planning Charter</center></h4>
+<h4><center>Strategy's Planning Charter</br></br></center></h4>
 <form class="form-horizontal col-md-6 col-md-offset-3">
           
 	   <div class="form-group">
@@ -37,12 +36,20 @@
           </div>
          </div>
 
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Actions (What, When, How, with Whom):be SMART!</label>
+          <div class="col-sm-9">
+            <input type="text" name="text" class="form-control" id="question" placeholder="Set Target...">
+            <p class="help-block">Enter a Actions</p>
+          </div>
+         </div>
+
          <div class="New Patient Information">
            <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Timeline:</label>
            <div class="col-sm-9">
              <input type="text" name="title" class="form-control" id="question" placeholder="Set Timeline...">
-             <p class="help-block">Enter a timeline for the goal</a>
+             <p class="help-block">Enter the timeline</a>
            </div>
          </div>
 
@@ -50,13 +57,10 @@
           <label for="question" class="col-sm-3 control-label">Indicator:</label>
           <div class="col-sm-9">
             <input type="text" name="text" class="form-control" id="question" placeholder="Set Indicator">
-            <p class="help-block">Enter an Indicator for the goal</p>
+            <p class="help-block">Enter an Indicator</p>
           </div>
          </div>
 </div>
-
-<!--Bootstrap Table, should scale with mobile devices-->
-
 
 <table>
 	<thead>
@@ -120,19 +124,12 @@
 </table>
 
   	
-  
 
-<!--   Note:   some info from patient_list that i didnt like
-  {% for patient in patients %}
-  <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
-  {% endfor %} -->
-
-<a href = "/gasstep1">Previous step</t></a> <a href = "/strategies">Next Step</a>
 
 </div>
 <div class="submit text-center">
-   <a href='/gasstep1' class="btn btn-info btn-lg">Prev Step</a>
-   <a href='/strategies' class="btn btn-info btn-lg">Next Step</a>
+   <a href='/strategies' class="btn btn-info btn-lg">Prev Step</a>
+   <input type="submit" class="btn btn-lg btn-success"></input>
   </div>
 </form>
 {% endblock %}

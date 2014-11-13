@@ -64,6 +64,9 @@ def planning(request):
 def strategies(request):
     return render(request, 'strategies.html')
 
+def strategy_planning(request):
+    return render(request, 'strategy_planning.html')
+
 def graph(request, user_id=None):
     try:
         physician = Physician.objects.get(user=request.user)
