@@ -56,7 +56,8 @@ def create_patient(request):
     return render(request, 'create_patient.html')
 
 
-#Goal Attainment Wizard Page
+#Goal Attainment Wizard Page ---------------------------
+#    gas_step1
 @user_passes_test(is_physician)
 def gas_step1(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
@@ -72,14 +73,66 @@ def gas_step1(request, user_id):
 	print gasgoals_data
 	if gasgoals_data['goal1'] == '':
 	    print "There is no data"
-        gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
-			     environmentalassessment1=gasgoals_data['environmentalassessment1'], 
-			     patient=patient)
-        gas_goals.save()
-        return render(request, 'gas_step1.html', {'patient': patient})
+	else:
+            gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
+			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
+			         patient=patient)
+            #gas_goals.save()
+	if gasgoals_data['createanother'] == 'yes': 
+            return render(request, 'gas_step1.html', {'patient': patient})
+	else:
+	    return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
     else:
 
         return render(request, 'gas_step1.html', {'patient': patient})
+    #gas_goal_selection
+@user_passes_test(is_physician)
+def gas_goal_selection(request, user_id=0):
+    patient = get_object_or_404(User, pk=int(user_id))
+
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    context_dict = {'gas_goals': gas_goals_list, 'patient': patient}
+    #print 'Testing print gas gaols selection page'
+
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        gas_goals_select = {}
+        for k, v in response.items():
+            gas_goals_select[str(k)] = v.pop()
+
+        #print 'These are the id im looking for:' 
+	#print gas_goals_select['goalselect']
+	#print 'These are all the ids of each thing:'
+
+	for tempGASGoals in gas_goals_list:
+	    tempGASGoals.select = 0
+	    tempGASGoals.save()
+	    print tempGASGoals.select
+            if tempGASGoals.id == int(gas_goals_select['goalselect']):
+	        selected_goal = tempGASGoals
+		#print selected_goal.select
+	
+        #selected_goal = gas_goals_list.GASGoals.id(gas_goals_select['goalselect'])
+	print selected_goal.goal1
+	selected_goal.select = 1
+	#print selected_goal.select
+	#GASGoals.objects.filter(id=selected_goal.id).update(selected_goal)
+
+	selected_goal.save()
+
+        return render(request, 'gas_goal_selection.html', context_dict)
+
+    else:
+        return render(request, 'gas_goal_selection.html', context_dict)
+
+@user_passes_test(is_physician)
+def gas_goal_selection_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+  
+    return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
 
 
 def graph(request, user_id=None):

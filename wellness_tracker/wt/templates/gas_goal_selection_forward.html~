@@ -1,0 +1,7 @@
+<!DOCTYPE html>
+<html>
+    <body>
+	<meta HTTP-EQUIV="REFRESH" content="0; url={% url 'gas_goal_selection' patient.id %}">
+	<!--- <a href="{% url 'gas_step1' graph_user.id %}">Goal Attainment </a> -->
+    </body>
+</html>
