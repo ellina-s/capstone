@@ -79,7 +79,7 @@
           <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="0">
         </div>
         <div class="col-sm-4">
-          <label for="slider-max_value">Upper Bound</label>
+          <label for="slider-max_value">Uppper Bound</label>
           <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="100">
         </div>
         <div class="col-sm-4">

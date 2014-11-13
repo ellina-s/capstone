@@ -67,6 +67,24 @@ def create_patient(request):
 	#return render(request, 'gas_step1.html')
     #else
     return render(request, 'create_patient.html')
+#Goal Attainment Wizard Pages
+def gas_step1(request):
+    return render(request, 'gas_step1.html')
+
+def planning(request):
+    return render(request, 'planning.html')
+
+def strategies(request):
+    return render(request, 'strategies.html')
+
+def strategy_planning(request):
+    return render(request, 'strategy_planning.html')
+
+def appendix_va(request):
+    return render(request, 'appendix_va.html')
+
+def appendix_va(request):
+    return render(request, 'appendix_vb.html')
 
 <<<<<<< HEAD
 #Goal Attainment Wizard Pages
