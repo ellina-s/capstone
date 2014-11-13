@@ -3,11 +3,11 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - New Question{% endblock %}
+{% block title %}{{ block.super }} - New Strategy{% endblock %}
 
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'new_question.css' %}">
+  <link rel="stylesheet" href="{% static 'gas.css' %}">
 {% endblock %}
 
 {% block script %}
@@ -30,9 +30,12 @@
 {% endblock %}
 
 {% block content %}
-<h2>{% firstof patient.get_full_name patient.username|title %} - New Question</h2>
+<h2>{% firstof patient.get_full_name patient.username|title %} - New Strategy</h2>
+
 <hr />
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_question' patient.id %}" method="post">
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy' patient.id %}" method="post">
+ <h4>Goal {{ selected_goal.goal1 }}</h4>
+ <br/>
   {% csrf_token %}
   <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
@@ -80,7 +83,7 @@
           <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="0">
         </div>
         <div class="col-sm-4">
-          <label for="slider-max_value">Upper Bound</label>
+          <label for="slider-max_value">Uppper Bound</label>
           <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="100">
         </div>
         <div class="col-sm-4">

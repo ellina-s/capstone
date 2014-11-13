@@ -107,14 +107,16 @@ def gas_goal_selection(request, user_id=0):
 	for tempGASGoals in gas_goals_list:
 	    tempGASGoals.select = 0
 	    tempGASGoals.save()
-	    print tempGASGoals.select
+	    #print tempGASGoals.select
             if tempGASGoals.id == int(gas_goals_select['goalselect']):
 	        selected_goal = tempGASGoals
 	
 	selected_goal.select = 1
 	selected_goal.save()
+	print 'Select Goal Page Selected Goal'
+        print selected_goal.goal1
 	context_dict = {'gas_goals': gas_goals_list, 'patient': patient, 'selected_goal': selected_goal}
-        return render(request, 'gas_goal_selection.html', context_dict)
+        return render(request, 'new_strategy_forward.html', context_dict)
 
     else:
 	context_dict = {'gas_goals': gas_goals_list, 'patient': patient}
@@ -132,17 +134,21 @@ def new_strategy_forward(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
     #print request.POST
   
-    return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
-# ------------------------------------------------   Strategy ___________________________________________________________
+    return render(request, 'new_strategy.html', {'patient': patient})
+# ______________________________________________   Strategy ___________________________________________________________
 @user_passes_test(is_physician)
 def new_strategy(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
-    #Find selected goal and create new strategy linked to selected goal
+    #Find selected goal to create new strategy linked to selected goal
     gas_goals_list = GASGoals.objects.filter(patient=patient)
     for tempGASGoals in gas_goals_list:
-	print tempGASGoals.select
-        if tempGASGoals.id == 1:
+	#print tempGASGoals.select
+        if tempGASGoals.select == 1:
 	    selected_goal = tempGASGoals
+    print 'New Strategy Page Selected Goal'
+    print selected_goal.goal1
+    #Create dict
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
 
     #print request.POST
     if request.method == 'POST':
@@ -203,7 +209,7 @@ def new_strategy(request, user_id):
                             increment=question_data['increment'])
             #slider.save()
     
-    return render(request, 'new_question.html', {'patient': patient})
+    return render(request, 'new_strategy.html', context_dict)
 
 
 def graph(request, user_id=None):
