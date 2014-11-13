@@ -67,30 +67,7 @@ def create_patient(request):
 	#return render(request, 'gas_step1.html')
     #else
     return render(request, 'create_patient.html')
-#Goal Attainment Wizard Pages
-def gas_step1(request):
-    return render(request, 'gas_step1.html')
 
-def planning(request):
-    return render(request, 'planning.html')
-
-def strategies(request):
-    return render(request, 'strategies.html')
-
-def strategy_planning(request):
-    return render(request, 'strategy_planning.html')
-
-def appendix_va(request):
-    return render(request, 'appendix_va.html')
-
-def appendix_va(request):
-    return render(request, 'appendix_vb.html')
-
-<<<<<<< HEAD
-#Goal Attainment Wizard Pages
-def gas_step1(request):
-    return render(request, 'gas_step1.html')
-=======
 
 #Goal Attainment Wizard Page ---------------------------
 #    gas_step1
@@ -113,16 +90,11 @@ def gas_step1(request, user_id):
             gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
 			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
 			         patient=patient)
-<<<<<<< HEAD
             #gas_goals.save()
 	if gasgoals_data['createanother'] == 'yes': 
             return render(request, 'gas_step1.html', {'patient': patient})
 	else:
 	    return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
-=======
-            gas_goals.save()
-        return render(request, 'gas_step1.html', {'patient': patient})
->>>>>>> a1566bbab25e198a82c38c87b15a0e964cae9cbb
     else:
 
         return render(request, 'gas_step1.html', {'patient': patient})
@@ -249,10 +221,28 @@ def new_strategy(request, user_id):
                             min_value=question_data['min_value'],
                             increment=question_data['increment'])
             #slider.save()
+        if question_data['createanother'] == 'yes': 
+            return render(request, 'new_strategy_forward', context_dict)
+	else:
+	    return render(request, 'gas_step1.html', context_dict)
     
     return render(request, 'new_strategy.html', context_dict)
 
->>>>>>> dbf994406312eb502d3550737adf2f67298f9f66
+
+def planning(request):
+    return render(request, 'planning.html')
+
+def strategies(request):
+    return render(request, 'strategies.html')
+
+def strategy_planning(request):
+    return render(request, 'strategy_planning.html')
+
+def appendix_va(request):
+    return render(request, 'appendix_va.html')
+
+def appendix_vb(request):
+    return render(request, 'appendix_vb.html')
 
 def graph(request, user_id=None):
     try:

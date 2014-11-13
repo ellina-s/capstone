@@ -221,6 +221,10 @@ def new_strategy(request, user_id):
                             min_value=question_data['min_value'],
                             increment=question_data['increment'])
             #slider.save()
+        if question_data['createanother'] == 'yes': 
+            return render(request, 'new_strategy_forward.html', context_dict)
+	else:
+	    return render(request, 'gas_step1.html', context_dict)
     
     return render(request, 'new_strategy.html', context_dict)
 
