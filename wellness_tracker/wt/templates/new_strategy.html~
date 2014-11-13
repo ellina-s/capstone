@@ -3,14 +3,11 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - New Question{% endblock %}
+{% block title %}{{ block.super }} - New Strategy{% endblock %}
 
 {% block css %}
   {{ block.super }}
-<<<<<<< HEAD
-  <link rel="stylesheet" href="{% static 'new_question.css' %}">
-=======
->>>>>>> a1566bbab25e198a82c38c87b15a0e964cae9cbb
+  <link rel="stylesheet" href="{% static 'gas.css' %}">
 {% endblock %}
 
 {% block script %}
@@ -33,9 +30,12 @@
 {% endblock %}
 
 {% block content %}
-<h2>{% firstof patient.get_full_name patient.username|title %} - New Question</h2>
+<h2>{% firstof patient.get_full_name patient.username|title %} - New Strategy</h2>
+
 <hr />
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_question' patient.id %}" method="post">
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy' patient.id %}" method="post">
+ <h4>Goal {{ selected_goal.goal1 }}</h4>
+ <br/>
   {% csrf_token %}
   <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
