@@ -6,7 +6,6 @@
 
 {% block css %}
   {{ block.super }}
-  <link rel="stylesheet" href="{% static 'gas.css' %}">
 {% endblock %}
 
 {% block script %}
@@ -31,6 +30,25 @@
 {% block content %}
 <h2>Goal Attainment Wizard Step1 - {% firstof patient.get_full_name patient.username|title %}</h2>
 
+<<<<<<< HEAD
+<h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</br></center></h4>
+<form class="form-horizontal col-md-6 col-md-offset-3">
+
+<div class="form-group">
+	<label for="goal" class="col-sm-3 control-label">Goal#1</label>
+	<div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Enter a goal for the patient</a>
+	</div>
+        <label for="goal" class="col-sm-3 control-label">Environmental Assesment</label>
+	<div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Describe the Environment</br></br></br></a>
+	</div>
+
+<label for="goal" class="col-sm-3 control-label">Goal#2</label>
+	<div class="col-sm-9">
+=======
 <h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</center></h4>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_step1' patient.id %}" method="post">
   {% csrf_token %}
@@ -55,42 +73,46 @@
            <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Goal#2</label>
            <div class="col-sm-9">
+>>>>>>> 542b7d2e47f8da0f8c23e3b6d4968501aad52334
              <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
              <p class="help-block">Enter a goal for the patient</a>
-           </div>
-         </div>
+	</div>
+        <label for="goal" class="col-sm-3 control-label">Environmental Assesment</label>
+	<div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Describe the Environment</br></br></br></a>
+	</div>
 
-        <div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
-          <div class="col-sm-9">
-            <input type="text" name="text" class="form-control" id="question" placeholder="Placeholder">
-            <p class="help-block">Describe the Enviroment</p>
-          </div>
-         </div>
-
-         <div class="New Patient Information">
-           <div class="form-group">
-           <label for="goal" class="col-sm-3 control-label">Goal#3</label>
-           <div class="col-sm-9">
+<label for="goal" class="col-sm-3 control-label">Goal#3</label>
+	<div class="col-sm-9">
              <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
              <p class="help-block">Enter a goal for the patient</a>
-           </div>
-         </div>
+	</div>
+        <label for="goal" class="col-sm-3 control-label">Environmental Assesment</label>
+	<div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Describe the Environment</br></br></br></a>
+	</div>
 
-        <div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
-          <div class="col-sm-9">
-            <input type="text" name="text" class="form-control" id="question" placeholder="Placeholder">
-            <p class="help-block">Describe the Enviroment</p>
-          </div>
-         </div> 
-
-         <div class="New Patient Information">
-           <div class="form-group">
-           <label for="goal" class="col-sm-3 control-label">Goal#4</label>
-           <div class="col-sm-9">
+<label for="goal" class="col-sm-3 control-label">Goal#4</label>
+	<div class="col-sm-9">
              <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
              <p class="help-block">Enter a goal for the patient</a>
+<<<<<<< HEAD
+	</div>
+        <label for="goal" class="col-sm-3 control-label">Environmental Assesment</label>
+	<div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Describe the Environment</br></br></br></a>
+	</div>
+
+
+
+</div>
+
+
+ <!-- Drop Down Select Question -->
+=======
            </div>
          </div>
 
@@ -104,6 +126,7 @@
 
 
 <!-- Drop Down Select Question -->
+>>>>>>> 542b7d2e47f8da0f8c23e3b6d4968501aad52334
 <div class="form-group">
     <label for="createanother" class="col-sm-3 control-label">Would you like to create another goal?</label>
     <div class="col-sm-9">
@@ -114,17 +137,14 @@
     </div>
   </div>
 
-  	
   </div>
 
-<!--   Note:   some info from patient_list that i didnt like
-  {% for patient in patients %}
-  <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
-  {% endfor %} -->
+</form>
+
+
 
 </div>
 <div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
+   <a href='/planning' class="btn btn-info btn-lg">Next Step</a>
   </div>
-</form>
 {% endblock %}

@@ -52,9 +52,45 @@ def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
 
+#Creating a new patient
 def create_patient(request):
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	
+        newuser = NewPatient(userid=question_data['userid'],
+        		     password=question_data['password'])
+        newuser.save()
+	#return render(request, 'gas_step1.html')
+    #else
     return render(request, 'create_patient.html')
+#Goal Attainment Wizard Pages
+def gas_step1(request):
+    return render(request, 'gas_step1.html')
 
+def planning(request):
+    return render(request, 'planning.html')
+
+def strategies(request):
+    return render(request, 'strategies.html')
+
+def strategy_planning(request):
+    return render(request, 'strategy_planning.html')
+
+def appendix_va(request):
+    return render(request, 'appendix_va.html')
+
+def appendix_va(request):
+    return render(request, 'appendix_vb.html')
+
+<<<<<<< HEAD
+#Goal Attainment Wizard Pages
+def gas_step1(request):
+    return render(request, 'gas_step1.html')
+=======
 
 #Goal Attainment Wizard Page ---------------------------
 #    gas_step1
@@ -77,11 +113,16 @@ def gas_step1(request, user_id):
             gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
 			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
 			         patient=patient)
+<<<<<<< HEAD
             #gas_goals.save()
 	if gasgoals_data['createanother'] == 'yes': 
             return render(request, 'gas_step1.html', {'patient': patient})
 	else:
 	    return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
+=======
+            gas_goals.save()
+        return render(request, 'gas_step1.html', {'patient': patient})
+>>>>>>> a1566bbab25e198a82c38c87b15a0e964cae9cbb
     else:
 
         return render(request, 'gas_step1.html', {'patient': patient})
@@ -211,6 +252,7 @@ def new_strategy(request, user_id):
     
     return render(request, 'new_strategy.html', context_dict)
 
+>>>>>>> dbf994406312eb502d3550737adf2f67298f9f66
 
 def graph(request, user_id=None):
     try:

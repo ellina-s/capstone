@@ -52,7 +52,20 @@ def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
 
+#Creating a new patient
 def create_patient(request):
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	
+        newuser = NewPatient(userid=question_data['userid'],
+        		     password=question_data['password'])
+        newuser.save()
+	#return render(request, 'gas_step1.html')
+    #else
     return render(request, 'create_patient.html')
 
 
@@ -211,6 +224,21 @@ def new_strategy(request, user_id):
     
     return render(request, 'new_strategy.html', context_dict)
 
+
+def planning(request):
+    return render(request, 'planning.html')
+
+def strategies(request):
+    return render(request, 'strategies.html')
+
+def strategy_planning(request):
+    return render(request, 'strategy_planning.html')
+
+def appendix_va(request):
+    return render(request, 'appendix_va.html')
+
+def appendix_vb(request):
+    return render(request, 'appendix_vb.html')
 
 def graph(request, user_id=None):
     try:

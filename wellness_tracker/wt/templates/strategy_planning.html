@@ -1,0 +1,135 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - GAS Step 4{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+
+{% block content %}
+<h2>Goal Attainment Wizard Step 4
+  {% if user|is_physician %}
+   - {% firstof patient.get_full_name patient.username|title %}
+  {% endif %}
+</h2>
+
+<h4><center>Strategy's Planning Charter</br></br></center></h4>
+<form class="form-horizontal col-md-6 col-md-offset-3">
+          
+	   <div class="form-group">
+           <label for="goal" class="col-sm-3 control-label">Baseline:</label>
+           <div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Set Benchmark...">
+             <p class="help-block">Enter a Baseline</a>
+           </div>
+         </div>
+
+        <div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Target:</label>
+          <div class="col-sm-9">
+            <input type="text" name="text" class="form-control" id="question" placeholder="Set Target...">
+            <p class="help-block">Enter a Target goal</p>
+          </div>
+         </div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Actions (What, When, How, with Whom):be SMART!</label>
+          <div class="col-sm-9">
+            <input type="text" name="text" class="form-control" id="question" placeholder="Set Target...">
+            <p class="help-block">Enter a Actions</p>
+          </div>
+         </div>
+
+         <div class="New Patient Information">
+           <div class="form-group">
+           <label for="goal" class="col-sm-3 control-label">Timeline:</label>
+           <div class="col-sm-9">
+             <input type="text" name="title" class="form-control" id="question" placeholder="Set Timeline...">
+             <p class="help-block">Enter the timeline</a>
+           </div>
+         </div>
+
+        <div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Indicator:</label>
+          <div class="col-sm-9">
+            <input type="text" name="text" class="form-control" id="question" placeholder="Set Indicator">
+            <p class="help-block">Enter an Indicator</p>
+          </div>
+         </div>
+</div>
+
+<table>
+	<thead>
+	<tr>
+		<th>Outcome Achievement</th>
+		<th>Expected Level of Achievement</th>
+		<th>Scaling</th>
+	</tr>
+	</thead>
+	<tbody>
+	<tr>
+		<td>Much More than Expeted Outcome</td>
+	        <td>
+		<div class="col-sm-9">
+                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                </div>
+                </td>
+		<td>+2</td>
+	</tr>
+
+	<tr>
+		<td>Slightly better than Expected Outcome</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>+1</td>
+	</tr>
+	
+	<tr>
+		<td>Expected Outcome (Target)</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>0</td>
+	</tr>
+
+	<tr>
+		<td>Slightly Worse than Expected Outcome</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>-1</td>
+	</tr>
+
+	<tr>
+		<td>Much less than Expected Outcome</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>-2</td>
+	</tr>
+	</tbody>
+</table>
+
+  	
+
+
+</div>
+<div class="submit text-center">
+   <a href='/strategies' class="btn btn-info btn-lg">Prev Step</a>
+   <input type="submit" class="btn btn-lg btn-success"></input>
+  </div>
+</form>
+{% endblock %}
