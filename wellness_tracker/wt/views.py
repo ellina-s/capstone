@@ -53,19 +53,35 @@ def patient_list(request):
     return render(request, 'patient_list.html', {'patients': patients})
 
 #Creating a new patient
+@user_passes_test(is_physician)
 def create_patient(request):
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
-        question_data = {}
+        new_patient_data = {}
         for k, v in response.items():
-            question_data[str(k)] = v.pop()
+            new_patient_data[str(k)] = v.pop()
 	
-        newuser = NewPatient(userid=question_data['userid'],
-        		     password=question_data['password'])
-        newuser.save()
-	#return render(request, 'gas_step1.html')
-    #else
+	#Create a new user object
+	tempuser = User.objects.create_user(new_patient_data['userid'],
+					    new_patient_data['useremail'],
+					    new_patient_data['password'])
+	# At this point, tempuser is a User object that has already been saved
+	# to the database. You can continue to change its attributes
+	# if you want to change other fields.
+
+	#get physician object(s)
+	currentdoctors = Physician.objects.get(user=request.user)
+	#create Patient
+	newpatient = Patient(user = tempuser)
+	#save Patient
+	newpatient.save()
+	#add physicians
+	#Note: the corresponding Patient object has to be created and saved by this point
+	newpatient.physicians.add(currentdoctors)
+	#update Patient
+	newpatient.save()        
+
     return render(request, 'create_patient.html')
 
 
