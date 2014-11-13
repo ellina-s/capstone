@@ -119,19 +119,11 @@
 	</tbody>
 </table>
 
-  	
-  
-
-<!--   Note:   some info from patient_list that i didnt like
-  {% for patient in patients %}
-  <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
-  {% endfor %} -->
-
-<a href = "/gasstep1">Previous step</t></a> <a href = "/strategies">Next Step</a>
 
 </div>
 <div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
+   <a href='/gasstep1' class="btn btn-info btn-lg">Prev Step</a>
+   <a href='/strategies' class="btn btn-info btn-lg">Next Step</a>
   </div>
 </form>
 {% endblock %}

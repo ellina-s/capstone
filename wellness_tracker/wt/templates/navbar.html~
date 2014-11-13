@@ -20,7 +20,7 @@
       {% if user|is_physician %}
       <li><a href="{% url 'patient_list' %}">Patients</a></li>
       <li><a href="{% url 'create_patient' %}">Create Patient</a></li>
-	<li><a href="{% url 'create_patient' %}">Gola Attainment System</a></li>
+
       {% else %}
       <li><a href="{% url 'graph' %}">Graph</a></li>
       <li><a href="{% url 'questions' %}">Questions</a></li>

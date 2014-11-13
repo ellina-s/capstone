@@ -67,6 +67,12 @@ def strategies(request):
 def strategy_planning(request):
     return render(request, 'strategy_planning.html')
 
+def appendix_va(request):
+    return render(request, 'appendix_va.html')
+
+def appendix_vb(request):
+    return render(request, 'appendix_vb.html')
+
 def graph(request, user_id=None):
     try:
         physician = Physician.objects.get(user=request.user)

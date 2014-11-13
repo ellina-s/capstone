@@ -14,4 +14,6 @@ urlpatterns = patterns( '',
     url( r'^createpatient/', views.create_patient, name='create_patient'),
     url( r'^new_question/(?P<user_id>\d+)/', views.new_question, name='new_question'),
     url( r'^gasstep1/', views.gas_step1, name='gas_step1'),
+    url( r'^appendix_va', views.appendix_va, name='appendix_va'),
+    url( r'^appendix_vb', views.appendix_vb, name='appendix_vb'),
 )
