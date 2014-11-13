@@ -16,4 +16,6 @@ urlpatterns = patterns( '',
     url( r'^appendix_va', views.appendix_va, name='appendix_va'),
     url( r'^appendix_vb', views.appendix_vb, name='appendix_vb'),
     url( r'^gas_step1/(?P<user_id>\d+)/', views.gas_step1, name='gas_step1'),
+    url( r'^gas_goal_selection/(?P<user_id>\d+)/', views.gas_goal_selection, name='gas_goal_selection'),
+    url( r'^new_strategy/(?P<user_id>\d+)/', views.new_strategy, name='new_strategy'),
 )
