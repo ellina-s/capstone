@@ -28,7 +28,6 @@ class GASGoals(models.Model):
                              null=False,
                              blank=False,
 			     help_text='Decription of the Goal')
-
     environmentalassessment1 = models.CharField(max_length=512,
 						null=False,
                                   		blank=False,
@@ -38,11 +37,43 @@ class GASGoals(models.Model):
                                 blank=False,
 				help_text='The user these goals are intended for.')
 
-    select = models.IntegerField(default=0,
+    activated = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Is this gold selected?')
+    baseline = models.IntegerField(default=0,
+                                   null=False,
+                                   blank=False,
+                                   help_text='Baseline for the goal')
+    target = models.IntegerField(default=0,
                                  null=False,
                                  blank=False,
-                                 help_text='Is this gold selected?')
-
+                                 help_text='Target for the goal')
+    timeline = models.IntegerField(default=0,
+                                   null=False,
+                                   blank=False,
+                                   help_text='Timeline (days) to achieve the goal')
+    indicator = models.CharField(max_length=512,
+				 null=True,
+                                 blank=True,
+				 help_text='How will we know if the gold has been reached')
+    scorepos2 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score +2')
+    scorepos1 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score +1')
+    scoreneg1 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score -1')
+    scoreneg2 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score -2')
+    
     def __unicode__(self):
         return self.text
 						
@@ -66,9 +97,58 @@ class Question(ShowFieldType, PolymorphicModel):
                                 null=False,
                                 blank=False,
                                 help_text='The user this question is intended for.')
-
-
-    target = models.IntegerField()
+    target = models.IntegerField(default=0,
+                            	 null=False,
+                            	 blank=False,
+                            	 help_text='The target of the strategy')
+    gasgoal = models.ForeignKey(GASGoals,
+                                null=True,
+                                blank=True,
+                                help_text='The GASGoal this strategy belongs to.')
+    importance = models.IntegerField(default=0,
+                                     null=False,
+                                     blank=False,
+                                     help_text='Importance of Strategy (1-4) 4=extremely important')
+    difficulty = models.IntegerField(default=0,
+                                     null=False,
+                                     blank=False,
+                                     help_text='Importance of Strategy (1-4) 4=extremely important')
+    baseline = models.IntegerField(default=0,
+                                   null=False,
+                                   blank=False,
+                                   help_text='Baseline for the goal')
+    action = models.CharField(max_length=512,
+                              null=True,
+                              blank=True,
+                              help_text='The questions your would like to ask.')
+    timeline = models.IntegerField(default=0,
+                                   null=False,
+                                   blank=False,
+                                   help_text='Timeline (days) to achieve the strategy')
+    indicator = models.CharField(max_length=512,
+				 null=True,
+                                 blank=True,
+				 help_text='How will we know if the strategy is working')
+    scorepos2 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score +2')
+    scorepos1 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score +1')
+    scoreneg1 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score -1')
+    scoreneg2 = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Gas score -2')
+    activated = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Is this gold selected?')
 
     def __unicode__(self):
         return self.text
@@ -224,17 +304,3 @@ def is_physician(user):
             return False
     return False
 
-class NewPatient(models.Model):
-    userid = models.CharField(max_length=16,
-                             null=False,
-                             blank=False,
-			     unique=True,
-                             help_text='A username of a new patient')
-
-    password = models.CharField(max_length=16,
-                            null=False,
-                            blank=False,
-                            help_text='A password for a new patient')
-
-    def __unicode__(self):
-        return self.userid

@@ -1,0 +1,118 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - GAS Goal Summary Page{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block script %}
+{{ block.super }}
+<script src="{% static 'jquery/jquery.js' %}"></script>
+<script>
+  $(function() {
+    $( "#type" ).change(function() {
+      $(".conditional-questions > div").hide();
+      $(".conditional-questions #" + $(this).val()).show();
+    });
+    $("#type").prop('selectedIndex', -1);
+  });
+  function add_category() {
+    var num = $("#cat-list > input").length + 1;
+    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+    $("#cat-list > input").last().focus();
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>Goal Attainment Goal Summary
+  {% if user|is_physician %}
+   - {% firstof patient.get_full_name patient.username|title %}
+  {% endif %}
+</h2>
+
+<h4><center>Goal Summary</center></h4>
+<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
+<dir class="form-horizontal col-md-6 col-md-offset-3">
+          
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Goal:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.goal1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Environmental Assessment:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.environmentalassessment1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Baseline:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.baseline }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Target:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.target }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Timeline:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.timeline }} Days</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Indicator:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.indicator }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score +2:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scorepos2 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score +1:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scorepos1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score -1:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scoreneg1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score -2:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scoreneg2 }}</p>
+     </div>
+   </div>
+
+
+</div>
+
+<div class="submit text-center">
+    <input type="submit" class="btn btn-lg btn-success"></input>
+  </div>
+
+{% endblock %}

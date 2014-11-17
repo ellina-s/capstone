@@ -1,14 +1,31 @@
 {% extends 'base.html' %}
-
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - GAS Step 2{% endblock %}
+{% block title %}{{ block.super }} - GAS Goal Planning{% endblock %}
 
 {% block css %}
   {{ block.super }}
 {% endblock %}
 
+{% block script %}
+{{ block.super }}
+<script src="{% static 'jquery/jquery.js' %}"></script>
+<script>
+  $(function() {
+    $( "#type" ).change(function() {
+      $(".conditional-questions > div").hide();
+      $(".conditional-questions #" + $(this).val()).show();
+    });
+    $("#type").prop('selectedIndex', -1);
+  });
+  function add_category() {
+    var num = $("#cat-list > input").length + 1;
+    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+    $("#cat-list > input").last().focus();
+  }
+</script>
+{% endblock %}
 
 {% block content %}
 <h2>Goal Attainment Wizard Step 2
@@ -18,20 +35,22 @@
 </h2>
 
 <h4><center>Goal's Planning Charter</center></h4>
-<form class="form-horizontal col-md-6 col-md-offset-3">
+<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'planning' patient.id %}" method="post">
+    {% csrf_token %}
           
 	   <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Baseline:</label>
            <div class="col-sm-9">
-             <input type="text" name="title" class="form-control" id="question" placeholder="Set Benchmark...">
-             <p class="help-block">Enter a Baseline</a>
+             <input type="text" name="baseline" class="form-control" id="question" placeholder="Set Benchmark...">
+             <p class="help-block">Enter a Baseline</p>
            </div>
          </div>
 
         <div class="form-group">
           <label for="question" class="col-sm-3 control-label">Target:</label>
           <div class="col-sm-9">
-            <input type="text" name="text" class="form-control" id="question" placeholder="Set Target...">
+            <input type="text" name="target" class="form-control" id="question" placeholder="Set Target...">
             <p class="help-block">Enter a Target goal</p>
           </div>
          </div>
@@ -40,15 +59,15 @@
            <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Timeline:</label>
            <div class="col-sm-9">
-             <input type="text" name="title" class="form-control" id="question" placeholder="Set Timeline...">
-             <p class="help-block">Enter a timeline for the goal</a>
+             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set Timeline...">
+             <p class="help-block">Enter a timeline for the goal</p>
            </div>
          </div>
 
         <div class="form-group">
           <label for="question" class="col-sm-3 control-label">Indicator:</label>
           <div class="col-sm-9">
-            <input type="text" name="text" class="form-control" id="question" placeholder="Set Indicator">
+            <input type="text" name="indicator" class="form-control" id="question" placeholder="Set Indicator">
             <p class="help-block">Enter an Indicator for the goal</p>
           </div>
          </div>
@@ -70,7 +89,7 @@
 		<td>Much More than Expeted Outcome</td>
 	        <td>
 		<div class="col-sm-9">
-                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                <input type="text" name="scorepos2" class="form-control" id="question" placeholder="">
                 </div>
                 </td>
 		<td>+2</td>
@@ -80,27 +99,19 @@
 		<td>Slightly better than Expected Outcome</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                <input type="text" name="scorepos1" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
 		<td>+1</td>
 	</tr>
 	
-	<tr>
-		<td>Expected Outcome (Target)</td>
-		<td>
-		<div class="col-sm-9">
-                <input type="text" name="text" class="form-control" id="question" placeholder="">
-                </div>
-		</td>
-		<td>0</td>
-	</tr>
+
 
 	<tr>
 		<td>Slightly Worse than Expected Outcome</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                <input type="text" name="scoreneg1" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
 		<td>-1</td>
@@ -110,7 +121,7 @@
 		<td>Much less than Expected Outcome</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="text" class="form-control" id="question" placeholder="">
+                <input type="text" name="scoreneg2" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
 		<td>-2</td>
@@ -119,10 +130,8 @@
 </table>
 
 
-</div>
 <div class="submit text-center">
-   <a href='/gasstep1' class="btn btn-info btn-lg">Prev Step</a>
-   <a href='/strategies' class="btn btn-info btn-lg">Next Step</a>
+    <input type="submit" class="btn btn-lg btn-success"></input>
   </div>
 </form>
 {% endblock %}
