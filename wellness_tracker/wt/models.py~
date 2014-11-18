@@ -97,10 +97,7 @@ class Question(ShowFieldType, PolymorphicModel):
                                 null=False,
                                 blank=False,
                                 help_text='The user this question is intended for.')
-    target = models.IntegerField(default=0,
-                            	 null=False,
-                            	 blank=False,
-                            	 help_text='The target of the strategy')
+    target = models.IntegerField()
     gasgoal = models.ForeignKey(GASGoals,
                                 null=True,
                                 blank=True,
