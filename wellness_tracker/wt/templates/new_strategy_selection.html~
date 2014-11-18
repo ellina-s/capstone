@@ -29,8 +29,8 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Strategy Selection - {% firstof patient.get_full_name patient.username|title %}</h2>
-<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>
+<h2>Goal Attainment Wizard Strategy Selection - {% firstof patient.get_full_name patient.username|title %} - {{ selected_goal.goal1 }}</h2>
+<!--<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>-->
     <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy_selection' patient.id %}" method="post">
         {% csrf_token %}
 	<br/>

@@ -47,7 +47,7 @@
            </div>
            <div class="col-sm-1">
 	     <label class="radio">
-	       <input type="radio" name="optionsradio" id="optionsRadios{{ gasgoals.id }}" value="{{ gasgoals.id }}" checked>
+	       <input type="radio" name="optionsradio" id="optionsRadios{{ gasgoals.id }}" value="{{ gasgoals.id }}">
 	     </label>
            </div>
          </div>

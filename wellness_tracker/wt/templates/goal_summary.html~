@@ -112,7 +112,7 @@
 </div>
 
 <div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
+    <a href="{% url 'new_strategy' patient.id %}" type="submit" class="btn btn-lg btn-success">Create Strategy</a>
   </div>
 
 {% endblock %}
