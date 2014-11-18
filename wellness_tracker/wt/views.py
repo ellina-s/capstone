@@ -106,7 +106,7 @@ def gas_step1(request, user_id):
             gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
 			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
 			         patient=patient)
-            #gas_goals.save()
+            gas_goals.save()
 	if gasgoals_data['createanother'] == 'yes': 
             return render(request, 'gas_step1.html', {'patient': patient})
 	else:
@@ -134,18 +134,19 @@ def gas_goal_selection(request, user_id=0):
 	#print 'These are all the ids of each thing:'
 
 	for tempGASGoals in gas_goals_list:
-	    tempGASGoals.select = 0
+	    tempGASGoals.activated = 0
 	    tempGASGoals.save()
 	    #print tempGASGoals.select
             if tempGASGoals.id == int(gas_goals_select['goalselect']):
 	        selected_goal = tempGASGoals
 	
-	selected_goal.select = 1
+	selected_goal.activated = 1
 	selected_goal.save()
 	print 'Select Goal Page Selected Goal'
         print selected_goal.goal1
 	context_dict = {'gas_goals': gas_goals_list, 'patient': patient, 'selected_goal': selected_goal}
-        return render(request, 'new_strategy_forward.html', context_dict)
+        #return render(request, 'planning.html', context_dict)
+	return render(request, 'planning_forward.html', context_dict)
 
     else:
 	context_dict = {'gas_goals': gas_goals_list, 'patient': patient}
@@ -158,13 +159,83 @@ def gas_goal_selection_forward(request, user_id):
   
     return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
 
+# ______________________________________________   Goal Planning ___________________________________________________________
+@user_passes_test(is_physician)
+def planning_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'planning_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def planning(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal to planning information
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+    #print 'Goal Planning Page Selected Goal'
+    #print selected_goal.goal1
+    #Create dict
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	
+	if question_data['baseline'] == '':
+	    print 'No goal planning data in the form'
+	else:
+	    selected_goal.baseline = question_data['baseline']
+	    selected_goal.target = question_data['target']
+	    selected_goal.timeline = question_data['timeline']
+	    selected_goal.indicator = question_data['indicator']
+	    selected_goal.scorepos2 = question_data['scorepos2']
+	    selected_goal.scorepos1 = question_data['scorepos1']
+	    selected_goal.scoreneg1 = question_data['scoreneg1']
+	    selected_goal.scoreneg2 = question_data['scoreneg2']
+	
+	    selected_goal.save()
+
+        return render(request, 'goal_summary_forward.html', context_dict)
+
+    return render(request, 'planning.html', context_dict)
+
+# ______________________________________________   Goal Summary ___________________________________________________________
+@user_passes_test(is_physician)
+def goal_summary_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'goal_summary_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def goal_summary(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+    return render(request, 'goal_summary.html', context_dict)
+
+
+
+# ______________________________________________   Strategy ___________________________________________________________
 @user_passes_test(is_physician)
 def new_strategy_forward(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
     #print request.POST
-  
-    return render(request, 'new_strategy.html', {'patient': patient})
-# ______________________________________________   Strategy ___________________________________________________________
+    return render(request, 'new_strategy_forward.html', {'patient': patient})
+
 @user_passes_test(is_physician)
 def new_strategy(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
@@ -172,10 +243,97 @@ def new_strategy(request, user_id):
     gas_goals_list = GASGoals.objects.filter(patient=patient)
     for tempGASGoals in gas_goals_list:
 	#print tempGASGoals.select
-        if tempGASGoals.select == 1:
+        if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
-    print 'New Strategy Page Selected Goal'
-    print selected_goal.goal1
+
+    #Create dict
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	#Check for blank title, if so dont save strategy
+	if question_data['title'] == '':
+	    print 'There is no strategy data'
+	else:
+	    newstrategy = Question(title=question_data['title'], 
+			         importance=question_data['importance'],
+			         difficulty=question_data['difficulty'],
+			         gasgoal=selected_goal, 
+			         patient=patient)
+            newstrategy.save()
+	#Check if user would like to create another strategy or move to next step
+	if question_data['createanotherstrategy'] == 'yes':
+	    return render(request, 'new_strategy.html', context_dict)
+	else:
+	    return render(request, 'new_strategy_selection_forward.html', context_dict)
+    else:
+
+        return render(request, 'new_strategy.html', context_dict)
+
+def new_strategy_selection_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'new_strategy_selection_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def new_strategy_selection(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal to create new strategy linked to selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+
+    strategy_list = Question.objects.filter(gasgoal=selected_goal)
+    print 'All strategies created:'
+    for tempstrategy in strategy_list:
+	print tempstrategy.title
+
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+
+	
+	#print question_data
+	#print 'Strategies you selected:'
+	#for stratcheck in strategy_list:
+	    #if question_data['stratcheck.id'] == 'selected':
+	    #print stratcheck.id
+	    #print question_data['char(stratcheck.id)']
+
+	myvar = str(3)
+	print myvar
+	#print question_data[myvar]
+
+    
+    #Create dict
+    context_dict = {'gas_goal_strategies' : strategy_list, 'patient': patient, 'selected_goal': selected_goal}
+    return render(request, 'new_strategy_selection.html', context_dict)
+
+
+@user_passes_test(is_physician)
+def new_strategy_planning(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal to create new strategy linked to selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+    #print 'New Strategy Page Selected Goal'
+    #print selected_goal.goal1
     #Create dict
     context_dict = {'patient': patient, 'selected_goal': selected_goal}
 
@@ -237,12 +395,13 @@ def new_strategy(request, user_id):
                             min_value=question_data['min_value'],
                             increment=question_data['increment'])
             #slider.save()
+        if question_data['createanother'] == 'yes': 
+            return render(request, 'new_strategy_forward.html', context_dict)
+	else:
+	    return render(request, 'gas_step1.html', context_dict)
     
     return render(request, 'new_strategy.html', context_dict)
 
-
-def planning(request):
-    return render(request, 'planning.html')
 
 def strategies(request):
     return render(request, 'strategies.html')
