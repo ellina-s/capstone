@@ -149,6 +149,10 @@ class Question(ShowFieldType, PolymorphicModel):
                                     null=False,
                                     blank=False,
                                     help_text='Is this gold selected?')
+    needsplanning = models.IntegerField(default=0,
+                                        null=False,
+                                        blank=False,
+                                        help_text='A flag for adding planning step to selected strategies')
 
     def __unicode__(self):
         return self.text

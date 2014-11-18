@@ -290,55 +290,74 @@ def new_strategy_selection(request, user_id):
 	#print tempGASGoals.select
         if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
-
+    #Find all strategies
     strategy_list = Question.objects.filter(gasgoal=selected_goal)
-    print 'All strategies created:'
-    for tempstrategy in strategy_list:
-	print tempstrategy.title
+    #print 'All strategies created:'
+    #for tempstrategy in strategy_list:
+	#print tempstrategy.title
+    
+    #Create dict
+    context_dict = {'gas_goal_strategies' : strategy_list, 'patient': patient, 'selected_goal': selected_goal}
 
     #print request.POST
     if request.method == 'POST':
+	#Reset flag (needsplanning) to 0 then update.
+	for stratcheck in strategy_list:
+	    stratcheck.needsplanning = 0
+	    stratcheck.activated = 0
+	    stratcheck.save()
+
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
         t = str(response.get('type'))
         question_data = {}
         for k, v in response.items():
-            question_data[str(k)] = v.pop()
+	    for stratcheck in strategy_list:
+                if str(k) == str(stratcheck.id):
+		    if v.pop() == 'selected':
+	                print stratcheck.title
+			stratcheck.needsplanning = 1
+			stratcheck.activated = 1
+			stratcheck.save()
 
-	
-	#print question_data
-	#print 'Strategies you selected:'
-	#for stratcheck in strategy_list:
-	    #if question_data['stratcheck.id'] == 'selected':
-	    #print stratcheck.id
-	    #print question_data['char(stratcheck.id)']
+	return render(request, 'new_strategy_planning_forward.html', context_dict)
 
-	myvar = str(3)
-	print myvar
-	#print question_data[myvar]
+    else:
+        
+        return render(request, 'new_strategy_selection.html', context_dict)
 
-    
-    #Create dict
-    context_dict = {'gas_goal_strategies' : strategy_list, 'patient': patient, 'selected_goal': selected_goal}
-    return render(request, 'new_strategy_selection.html', context_dict)
 
+def new_strategy_planning_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'new_strategy_planning_forward.html', {'patient': patient})
 
 @user_passes_test(is_physician)
 def new_strategy_planning(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
+
     #Find selected goal to create new strategy linked to selected goal
     gas_goals_list = GASGoals.objects.filter(patient=patient)
     for tempGASGoals in gas_goals_list:
 	#print tempGASGoals.select
         if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
-    #print 'New Strategy Page Selected Goal'
-    #print selected_goal.goal1
+
+    #Find flagged (needsplanning) strategies and finish them 1 by 1
+    strategy_list = Question.objects.filter(gasgoal=selected_goal)
+    for tempstrategy in strategy_list:
+	if tempstrategy.needsplanning == 1:
+	    selected_strategy = tempstrategy
+
     #Create dict
-    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+    context_dict = {'patient': patient, 'selected_goal': selected_goal, 'selected_strategy': selected_strategy }
 
     #print request.POST
     if request.method == 'POST':
+	#unflag needsplanning for strategy submitted.
+	selected_strategy.needsplanning = 0
+	selected_strategy.save()
+
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
         t = str(response.get('type'))
@@ -346,61 +365,83 @@ def new_strategy_planning(request, user_id):
         for k, v in response.items():
             question_data[str(k)] = v.pop()
 
-        if t == "[u'boolean']": # new question is boolean
-            boolean = Boolean(title=question_data['title'],
-                              text=question_data['text'],
-                              description=question_data['description'],
-                              target=int(question_data['goal']),
-                              patient=patient)
-            #boolean.save()
+	print question_data
+	if question_data['text'] == '':
+		print 'These is no strategy planning data.'
+	else:
+            if t == "[u'boolean']": # new question is boolean
+                boolean = Boolean(title=selected_strategy.title,
+				  text=question_data['text'],
+                                  description=question_data['description'],
+                                  target=int(question_data['goal']),
+                                  patient=patient)
+                boolean.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		selected_strategy.delete()
 
-        elif t == "[u'category']": # new question is categorical
-            category_list = []
 
-            i = 1
-            while 'cat' + str(i) in question_data:
-                category = Category(name=question_data['cat' + str(i)].lower(), value=i-1)
-                category_list.append(question_data['cat'+ str(i)].lower())
-                i = i + 1
+            elif t == "[u'category']": # new question is categorical
+                category_list = []
 
-            categorical = Categorical(title=question_data['title'],
-                                        text=question_data['text'],
-                                        description=question_data['description'],
-                                        categories=category_list,
-                                        patient=patient)
+                i = 1
+                while 'cat' + str(i) in question_data:
+                    category = Category(name=question_data['cat' + str(i)].lower(), value=i-1)
+                    category_list.append(question_data['cat'+ str(i)].lower())
+                    i = i + 1
 
-            if question_data['goal'].lower() in category_list: # check for numerical or text goal
-                categorical.target = category_list.index(question_data['goal'].lower())
-            else:
-                categorical.target = int(question_data['goal'])
+                categorical = Categorical(title=selected_strategy.title,
+					    text=question_data['text'],
+                                            description=question_data['description'],
+                                            categories=category_list,
+                                            patient=patient)
 
-            #categorical.save()
+                if question_data['goal'].lower() in category_list: # check for numerical or text goal
+                    categorical.target = category_list.index(question_data['goal'].lower())
+                else:
+                    categorical.target = int(question_data['goal'])
 
-        elif t == "[u'integer']": # new question is free form
-            free_form = FreeForm(title=question_data['title'],
-                                text=question_data['text'],
+                categorical.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		selected_strategy.delete()
+
+            elif t == "[u'integer']": # new question is free form
+		#selected_strategy.text = question_data['text']
+		#selected_strategy.description = question_data['description']
+		#selected_strategy.target = question_data['target']
+		#selected_strategy.text = question_data['units']
+
+                free_form = FreeForm(title=selected_strategy.title,
+				     text=question_data['text'],
+                                     description=question_data['description'],
+                                     target = int(question_data['goal']),
+                                     patient=patient,
+                                     units=question_data['units'])
+		print 'Saved the freeform'
+                free_form.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		selected_strategy.delete()
+            elif t == "[u'slider']": # new question is slider
+                slider = Slider(title=selected_strategy.title,
+				text=question_data['text'],
                                 description=question_data['description'],
                                 target = int(question_data['goal']),
                                 patient=patient,
-                                units=question_data['units'])
-            #free_form.save()
+                                max_value=question_data['max_value'],
+                                min_value=question_data['min_value'],
+                                increment=question_data['increment'])
+                slider.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		selected_strategy.delete()
 
-        elif t == "[u'slider']": # new question is slider
-            slider = Slider(title=question_data['title'],
-                            text=question_data['text'],
-                            description=question_data['description'],
-                            target = int(question_data['goal']),
-                            patient=patient,
-                            max_value=question_data['max_value'],
-                            min_value=question_data['min_value'],
-                            increment=question_data['increment'])
-            #slider.save()
-        if question_data['createanother'] == 'yes': 
-            return render(request, 'new_strategy_forward.html', context_dict)
+	#check if anymore strategies need planning, if so repeat strategy planning page
+	#if not, continue to overall summary page.
+	for tempstrategy in strategy_list:
+	    if tempstrategy.needsplanning == 1: 
+                return render(request, 'new_strategy_planning_forward.html', context_dict)
 	else:
-	    return render(request, 'gas_step1.html', context_dict)
+	    return render(request, 'graph_forward.html', context_dict)
     
-    return render(request, 'new_strategy.html', context_dict)
+    return render(request, 'new_strategy_planning.html', context_dict)
 
 
 def strategies(request):
