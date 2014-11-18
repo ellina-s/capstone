@@ -47,7 +47,11 @@
            </div>
            <div class="col-sm-1">
 	     <label class="radio">
+<<<<<<< HEAD
 	       <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}">
+=======
+	       <input type="radio" name="optionsradio" id="optionsRadios{{ gasgoals.id }}" value="{{ gasgoals.id }}">
+>>>>>>> 5c522b5e3768ea07deb1905ab6a5c539bb866b7a
 	     </label>
            </div>
          </div>

@@ -44,7 +44,7 @@
 <div class="form-group">
     <label for="createanother" class="col-sm-3 control-label"></label>
     <div class="col-sm-9"><p>Would you like to create another strategy?</p>
-      <select id="type" name="createanother" class="form-control">
+      <select id="type" name="createanotherstrategy" class="form-control">
         <option value="yes">Yes, Create another strategy.</option>
         <option value="no">No, Continue to the next step.</option>
       </select>

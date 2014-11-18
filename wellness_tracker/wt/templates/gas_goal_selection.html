@@ -39,8 +39,7 @@
           
     {% for gasgoals in gas_goals %}
 
-         <div class="New Patient Information">
-           <div class="form-group">
+    <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Goal</label>
            <div class="col-sm-8">
              <p class="help-block">{{ gasgoals.goal1 }}</p>
@@ -50,12 +49,10 @@
 	       <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}">
 	     </label>
            </div>
-         </div>
-
-        <div class="form-group">
+       
           <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
           <div class="col-sm-9">
-            <p class="help-block">{{ gasgoals.environmentalassessment1 }}</p>
+            <p class="help-block">{{ gasgoals.environmentalassessment1 }}<br><br><br></p>
           </div>
          </div>
     {% endfor %}

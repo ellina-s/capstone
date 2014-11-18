@@ -37,6 +37,7 @@
 <h4><center>Goal's Planning Charter</center></h4>
 <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'planning' patient.id %}" method="post">
+    {% csrf_token %}
           
 	   <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Baseline:</label>
@@ -131,6 +132,7 @@
 
 <div class="submit text-center">
     <input type="submit" class="btn btn-lg btn-success"></input>
+
   </div>
 </form>
 {% endblock %}
