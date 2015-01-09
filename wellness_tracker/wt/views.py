@@ -593,3 +593,8 @@ def new_question(request, user_id):
             slider.save()
 
     return render(request, 'new_question.html', {'patient': patient})
+
+#__________________________________________ Password Change ___________________________________________
+# This view handles the password change.
+def profile(request):
+	return render(request, 'profile.html')
