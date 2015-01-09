@@ -12,6 +12,8 @@ from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
 
 from numpy import mean, std
 from preserialize.serialize import serialize
@@ -80,7 +82,15 @@ def create_patient(request):
 	#Note: the corresponding Patient object has to be created and saved by this point
 	newpatient.physicians.add(currentdoctors)
 	#update Patient
-	newpatient.save()        
+	newpatient.save()
+
+	# Send an email
+	#email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+	email = EmailMessage('Django Testing -- New User',
+		'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
+		'wtdev.testing@gmail.com',
+		[new_patient_data['useremail']] )
+	email.send()
 
     return render(request, 'create_patient.html')
 
