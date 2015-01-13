@@ -12,6 +12,13 @@ from django.forms.formsets import formset_factory
 from django.forms.models import modelformset_factory
 from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
+from django.core.mail import send_mail
+from django.core.mail import EmailMessage
+# Import custom forms
+from wt.forms import PasswordForm
+from django import forms
+# Import http redirect
+from django.http import HttpResponseRedirect
 
 from numpy import mean, std
 from preserialize.serialize import serialize
@@ -80,7 +87,15 @@ def create_patient(request):
 	#Note: the corresponding Patient object has to be created and saved by this point
 	newpatient.physicians.add(currentdoctors)
 	#update Patient
-	newpatient.save()        
+	newpatient.save()
+
+	# Send an email
+	#email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+	email = EmailMessage('Django Testing -- New User',
+		'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
+		'wtdev.testing@gmail.com',
+		[new_patient_data['useremail']] )
+	email.send()
 
     return render(request, 'create_patient.html')
 
@@ -649,3 +664,65 @@ def new_question(request, user_id):
             slider.save()
 
     return render(request, 'new_question.html', {'patient': patient})
+
+#__________________________________________ Password Change ___________________________________________
+# This view handles the password change.
+def profile(request):
+    user = request.user
+    #profile_context = {'profile_user': my_user} # user info that will be passed to the template
+    errors_dictionary = {} # a dictionary to hold errors that will be passed to the template
+
+    # if this is a POST request we need to process the form data
+    if request.method == 'POST':
+        # create a form instance and populate it with data from the request:
+        form = PasswordForm(request.POST)
+        # check whether it's valid:
+        if form.is_valid():
+            # process the data in form.cleaned_data as required
+
+            old_password = form.cleaned_data['old_password']
+            new_password = form.cleaned_data['new_password']
+            confirm_new_password = form.cleaned_data['confirm_new_password']
+            #print old_password
+            
+            #Validates that the old_password field is correct.
+            if user.check_password(old_password):
+                print "Old password is correct YAY"
+                errors_dictionary['old_pass_flag'] = False
+                if new_password == confirm_new_password:
+                    print "Passwords match YAY"
+                    errors_dictionary['new_pass_flag'] = False
+                    user.set_password(new_password)
+                    user.save()
+                    print "Password updated"
+                    # redirect to the profile:
+                    return HttpResponseRedirect('/profile_success/')
+                else:
+                    print "Passwords do not match NNNAY"
+                    errors_dictionary['new_pass_flag'] = True
+                    errors_dictionary['new_pass'] = 'Passwords do not match. Please, try again'
+            else:
+                print "Old password is not correct NNNAY"
+                errors_dictionary['old_pass_flag'] = True
+                errors_dictionary['old_pass'] = 'You entered incorrect current password. Please, try again'
+
+            print "** VIEWS SAYS form is VALID"
+            # render a template with form, user data, and errors dictionaries:
+            return render(request, 'profile.html', {'form': form, 'profile_user': user, 'any_errors': errors_dictionary})
+        else:
+            print "** VIEWS SAYS form is INVALID"
+            print form.errors
+
+    # if a GET (or any other method) we'll create a blank form
+    else:
+        form = PasswordForm()
+    
+    print "** VIEWS SAYS final return"
+    return render(request, 'profile.html', {'form': form, 'profile_user': user})
+
+
+# Confirmation view dipslayed when a password is updated successfully
+def profile_success(request):
+    user = request.user
+    profile_context = {'profile_user': user} # user info that will be passed to the template
+    return render(request, 'profile_success.html', profile_context)

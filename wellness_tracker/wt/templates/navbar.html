@@ -21,10 +21,12 @@
       <li><a href="{% url 'patient_list' %}">Patients</a></li>
       <li><a href="{% url 'create_patient' %}">Create Patient</a></li>
       <li><a href="{% url 'appendix_va' %}">Appendix</a></li>
+      <li><a href="{% url 'profile' %}">Profile</a></li>
 
       {% else %}
       <li><a href="{% url 'graph' %}">Graph</a></li>
       <li><a href="{% url 'questions' %}">Questions</a></li>
+      <li><a href="{% url 'profile' %}">Profile</a></li>
       {% endif %}
     </ul>
     <ul class="nav navbar-nav navbar-right">
