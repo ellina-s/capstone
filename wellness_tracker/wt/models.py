@@ -77,6 +77,39 @@ class GASGoals(models.Model):
     def __unicode__(self):
         return self.text
 						
+class PreQuestion(models.Model):
+    title = models.CharField(max_length=32,
+                             null=False,
+                             blank=False,
+                             help_text='One word title to descript your question')
+    patient = models.ForeignKey(User,
+                                null=False,
+                                blank=False,
+                                help_text='The user this question is intended for.')
+    gasgoal = models.ForeignKey(GASGoals,
+                                null=True,
+                                blank=True,
+                                help_text='The GASGoal this strategy belongs to.')
+    importance = models.IntegerField(default=0,
+                                     null=False,
+                                     blank=False,
+                                     help_text='Importance of Strategy (1-4) 4=extremely important')
+    difficulty = models.IntegerField(default=0,
+                                     null=False,
+                                     blank=False,
+                                     help_text='Importance of Strategy (1-4) 4=extremely important')
+    activated = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Is this gold selected?')
+    needsplanning = models.IntegerField(default=0,
+                                        null=False,
+                                        blank=False,
+                                        help_text='A flag for adding planning step to selected strategies')
+
+    def __unicode__(self):
+        return self.text
+
 
 class Question(ShowFieldType, PolymorphicModel):
     title = models.CharField(max_length=32,
