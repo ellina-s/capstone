@@ -1,0 +1,223 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - GAS Overall Summary Page{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block script %}
+{{ block.super }}
+<script src="{% static 'jquery/jquery.js' %}"></script>
+<script>
+  $(function() {
+    $( "#type" ).change(function() {
+      $(".conditional-questions > div").hide();
+      $(".conditional-questions #" + $(this).val()).show();
+    });
+    $("#type").prop('selectedIndex', -1);
+  });
+  function add_category() {
+    var num = $("#cat-list > input").length + 1;
+    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+    $("#cat-list > input").last().focus();
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>Goal Attainment Overall Summary
+  {% if user|is_physician %}
+   - {% firstof patient.get_full_name patient.username|title %}
+  {% endif %} - {{ selected_goal.goal1 }}
+</h2>
+
+<h4><center><br>Goal Summary<br><br></center></h4>
+<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
+<dir class="form-horizontal col-md-6 col-md-offset-3">
+          
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Goal:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.goal1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Environmental Assessment:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.environmentalassessment1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Baseline:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.baseline }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Target:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.target }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Timeline:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.timeline }} Days</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Indicator:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.indicator }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Action:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.action }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score +2:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scorepos2 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score +1:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scorepos1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score -1:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scoreneg1 }}</p>
+     </div>
+   </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-3 control-label">Gas Score -2:</label>
+     <div class="col-sm-9">
+       <p class="help-block">{{ selected_goal.scoreneg2 }}</p>
+     </div>
+   </div>
+
+<!-- Display Strategies -->
+{% if active_strategy_list %}
+          
+    {% for question in active_strategy_list %}
+
+         <h5><center>Strategy - {{ question.title }}</center></h5>
+
+         <div class="form-group">
+           <label for="goal" class="col-sm-3 control-label">Strategy Title:</label>
+           <div class="col-sm-9">
+             <p class="help-block">{{ question.title }}</p>
+           </div>
+	 </div>
+          
+        <div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Question:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.text }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Description:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.description }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Target:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.Target }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Baseline:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.baseline }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Timeline:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.timeline }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">Importance:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.importance }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">        
+          <label for="question" class="col-sm-3 control-label">Difficulty:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.difficulty }}</p>
+          </div>
+         </div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">GAS Score +2:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.scorepos2 }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">GAS Score +1:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.scorepos1 }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">GAS Score -1:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.scoreneg1 }}</p>
+          </div>
+	</div>
+
+	<div class="form-group">
+          <label for="question" class="col-sm-3 control-label">GAS Score -2:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.scoreneg2 }}</p>
+          </div>
+	</div>
+
+    {% endfor %}
+            
+{% else %}
+            <strong>There are no strategies present for this goal.</strong><br/>
+{% endif %}
+
+<!-- End of Display Strategies -->
+
+</div>
+
+<div class="submit text-center">
+    <a href="{% url 'user_graph' patient.id %}" type="submit" class="btn btn-lg btn-success">Finish</a>
+  </div>
+
+{% endblock %}

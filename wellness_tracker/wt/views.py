@@ -261,7 +261,8 @@ def new_strategy(request, user_id):
 	if question_data['title'] == '':
 	    print 'There is no strategy data'
 	else:
-	    newstrategy = Question(title=question_data['title'], 
+	    #Save Question Title, Importance, and Difficulty to PreQuestion for further planning
+	    newstrategy = PreQuestion(title=question_data['title'], 
 			         importance=question_data['importance'],
 			         difficulty=question_data['difficulty'],
 			         gasgoal=selected_goal, 
@@ -291,21 +292,36 @@ def new_strategy_selection(request, user_id):
         if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
     #Find all strategies
-    strategy_list = Question.objects.filter(gasgoal=selected_goal)
-    #print 'All strategies created:'
-    #for tempstrategy in strategy_list:
-	#print tempstrategy.title
+    strategy_list = PreQuestion.objects.filter(gasgoal=selected_goal)
+	
+    #Reset needsplanning for all strategies because user will decide what strategies to use
+    for tempstrat in strategy_list:
+	tempstrat.needsplanning = 0
+	tempstrat.save()
+	
+	
+
+    #Find all new (non active) strategies
+    non_active_strategy_list = PreQuestion.objects.filter(gasgoal=selected_goal, activated='0')
+
+    #for chkneedsplanningstrat in strategy_list:
+	#print tempGASGoals.select
+        #if chkneedsplanningstrat.needsplanning == 0:
+	    #needsplanning_strategy_list = chkneedsplanningstrat
+    #print 'All strategies created that needs planning:'
+    #for plzprint in needsplanning_strategy_list:
+	#print plzprint.title
     
     #Create dict
-    context_dict = {'gas_goal_strategies' : strategy_list, 'patient': patient, 'selected_goal': selected_goal}
+    context_dict = {'gas_goal_strategies' : non_active_strategy_list, 'patient': patient, 'selected_goal': selected_goal}
 
     #print request.POST
     if request.method == 'POST':
 	#Reset flag (needsplanning) to 0 then update.
-	for stratcheck in strategy_list:
-	    stratcheck.needsplanning = 0
-	    stratcheck.activated = 0
-	    stratcheck.save()
+	#for stratcheck in strategy_list:
+	    #stratcheck.needsplanning = 0
+	    #stratcheck.activated = 0
+	    #stratcheck.save()
 
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -344,7 +360,7 @@ def new_strategy_planning(request, user_id):
 	    selected_goal = tempGASGoals
 
     #Find flagged (needsplanning) strategies and finish them 1 by 1
-    strategy_list = Question.objects.filter(gasgoal=selected_goal)
+    strategy_list = PreQuestion.objects.filter(gasgoal=selected_goal)
     for tempstrategy in strategy_list:
 	if tempstrategy.needsplanning == 1:
 	    selected_strategy = tempstrategy
@@ -415,11 +431,24 @@ def new_strategy_planning(request, user_id):
                                      description=question_data['description'],
                                      target = int(question_data['goal']),
                                      patient=patient,
-                                     units=question_data['units'])
+                                     units=question_data['units'],
+				     gasgoal=selected_strategy.gasgoal,
+				     importance=selected_strategy.importance,
+				     difficulty=selected_strategy.difficulty,
+				     baseline=question_data['baseline'],
+				     action=question_data['action'],
+				     timeline=question_data['timeline'],
+				     indicator=question_data['indicator'],
+				     scorepos2=question_data['scorepos2'],
+				     scorepos1=question_data['scorepos1'],
+				     scoreneg1=question_data['scoreneg1'],
+				     scoreneg2=question_data['scoreneg1'],
+				     activated=1,
+				     needsplanning=0)
 		print 'Saved the freeform'
                 free_form.save()
 		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
-		selected_strategy.delete()
+		#selected_strategy.delete()
             elif t == "[u'slider']": # new question is slider
                 slider = Slider(title=selected_strategy.title,
 				text=question_data['text'],
@@ -428,10 +457,23 @@ def new_strategy_planning(request, user_id):
                                 patient=patient,
                                 max_value=question_data['max_value'],
                                 min_value=question_data['min_value'],
-                                increment=question_data['increment'])
+                                increment=question_data['increment'],
+				gasgoal=selected_strategy.gasgoal,
+				importance=selected_strategy.importance,
+				difficulty=selected_strategy.difficulty,
+				baseline=question_data['baseline'],
+				action=question_data['action'],
+				timeline=question_data['timeline'],
+				indicator=question_data['indicator'],
+				scorepos2=question_data['scorepos2'],
+				scorepos1=question_data['scorepos1'],
+				scoreneg1=question_data['scoreneg1'],
+				scoreneg2=question_data['scoreneg1'],
+				activated=1,
+				needsplanning=0)
                 slider.save()
 		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
-		selected_strategy.delete()
+		#selected_strategy.delete()
 
 	#check if anymore strategies need planning, if so repeat strategy planning page
 	#if not, continue to overall summary page.
@@ -439,10 +481,34 @@ def new_strategy_planning(request, user_id):
 	    if tempstrategy.needsplanning == 1: 
                 return render(request, 'new_strategy_planning_forward.html', context_dict)
 	else:
-	    return render(request, 'graph_forward.html', context_dict)
+	    return render(request, 'overall_summary_forward.html', context_dict)
     
     return render(request, 'new_strategy_planning.html', context_dict)
 
+# ______________________________________________   Overall Summary ___________________________________________________________
+@user_passes_test(is_physician)
+def overall_summary_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'overall_summary_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def overall_summary(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+	    print tempGASGoals.goal1
+    #Find all active strategies
+    active_strategy_list = Question.objects.filter(gasgoal=selected_goal)
+    for astrat in active_strategy_list:
+	print astrat.title
+
+    context_dict = {'patient': patient, 'selected_goal': selected_goal, 'active_strategy_list': active_strategy_list}
+    return render(request, 'overall_summary.html', context_dict)
 
 def strategies(request):
     return render(request, 'strategies.html')
