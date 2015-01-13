@@ -8,4 +8,3 @@ class PasswordForm(forms.Form):
 	widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter new password' }))
     confirm_new_password = forms.CharField(max_length=32,
 	widget=forms.TextInput(attrs={'class': 'form-control', 'placeholder': 'Enter new password again' }))
-    #error_messages = {'password_incorrect': "The old password is not correct."}

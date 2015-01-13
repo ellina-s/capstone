@@ -603,49 +603,53 @@ def new_question(request, user_id):
 # This view handles the password change.
 def profile(request):
     my_user = request.user
-    profile_context = {'profile_user': my_user}
+    profile_context = {'profile_user': my_user} # user info will be passed to the template
+    errors_dictionary = {} # a dictionary to hold errors that will be passed to the template
 
-    # if this is a POST request, we need to process the form data
+    # if this is a POST request we need to process the form data
     if request.method == 'POST':
         # create a form instance and populate it with data from the request:
         form = PasswordForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
             # process the data in form.cleaned_data as required
-			#print "Form is valid YAY"
+
             old_password = form.cleaned_data['old_password']
             new_password = form.cleaned_data['new_password']
             confirm_new_password = form.cleaned_data['confirm_new_password']
+            #print old_password
+            
+            #Validates that the old_password field is correct.
+            if my_user.check_password(old_password):
+                print "Old password is correct YAY"
+                errors_dictionary['old_pass_flag'] = False
+                if new_password == confirm_new_password:
+                    print "Passwords match YAY"
+                    errors_dictionary['new_pass_flag'] = False
+                    my_user.set_password(new_password)
+                    my_user.save()
+                    print "Password updated"
+                    # redirect to the profile:
+                    return HttpResponseRedirect('/profile/')
+                else:
+                    print "Passwords do not match NNNAY"
+                    errors_dictionary['new_pass_flag'] = True
+                    errors_dictionary['new_pass'] = 'Passwords do not match. Please, try again'
+            else:
+                print "Old password is not correct NNNAY"
+                errors_dictionary['old_pass_flag'] = True
+                errors_dictionary['old_pass'] = 'You entered incorrect current password. Please, try again'
 
-        #Validates that the old_password field is correct.
-
-	    if my_user.check_password(old_password):
-		print "Old password is correct YAY"
-		if new_password == confirm_new_password:
-                	print "Passwords match YAY"
-			my_user.set_password(new_password)
-			my_user.save()
-			print "Password updated"
-		else:
-			print "Passwords do not match NNNAY"
-	    else:
-		print "Old password is not correct NNNAY"
-		#raise forms.ValidationError(
-                #form.error_messages['password_incorrect'],
-                #code='password_incorrect',)
-
-
-            """if not my_user.check_password(old_password):
-            raise forms.ValidationError(
-                error_messages['password_incorrect'],
-                code='password_incorrect',
-            ) """
-
-            # redirect to a new URL:
-            return HttpResponseRedirect('/profile/')
+            print "** VIEWS SAYS form is VALID"
+            # render a template with form, user data, and errors dictionaries:
+            return render(request, 'profile.html', {'form': form, 'profile_user': my_user, 'any_errors': errors_dictionary})
+        else:
+            print "** VIEWS SAYS form is INVALID"
+            print form.errors
 
     # if a GET (or any other method) we'll create a blank form
     else:
         form = PasswordForm()
-
+    
+    print "** VIEWS SAYS final return"
     return render(request, 'profile.html', {'form': form, 'profile_user': my_user})
