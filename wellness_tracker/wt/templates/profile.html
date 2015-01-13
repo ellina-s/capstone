@@ -48,12 +48,10 @@
     {% csrf_token %}
 
     {% if any_errors.new_pass_flag %}
-        <p>Errors detected (oops!)</p>
         <div class="form_error_message">{{ any_errors.new_pass }}</div>
     {% endif %}
     
     {% if any_errors.old_pass_flag %}
-        <p>Errors detected (oops!)</p>
         <div class="form_error_message">{{ any_errors.old_pass }}</div>
     {% endif %}
 

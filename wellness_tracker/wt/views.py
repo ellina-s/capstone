@@ -602,8 +602,8 @@ def new_question(request, user_id):
 #__________________________________________ Password Change ___________________________________________
 # This view handles the password change.
 def profile(request):
-    my_user = request.user
-    profile_context = {'profile_user': my_user} # user info will be passed to the template
+    user = request.user
+    #profile_context = {'profile_user': my_user} # user info that will be passed to the template
     errors_dictionary = {} # a dictionary to hold errors that will be passed to the template
 
     # if this is a POST request we need to process the form data
@@ -620,17 +620,17 @@ def profile(request):
             #print old_password
             
             #Validates that the old_password field is correct.
-            if my_user.check_password(old_password):
+            if user.check_password(old_password):
                 print "Old password is correct YAY"
                 errors_dictionary['old_pass_flag'] = False
                 if new_password == confirm_new_password:
                     print "Passwords match YAY"
                     errors_dictionary['new_pass_flag'] = False
-                    my_user.set_password(new_password)
-                    my_user.save()
+                    user.set_password(new_password)
+                    user.save()
                     print "Password updated"
                     # redirect to the profile:
-                    return HttpResponseRedirect('/profile/')
+                    return HttpResponseRedirect('/profile_success/')
                 else:
                     print "Passwords do not match NNNAY"
                     errors_dictionary['new_pass_flag'] = True
@@ -642,7 +642,7 @@ def profile(request):
 
             print "** VIEWS SAYS form is VALID"
             # render a template with form, user data, and errors dictionaries:
-            return render(request, 'profile.html', {'form': form, 'profile_user': my_user, 'any_errors': errors_dictionary})
+            return render(request, 'profile.html', {'form': form, 'profile_user': user, 'any_errors': errors_dictionary})
         else:
             print "** VIEWS SAYS form is INVALID"
             print form.errors
@@ -652,4 +652,11 @@ def profile(request):
         form = PasswordForm()
     
     print "** VIEWS SAYS final return"
-    return render(request, 'profile.html', {'form': form, 'profile_user': my_user})
+    return render(request, 'profile.html', {'form': form, 'profile_user': user})
+
+
+# Confirmation view dipslayed when a password is updated successfully
+def profile_success(request):
+    user = request.user
+    profile_context = {'profile_user': user} # user info that will be passed to the template
+    return render(request, 'profile_success.html', profile_context)
