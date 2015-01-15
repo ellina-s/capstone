@@ -12,6 +12,11 @@
 
 {% block content %}
 
+<script type "text/javascript">
+$.notify.defaults({ globalPosition: "top center" });
+$.notify("Password updated successfully", "success");
+</script>
+
 <h2>User Profile - 
 {% firstof profile_user.get_full_name profile_user.username|title %}
 </h2>

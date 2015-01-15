@@ -49,10 +49,18 @@
 
     {% if any_errors.new_pass_flag %}
         <div class="form_error_message">{{ any_errors.new_pass }}</div>
+        <script type "text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("New passwords do not macth", "error");
+        </script>
     {% endif %}
     
     {% if any_errors.old_pass_flag %}
         <div class="form_error_message">{{ any_errors.old_pass }}</div>
+        <script type "text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Incorrect current password", "error");
+        </script>
     {% endif %}
 
 	<div class="New Patient Information">
