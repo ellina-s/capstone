@@ -503,7 +503,7 @@ def overall_summary(request, user_id):
 	    selected_goal = tempGASGoals
 	    print tempGASGoals.goal1
     #Find all active strategies
-    active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated=1)
+    active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated='1')
     for astrat in active_strategy_list:
 	print astrat.title
 
@@ -649,3 +649,50 @@ def new_question(request, user_id):
             slider.save()
 
     return render(request, 'new_question.html', {'patient': patient})
+
+## ______________________________________________   Follow Up Meeting __________________________________________________
+@user_passes_test(is_physician)
+def followup_goaledit_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'followup_goaledit_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_goaledit(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+	    
+    #Find all banked goals
+    banked_goals_list = GASGoals.objects.filter(patient=patient, activated='0')
+
+    #Find all active strategies
+    #active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated='1')
+    #for astrat in active_strategy_list:
+	#print astrat.title
+    navselecterror = 'good'
+    print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+
+	
+	if 'e' == 'e':
+	    print 'Error: Nothing selected'
+	    navselecterror = 'error'
+	else:
+	    print question_data['navselect']
+	    navselecterror = 'good'
+
+
+    context_dict = {'patient': patient, 'selected_goal': selected_goal, 'banked_goals_list': banked_goals_list, 'navselecterror' : navselecterror}
+    return render(request, 'followup_goaledit.html', context_dict)
+
