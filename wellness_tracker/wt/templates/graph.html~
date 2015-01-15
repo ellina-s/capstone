@@ -78,7 +78,7 @@ svg {
     <div class="row">
       <div class="col-md-12 col-sm-6">
 
-        <h4>Symptoms</h4>
+        <h4>Strategies</h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
           <a href="#" class="symptom list-group-item inactive">{{ symptom.key }}</a>

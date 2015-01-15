@@ -1,0 +1,167 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - GAS Follow Up Meeting Edit Strategies{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block script %}
+{{ block.super }}
+<script src="{% static 'jquery/jquery.js' %}"></script>
+<script>
+  $(function() {
+    $( "#type" ).change(function() {
+      $(".conditional-questions > div").hide();
+      $(".conditional-questions #" + $(this).val()).show();
+    });
+    $("#type").prop('selectedIndex', -1);
+  });
+  function add_category() {
+    var num = $("#cat-list > input").length + 1;
+    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+    $("#cat-list > input").last().focus();
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>Follow Up Meeting - Edit Goal
+  {% if user|is_physician %}
+   - {% firstof patient.get_full_name patient.username|title %}
+  {% endif %}
+</h2>
+</br>
+<center><h4>Selected Goal - {{ selected_goal.goal1 }}</h4></center>
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_strategyedit' patient.id %}" method="post">
+{% csrf_token %}
+    </br>   
+<!-- Display activated strategies -->
+{% if selected_freeform_strategy_list %}
+          
+    {% for selectedstrat in selected_freeform_strategy_list %} 
+
+  <center><h5>Current Selected Strateges:</h5></center>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-4 control-label">Title:</label>
+     <div class="col-sm-8">
+       <p class="help-block">{{ selectedstrat.title }}</p>
+     </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-4 control-label">Question:</label>
+     <div class="col-sm-8">
+       <p class="help-block">{{ selectedstrat.text }}</p>
+     </div>
+   </div>
+
+{% endfor %}
+            
+{% else %}
+            <strong>There are no selected strategies.</strong><br/>
+{% endif %}
+
+<center><h5>Banked Strateges:</h5></center>
+<!-- Display all non active strategies -->
+{% if nonactive_freeform_strategy_list %}
+          
+    {% for nonactivestrat in nonactive_freeform_strategy_list %} 
+
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-4 control-label">Title:</label>
+     <div class="col-sm-8">
+       <p class="help-block">{{ nonactivestrat.title }}</p>
+     </div>
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-4 control-label">Question:</label>
+     <div class="col-sm-8">
+       <p class="help-block">{{ nonactivestrat.text }}</p>
+     </div>
+   </div>
+
+{% endfor %}
+            
+{% else %}
+            <!-- <strong>There are no non-active strategies.</strong><br/> -->
+{% endif %}
+
+<!-- Display all prequestion strategies -->
+{% if prequestion_strategy_list %}
+          
+    {% for prequestionstrat in prequestion_strategy_list %} 
+
+   <div class="form-group">
+     <label for="goal" class="col-sm-4 control-label">Title:</label>
+     <div class="col-sm-8">
+       <p class="help-block">{{ prequestionstrat.title }}</p>
+     </div>
+  </div>
+
+<!-- 
+   <div class="form-group">
+     <label for="goal" class="col-sm-4 control-label">Question:</label>
+     <div class="col-sm-8">
+       <p class="help-block">{{ prequestionstrat.text }}</p>
+     </div>
+   </div> -->
+
+{% endfor %}
+            
+{% else %}
+            <!-- <strong>There are no prequestion strategies.</strong><br/> -->
+{% endif %}
+
+</br>
+
+<!-- User selection code -->
+
+    <div class="form-group">
+     <label for="goal" class="col-sm-5 control-label">What would you like to do?</label>
+    </div>
+
+           <div class="form-group">
+             <label for="goal" class="col-sm-8 control-label">Keep all selected strategies without change:</label>
+	     <div class="col-sm-1">
+	       <label class="radio">
+	       <input type="radio" name="navselect" id="optionsRadios" value="keep" >
+	     </label>
+             </div>
+	   </div>
+
+           <div class="form-group">
+             <label for="goal" class="col-sm-8 control-label">Select and edit from all strategies above:</label>
+	     <div class="col-sm-1">
+	       <label class="radio">
+	       <input type="radio" name="navselect" id="optionsRadios" value="select">
+	     </label>
+             </div>
+	   </div>
+
+           <div class="form-group">
+             <label for="goal" class="col-sm-8 control-label">Create new then select and edit from all strategies:</label>
+	     <div class="col-sm-1">
+	       <label class="radio">
+	       <input type="radio" name="navselect" id="optionsRadios" value="create">
+	     </label>
+             </div>
+	   </div>
+
+
+  {% if navselecterror == 'error' %}
+      <div class="alert alert-danger">
+        <strong>Error:</strong> Please select an option above.
+      </div>
+  {% endif %}
+
+
+
+  <div class="submit text-center">
+    <input type="submit" class="btn btn-lg btn-success"></input>
+  </div>
+</form>
+{% endblock %}

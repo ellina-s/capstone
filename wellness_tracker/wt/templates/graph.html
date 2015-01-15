@@ -62,6 +62,7 @@ svg {
   
   {% if user|is_physician %}
   <a href="{% url 'gas_step1' graph_user.id %}">Goal Attainment </a>
+  <a href="{% url 'followup_goaledit' graph_user.id %}">Follow Up Meeting </a>
   {% endif %}
  
 

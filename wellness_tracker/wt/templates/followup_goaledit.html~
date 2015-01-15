@@ -61,7 +61,7 @@
 {% endif %}
 
 
-</br></br>
+</br>
 
 <!-- User selection code -->
 
@@ -73,7 +73,7 @@
              <label for="goal" class="col-sm-6 control-label">Keep selected Goal:</label>
 	     <div class="col-sm-1">
 	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="keep">
+	       <input type="radio" name="navselect" id="optionsRadios" value="keep" >
 	     </label>
              </div>
 	   </div>
@@ -105,7 +105,11 @@
              </div>
 	   </div>
 
-
+  {% if navselecterror == 'error' %}
+      <div class="alert alert-danger">
+        <strong>Error</strong> Please select an option above.
+      </div>
+  {% endif %}
 
 
 
