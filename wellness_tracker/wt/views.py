@@ -665,7 +665,6 @@ def new_question(request, user_id):
 
     return render(request, 'new_question.html', {'patient': patient})
 
-<<<<<<< HEAD
 ## ______________________________________________   Follow Up Meeting __________________________________________________
 @user_passes_test(is_physician)
 def followup_goaledit_forward(request, user_id):
@@ -712,7 +711,6 @@ def followup_goaledit(request, user_id):
     context_dict = {'patient': patient, 'selected_goal': selected_goal, 'banked_goals_list': banked_goals_list, 'navselecterror' : navselecterror}
     return render(request, 'followup_goaledit.html', context_dict)
 
-=======
 #__________________________________________ Password Change ___________________________________________
 # This view handles the password change.
 def profile(request):
@@ -774,4 +772,3 @@ def profile_success(request):
     user = request.user
     profile_context = {'profile_user': user} # user info that will be passed to the template
     return render(request, 'profile_success.html', profile_context)
->>>>>>> 8060441af6f0954dd4cf5b965ba5ae4e151e4aa5
