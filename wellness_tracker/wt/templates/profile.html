@@ -48,7 +48,6 @@
     {% csrf_token %}
 
     {% if any_errors.old_pass_flag %}
-        <div class="form_error_message">{{ any_errors.old_pass }}</div>
         <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("Incorrect current password", "error");
@@ -56,7 +55,6 @@
     {% endif %}
 
     {% if any_errors.new_pass_flag %}
-        <div class="form_error_message">{{ any_errors.new_pass }}</div>
         <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("New passwords do not macth", "error");
@@ -64,7 +62,6 @@
     {% endif %}
     
     {% if update_success.flag %}
-        <div class="form_error_message">{{ update_success.message }}</div>
         <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("Password updated successfully", "success");

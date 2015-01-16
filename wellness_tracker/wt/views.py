@@ -698,8 +698,7 @@ def profile(request):
                     
                     update_success = {}
                     update_success['flag'] = True
-                    update_success['message'] = "Password updated successfully"
-                    empty_form = PasswordForm() # return an empty form
+                    empty_form = PasswordForm() # return an empty form to prevent displaying password data
                     # render a template for successful password update:
                     return render(request, 'profile.html', {'form': empty_form, 'profile_user': user,
                                                             'any_errors': errors_dictionary,
@@ -708,11 +707,9 @@ def profile(request):
                 else:
                     print "Passwords do not match NNNAY"
                     errors_dictionary['new_pass_flag'] = True
-                    errors_dictionary['new_pass'] = 'Passwords do not match. Please, try again'
             else:
                 print "Old password is not correct NNNAY"
                 errors_dictionary['old_pass_flag'] = True
-                errors_dictionary['old_pass'] = 'You entered incorrect current password. Please, try again'
 
             print "** VIEWS SAYS form is VALID"
             # render a template with form, user data, and errors dictionaries:
