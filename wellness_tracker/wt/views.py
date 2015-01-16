@@ -695,8 +695,16 @@ def profile(request):
                     user.set_password(new_password)
                     user.save()
                     print "Password updated"
-                    # redirect to the profile:
-                    return HttpResponseRedirect('/profile_success/')
+                    
+                    update_success = {}
+                    update_success['flag'] = True
+                    update_success['message'] = "Password updated successfully"
+                    empty_form = PasswordForm() # return an empty form
+                    # render a template for successful password update:
+                    return render(request, 'profile.html', {'form': empty_form, 'profile_user': user,
+                                                            'any_errors': errors_dictionary,
+                                                            'update_success': update_success })
+                    #return HttpResponseRedirect('/profile_success/')
                 else:
                     print "Passwords do not match NNNAY"
                     errors_dictionary['new_pass_flag'] = True
@@ -720,9 +728,3 @@ def profile(request):
     print "** VIEWS SAYS final return"
     return render(request, 'profile.html', {'form': form, 'profile_user': user})
 
-
-# Confirmation view dipslayed when a password is updated successfully
-def profile_success(request):
-    user = request.user
-    profile_context = {'profile_user': user} # user info that will be passed to the template
-    return render(request, 'profile_success.html', profile_context)
