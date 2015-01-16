@@ -725,3 +725,29 @@ def profile(request):
     print "** VIEWS SAYS final return"
     return render(request, 'profile.html', {'form': form, 'profile_user': user})
 
+
+# Add a significant other
+@user_passes_test(is_physician)
+def add_so(request):
+    # Retrieve patients
+    patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    errors_dictionary={}
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        so_data = {}
+        for k, v in response.items():
+            so_data[str(k)] = v.pop()
+
+        print 'Chosen patient is'
+        print so_data['choosepatient']
+        print so_data['userid']
+        
+        if so_data['choosepatient'] == "none":
+            print "Error: You didn\'t select any patient"
+            errors_dictionary['no_patient'] = True
+        else:
+            #print "Something else other than none"
+            errors_dictionary['no_patient'] = False
+    
+    return render(request, 'add_so.html', {'patients': patients, 'errors': errors_dictionary})

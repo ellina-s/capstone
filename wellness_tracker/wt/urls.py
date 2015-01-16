@@ -22,4 +22,5 @@ urlpatterns = patterns( '',
     url( r'^gas_goal_selection/(?P<user_id>\d+)/', views.gas_goal_selection, name='gas_goal_selection'),
     url( r'^new_strategy/(?P<user_id>\d+)/', views.new_strategy, name='new_strategy'),
 	url( r'^profile/', views.profile, name='profile'),
+    url( r'^add_so/', views.add_so, name='add_so'),
 )
