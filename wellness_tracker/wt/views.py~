@@ -45,8 +45,18 @@ def questions(request):
         else:
             print formset.errors
 
+    #Find patient
+    patient=request.user
+
+    #Find selected goal 
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+
     # Get questions list
-    question_list = Question.objects.filter(patient=request.user)
+    question_list = Question.objects.filter(patient=request.user, gasgoal=selected_goal)
     initial_data = [{'question': q, 'patient': request.user} for q in question_list]
     AnswerFormSet1 = modelformset_factory(Answer, form=AnswerForm, extra=len(initial_data))
     formset = AnswerFormSet1(queryset=Answer.objects.none(), initial=initial_data)
@@ -100,7 +110,7 @@ def create_patient(request):
     return render(request, 'create_patient.html')
 
 
-#Goal Attainment Wizard Page ---------------------------
+#--------------------------------------------------Goal Attainment Wizard Page1 ---------------------------
 #    gas_step1
 @user_passes_test(is_physician)
 def gas_step1(request, user_id):
@@ -348,7 +358,7 @@ def new_strategy_selection(request, user_id):
 		    if v.pop() == 'selected':
 	                print stratcheck.title
 			stratcheck.needsplanning = 1
-			stratcheck.activated = 1
+			stratcheck.activated = 0
 			stratcheck.save()
 
 	return render(request, 'new_strategy_planning_forward.html', context_dict)
@@ -387,6 +397,7 @@ def new_strategy_planning(request, user_id):
     if request.method == 'POST':
 	#unflag needsplanning for strategy submitted.
 	selected_strategy.needsplanning = 0
+	selected_strategy.activated = 1
 	selected_strategy.save()
 
         response = dict(request.POST)
@@ -543,6 +554,7 @@ def graph(request, user_id=None):
     except Physician.DoesNotExist:
         physician = None
 
+    
     # Get the right user for the graph
     # For a physician, this means checking that they are,
     # a physician for the patient they are requesting to view.
@@ -552,10 +564,23 @@ def graph(request, user_id=None):
             raise Http404
     else:
         user = request.user
+	
 
+    patient = user
+    at_least_1_goal = 'nogoal'
+    selected_goal = '-1'
+    #Pull selected goal for this patient
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	at_least_1_goal = 'goalpresent'
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+
+    print at_least_1_goal
     # Pull the questions for this user
-    question_list = Question.objects.filter(patient=user)
-    questions = Question.objects.filter(patient=user).get_real_instances(question_list)
+    question_list = Question.objects.filter(patient=user, gasgoal=selected_goal)
+    questions = Question.objects.filter(patient=user, gasgoal=selected_goal).get_real_instances(question_list)
 
     latest_datetime = []
     latest_datetime = Answer.objects.extra(
@@ -563,8 +588,58 @@ def graph(request, user_id=None):
         ).values_list('the_date').annotate(max_date=Max('date'))
     max_dates = [item[1] for item in latest_datetime]
 
-    answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
 
+
+    answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
+    #check most recent point and base gasscore on most recent point. Check for type fo question as well.
+    #for tempanswer in answers:
+	#most_recent_value=tempanswer.value
+	#if most_recent_value >= tempanswer.question.question_ptr.scoreneg2:
+	    #print most_recent_value
+	    #print "GAS Score +2"
+	    
+	    #gasscore = '+2'
+    #try again lol
+    for question1 in question_list:
+	for tempanswer in answers:
+	    if tempanswer.question.question_ptr.id == question1.id:
+		question1.displayedscore = tempanswer.value
+		question1.save()
+		#print question1.title
+		#print question1.displayedscore
+		#print '-------'
+    #end check most recent
+
+    #Logic for gasscore....
+    for question in question_list:
+	mostrecentscore = question.displayedscore
+	if (question.scorepos2 - question.scoreneg2) <= 0:
+	     #+2 - (-2) is negative, start +2 and add to get to -2
+	    if mostrecentscore <= question.scorepos2:
+		question.displayedscore = '+2'
+	    elif mostrecentscore <= question.scorepos1:
+		question.displayedscore = '+1'
+	    elif mostrecentscore <= question.target:
+		question.displayedscore = '0'
+	    elif mostrecentscore <= question.scoreneg1:
+		question.displayedscore = '-1'
+	    else:
+		question.displayedscore = '-2'
+	else:
+	    if mostrecentscore >= question.scorepos2:
+		question.displayedscore = '+2'
+	    elif mostrecentscore >= question.scorepos1:
+		question.displayedscore = '+1'
+	    elif mostrecentscore >= question.target:
+		question.displayedscore = '0'
+	    elif mostrecentscore >= question.scoreneg1:
+		question.displayedscore = '-1'
+	    else:
+		question.displayedscore = '-2'
+	question.save()     
+    #end Logic for gasscore
+
+    
     grouped_answers = defaultdict(list)
     for ans in answers:
         grouped_answers[ans.question.title].append(ans)
@@ -585,8 +660,15 @@ def graph(request, user_id=None):
         avg = mean(values)
         stdev = std(values)
 
+	#find displayedscore of each question (compare tile of question). Note: Bad way to do it since there could be another
+	#question with the same name..... must find a better way.
+	for eachquestion in question_list:
+	    if k == eachquestion.title:
+		displayedscoretemp = eachquestion.displayedscore
+
         data.append(
                 {'key':k,
+		 'displayedscore': displayedscoretemp,
                  'values': point_list,
                  'disabled': True,
                  'avg': avg,
@@ -598,7 +680,10 @@ def graph(request, user_id=None):
     return render(request, "graph.html",
             {"data_json": json.dumps(data),
              "data": data,
-             "graph_user": user})
+             "graph_user": user,
+	     "selected_goal": selected_goal,
+	     "question_list": question_list,
+	     "at_least_1_goal": at_least_1_goal})
 
 
 @user_passes_test(is_physician)
@@ -674,6 +759,7 @@ def followup_goaledit_forward(request, user_id):
 @user_passes_test(is_physician)
 def followup_goaledit(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
+    #Jennifer Lawrence
     #Find selected goal
     gas_goals_list = GASGoals.objects.filter(patient=patient)
     for tempGASGoals in gas_goals_list:
@@ -712,12 +798,152 @@ def followup_goaledit(request, user_id):
 	if question_data['navselect'] == 'edit':
 	    return render(request, 'planning_forward.html', context_dict)
 	if question_data['navselect'] == 'select':
-	    return render(request, 'gas_goal_selection_forward.html', context_dict)
+	    return render(request, 'followup_goal_selection_forward.html', context_dict)
 	if question_data['navselect'] == 'create':
-	    return render(request, 'gas_step1_forward.html', context_dict)
+	    return render(request, 'followup_goal_create_forward.html', context_dict)
 
     context_dict = {'patient': patient, 'selected_goal': selected_goal, 'banked_goals_list': banked_goals_list, 'navselecterror' : navselecterror}
     return render(request, 'followup_goaledit.html', context_dict)
+
+#__________________________________________________Follow Up Meeting Goal Create_________________________________________
+@user_passes_test(is_physician)
+def followup_goal_create_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    return render(request, 'followup_goal_create_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_goal_create(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        gasgoals_data = {}
+        for k, v in response.items():
+            gasgoals_data[str(k)] = v.pop()
+
+	print gasgoals_data
+	if gasgoals_data['goal1'] == '':
+	    print "There is no data"
+	else:
+            gas_goals = GASGoals(goal1=gasgoals_data['goal1'], 
+			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
+			         patient=patient)
+            gas_goals.save()
+	if gasgoals_data['createanother'] == 'yes': 
+            return render(request, 'gas_step1.html', {'patient': patient})
+	else:
+	    return render(request, 'followup_goal_selection_forward.html', {'patient': patient})
+    else:
+
+        return render(request, 'followup_goal_create.html', {'patient': patient})
+
+## ______________________________________________   Follow Up Meeting Goal selection __________________________________
+@user_passes_test(is_physician)
+def followup_goal_selection(request, user_id=0):
+    patient = get_object_or_404(User, pk=int(user_id))
+
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        gas_goals_select = {}
+        for k, v in response.items():
+            gas_goals_select[str(k)] = v.pop()
+
+        #print 'These are the id im looking for:' 
+	#print gas_goals_select['goalselect']
+	#print 'These are all the ids of each thing:'
+
+	for tempGASGoals in gas_goals_list:
+	    tempGASGoals.activated = 0
+	    tempGASGoals.save()
+	    #print tempGASGoals.select
+            if tempGASGoals.id == int(gas_goals_select['goalselect']):
+	        selected_goal = tempGASGoals
+	
+	selected_goal.activated = 1
+	selected_goal.save()
+	context_dict = {'gas_goals': gas_goals_list, 'patient': patient, 'selected_goal': selected_goal}
+        #return render(request, 'planning.html', context_dict)
+	return render(request, 'followup_goal_planning_forward.html', context_dict)
+
+    else:
+	context_dict = {'gas_goals': gas_goals_list, 'patient': patient}
+        return render(request, 'followup_goal_selection.html', context_dict)
+
+# ______________________________________________   Follow Up Meeting Goal Planning ___________________________________
+@user_passes_test(is_physician)
+def followup_goal_planning_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'followup_goal_planning_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_goal_planning(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal to planning information
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+    #print 'Goal Planning Page Selected Goal'
+    #print selected_goal.goal1
+    #Create dict
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	
+	if question_data['baseline'] == '':
+	    print 'No goal planning data in the form'
+	else:
+	    selected_goal.baseline = question_data['baseline']
+	    selected_goal.target = question_data['target']
+	    selected_goal.timeline = question_data['timeline']
+	    selected_goal.indicator = question_data['indicator']
+	    selected_goal.scorepos2 = question_data['scorepos2']
+	    selected_goal.scorepos1 = question_data['scorepos1']
+	    selected_goal.scoreneg1 = question_data['scoreneg1']
+	    selected_goal.scoreneg2 = question_data['scoreneg2']
+	
+	    selected_goal.save()
+
+        return render(request, 'followup_goal_summary_forward.html', context_dict)
+
+    return render(request, 'followup_goal_planning.html', context_dict)
+
+# ______________________________________________   Follow Up Meeting Goal Summary ______________________________
+@user_passes_test(is_physician)
+def followup_goal_summary_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'follow_goal_summary_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_goal_summary(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+    return render(request, 'followup_goal_summary.html', context_dict)
+
+
 ## ______________________________________________   Follow Up Meeting Strategyedit ______________________________________________
 @user_passes_test(is_physician)
 def followup_strategyedit_forward(request, user_id):
@@ -745,11 +971,6 @@ def followup_strategyedit(request, user_id):
     #Find all prequestion strategies
     prequestion_strategy_list = PreQuestion.objects.filter(patient=patient, activated='0')
 
-    #test display banked strategies
-    print 'Display all banked startegies'
-    for bankedstrat in prequestion_strategy_list:
-	print bankedstrat.title
-
     #Find all active strategies
     #active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated='1')
     #for astrat in active_strategy_list:
@@ -774,9 +995,9 @@ def followup_strategyedit(request, user_id):
 	    return render(request, 'followup_strategyedit.html', context_dict)
 
 	if question_data['navselect'] == 'keep':
-	    return render(request, 'overall_summary_forward.html', context_dict)
+	    return render(request, 'followup_overall_summary_forward.html', context_dict)
 	if question_data['navselect'] == 'select':
-	    return render(request, 'followup_strategyedit.html', context_dict)
+	    return render(request, 'followup_strategy_selection_forward.html', context_dict)
 	if question_data['navselect'] == 'create':
 	    return render(request, 'followup_strategy_create_forward.html', context_dict)
 
@@ -901,14 +1122,14 @@ def followup_strategy_selection(request, user_id):
 		    if v.pop() == 'selected':
 	                print stratcheck.title
 			stratcheck.needsplanning = 1
-			stratcheck.activated = 1
+			stratcheck.activated = 0
 			stratcheck.save()
 	    for stratcheck1 in question_strategy_list:
                 if str(k) == str(stratcheck1.id):
 		    if v.pop() == 'selected':
 	                print stratcheck1.title
 			stratcheck1.needsplanning = 1
-			stratcheck1.activated = 1
+			stratcheck1.activated = 0
 			stratcheck1.save()
 
 	
@@ -958,6 +1179,7 @@ def followup_strategy_planning(request, user_id):
     if request.method == 'POST':
 	#unflag needsplanning for strategy submitted.
 	selected_strategy.needsplanning = 0
+	selected_strategy.activated = 1
 	selected_strategy.save()
 
         response = dict(request.POST)
@@ -1089,9 +1311,34 @@ def followup_strategy_planning(request, user_id):
 	    if tempstrategy.needsplanning == 1: 
                 return render(request, 'followup_strategy_planning_forward.html', context_dict)
 	else:
-	    return render(request, 'overall_summary_forward.html', context_dict)
+	    return render(request, 'followup_overall_summary_forward.html', context_dict)
     
     return render(request, 'followup_strategy_planning.html', context_dict)
+
+# ______________________________________________   Follow Up Meeting Overall Summary __________________________
+@user_passes_test(is_physician)
+def followup_overall_summary_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'followup_overall_summary_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_overall_summary(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+	    print tempGASGoals.goal1
+    #Find all active strategies
+    active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated='1')
+    for astrat in active_strategy_list:
+	print astrat.title
+
+    context_dict = {'patient': patient, 'selected_goal': selected_goal, 'active_strategy_list': active_strategy_list}
+    return render(request, 'followup_overall_summary.html', context_dict)
 
 #__________________________________________ Password Change ___________________________________________
 # This view handles the password change.

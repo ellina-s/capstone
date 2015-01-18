@@ -5250,7 +5250,7 @@ a.thumbnail:focus {
   border: 1px solid #dddddd;
 }
 
-.list-group-item-bluewt {
+.list-group-item-blue {
   position: relative;
   display: block;
   padding: 10px 15px;

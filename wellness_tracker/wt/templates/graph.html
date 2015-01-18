@@ -59,16 +59,22 @@ svg {
     - {% firstof graph_user.get_full_name graph_user.username|title %}
   {% endif %}
 
-  
+ <!-- 
   {% if user|is_physician %}
   <a href="{% url 'gas_step1' graph_user.id %}">Goal Attainment </a>
   <a href="{% url 'followup_goaledit' graph_user.id %}">Follow Up Meeting </a>
-  {% endif %}
+  {% endif %} -->
  
 
 
 </h2>
+
 <hr />
+{% if selected_goal == '-1' %}
+<h4>There are no goals created or selected for this patient.</h4>
+{% else %}
+<h4> Goal - {{ selected_goal.goal1 }}</h4>
+{% endif %}
 <div class="row">
   <div id="graph" class="text-left col-md-9 gui-container">
     <div id="chart" class='with-3d-shadow with-transitions'>
@@ -79,13 +85,26 @@ svg {
     <div class="row">
       <div class="col-md-12 col-sm-6">
 
+	<!--Add Goal Attainment and Followup links above strategies -->
+	{% if user|is_physician %}
+	<div id="links" class="list-group">
+	  
+	  {% if at_least_1_goal == 'nogoal' %}
+	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
+	  {% else %}
+	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Follow Up Meeting</a></center>
+	  {% endif %}
+	</div>
+	{% endif %}
+
         <h4>Strategies</h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
-          <a href="#" class="symptom list-group-item inactive">{{ symptom.key }}</a>
+          <a href="#" class="symptom list-group-item inactive">{{ symptom.displayedscore }} {{ symptom.key }}</a>
           {% endfor %}
           {% if user|is_physician %}
-          <a href="{% url 'new_question' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Symptom</a>
+	  <!-- Original (Add this back, "Add new strategy"
+	  <a href="{% url 'new_question' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Symptom</a> -->
           {% endif %}
         </div>
       </div>

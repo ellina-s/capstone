@@ -178,6 +178,10 @@ class Question(ShowFieldType, PolymorphicModel):
                                     null=False,
                                     blank=False,
                                     help_text='Gas score -2')
+    displayedscore = models.CharField(max_length=512,
+                                    null=True,
+                                    blank=True,
+                                    help_text='Displayed score on graph (+2, ')
     activated = models.IntegerField(default=0,
                                     null=False,
                                     blank=False,
