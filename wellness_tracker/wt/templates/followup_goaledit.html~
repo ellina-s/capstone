@@ -28,7 +28,7 @@
 {% endblock %}
 
 {% block content %}
-<h2>Follow Up Meeting - Edit Goals
+<h2>Follow Up Meeting - Edit Goal
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
   {% endif %}

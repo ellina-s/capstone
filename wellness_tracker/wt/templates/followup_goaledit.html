@@ -34,6 +34,11 @@
   {% endif %}
 </h2>
 
+<!-- Breadcrumbs -->
+<ol class="breadcrumb">
+  <li class="active">Goal Edit</li>
+</ol>
+
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goaledit' patient.id %}" method="post">
 {% csrf_token %}
     </br></br>      
