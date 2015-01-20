@@ -14,6 +14,7 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
+from django.db import IntegrityError
 # Import custom forms
 from wt.forms import PasswordForm
 from django import forms
@@ -740,14 +741,15 @@ def add_so(request):
             so_data[str(k)] = v.pop()
         
         status_dictionary['missing_info'] = False # Remove this line when form validation is done.
+        status_dictionary['duplicate_username'] = False
         
         if so_data['choosepatient'] == "none":
-            print "Error: You didn\'t select any patient"
+            print " * Error: You didn\'t select any patient"
             status_dictionary['no_patient'] = True
             status_dictionary['so_created'] = False
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         else:
-            print "Something else other than none"
+            print " * Something else other than none"
             status_dictionary['no_patient'] = False
         
         # Check for empty stings in forms
@@ -758,9 +760,16 @@ def add_so(request):
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Create a new user object
-        tempuser = User.objects.create_user(so_data['userid'],
+        try:
+            tempuser = User.objects.create_user(so_data['userid'],
 					    so_data['useremail'],
 					    so_data['password'])
+        except IntegrityError as e:
+            print ' * Detected an integrity error'
+            print e
+            status_dictionary['duplicate_username'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            
         # At this point, tempuser is a User object that has already been saved
         # to the database. You can continue to change its attributes
         # if you want to change other fields.
