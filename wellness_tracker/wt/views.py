@@ -731,23 +731,71 @@ def profile(request):
 def add_so(request):
     # Retrieve patients
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
-    errors_dictionary={}
+    status_dictionary={}
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
         so_data = {}
         for k, v in response.items():
             so_data[str(k)] = v.pop()
-
-        print 'Chosen patient is'
-        print so_data['choosepatient']
-        print so_data['userid']
         
         if so_data['choosepatient'] == "none":
             print "Error: You didn\'t select any patient"
-            errors_dictionary['no_patient'] = True
+            status_dictionary['no_patient'] = True
+            status_dictionary['so_created'] = False
+            return render(request, 'add_so.html', {'patients': patients, 'errors': status_dictionary})
         else:
-            #print "Something else other than none"
-            errors_dictionary['no_patient'] = False
-    
-    return render(request, 'add_so.html', {'patients': patients, 'errors': errors_dictionary})
+            print "Something else other than none"
+            status_dictionary['no_patient'] = False
+        
+        if so_data['userid'] == "":
+            print ' * NO USERNAME SET'
+        if so_data['useremail'] =="":
+            print ' * NO EMAIL SET'
+        if so_data['password'] == "":
+            print ' * NO PASSWORD SET'
+        
+        #Create a new user object
+        tempuser = User.objects.create_user(so_data['userid'],
+					    so_data['useremail'],
+					    so_data['password'])
+        # At this point, tempuser is a User object that has already been saved
+        # to the database. You can continue to change its attributes
+        # if you want to change other fields.
+        
+        #get the current physician's object
+        doctors = Physician.objects.get(user=request.user)
+        
+        #get patient for whom the significant other is created for
+        patient_user = get_object_or_404(User, pk=int(so_data['choosepatient']))
+        patient = Patient.objects.get(user=patient_user)
+        '''
+        print 'Patient Object Data:'
+        print patient_user.id
+        print patient_user.get_username() #should use this method instead of accesing the username field (Django Docs)
+        print ' * '
+        '''
+        #create Significant Other (SO)
+        newSigOther = SignificantOther(user = tempuser)
+        #save SO
+        newSigOther.save()
+        
+        #add physician and patient
+        #Note: the corresponding SignificantOther object has to be created and saved by this point
+        newSigOther.physicians.add(doctors)
+        newSigOther.patients.add(patient)
+        #update SO
+        newSigOther.save()
+
+        status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
+
+        '''
+        print 'Chosen patient ID is'
+        print so_data['choosepatient']
+        print 'Data entered in the form:'
+        print so_data['userid']
+        print so_data['useremail']
+        print so_data['password']
+        '''
+        
+    return render(request, 'add_so.html', {'patients': patients, 'errors': status_dictionary})

@@ -23,6 +23,14 @@ class Patient(models.Model):
     def __unicode__(self):
         return self.user.username
 
+class SignificantOther(models.Model):
+    user = models.OneToOneField(User)
+    physicians = models.ManyToManyField(Physician, blank=False)
+    patients = models.ManyToManyField(Patient, blank=False)
+    
+    def __unicode__(self):
+        return self.user.username
+
 class GASGoals(models.Model):
     goal1 = models.CharField(max_length=128,
                              null=False,

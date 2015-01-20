@@ -16,10 +16,16 @@
   <div class="New Significant Other">
 
     {% if errors.no_patient %}
-         <div class="form_error_message">No patient selected</div> 
         <script type "text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
-            $.notify("No patient selected", "error");
+            $.notify("No patient selected. Please select a patient.", "error");
+        </script>
+    {% endif %}
+    
+    {% if errors.so_created %}
+        <script type "text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Added a significant other", "success");
         </script>
     {% endif %}
 
@@ -55,7 +61,7 @@
       <select id="type" name="choosepatient" class="form-control">
           <option value="none">Select a patient...</option>
           {% for patient in patients %}
-          <option value="id_{{patient.user.id}}">{% firstof patient.user.get_full_name patient.user.username|title %}</option>
+          <option value="{{patient.user.id}}">{% firstof patient.user.get_full_name patient.user.username|title %}</option>
           {% endfor %}
       </select>
     </div>
