@@ -739,23 +739,25 @@ def add_so(request):
         for k, v in response.items():
             so_data[str(k)] = v.pop()
         
+        status_dictionary['missing_info'] = False # Remove this line when form validation is done.
+        
         if so_data['choosepatient'] == "none":
             print "Error: You didn\'t select any patient"
             status_dictionary['no_patient'] = True
             status_dictionary['so_created'] = False
-            return render(request, 'add_so.html', {'patients': patients, 'errors': status_dictionary})
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         else:
             print "Something else other than none"
             status_dictionary['no_patient'] = False
         
-        if so_data['userid'] == "":
-            print ' * NO USERNAME SET'
-        if so_data['useremail'] =="":
-            print ' * NO EMAIL SET'
-        if so_data['password'] == "":
-            print ' * NO PASSWORD SET'
+        # Check for empty stings in forms
+        if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
+            print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
+            status_dictionary['so_created'] = False
+            status_dictionary['missing_info'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         
-        #Create a new user object
+        # Create a new user object
         tempuser = User.objects.create_user(so_data['userid'],
 					    so_data['useremail'],
 					    so_data['password'])
@@ -763,10 +765,10 @@ def add_so(request):
         # to the database. You can continue to change its attributes
         # if you want to change other fields.
         
-        #get the current physician's object
+        # get the current physician's object
         doctors = Physician.objects.get(user=request.user)
         
-        #get patient for whom the significant other is created for
+        # get patient for whom the significant other is created for
         patient_user = get_object_or_404(User, pk=int(so_data['choosepatient']))
         patient = Patient.objects.get(user=patient_user)
         '''
@@ -775,16 +777,16 @@ def add_so(request):
         print patient_user.get_username() #should use this method instead of accesing the username field (Django Docs)
         print ' * '
         '''
-        #create Significant Other (SO)
+        # create Significant Other (SO)
         newSigOther = SignificantOther(user = tempuser)
-        #save SO
+        # save SO
         newSigOther.save()
         
-        #add physician and patient
-        #Note: the corresponding SignificantOther object has to be created and saved by this point
+        # add physician and patient
+        # Note: the corresponding SignificantOther object has to be created and saved by this point
         newSigOther.physicians.add(doctors)
         newSigOther.patients.add(patient)
-        #update SO
+        # update SO
         newSigOther.save()
 
         status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
@@ -798,4 +800,4 @@ def add_so(request):
         print so_data['password']
         '''
         
-    return render(request, 'add_so.html', {'patients': patients, 'errors': status_dictionary})
+    return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})

@@ -15,17 +15,24 @@
 
   <div class="New Significant Other">
 
-    {% if errors.no_patient %}
+    {% if status.no_patient %}
         <script type "text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("No patient selected. Please select a patient.", "error");
         </script>
     {% endif %}
     
-    {% if errors.so_created %}
+    {% if status.so_created %}
         <script type "text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("Added a significant other", "success");
+        </script>
+    {% endif %}
+    
+    {% if status.missing_info %}
+        <script type "text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Missing a username, password, or email.", "error");
         </script>
     {% endif %}
 
