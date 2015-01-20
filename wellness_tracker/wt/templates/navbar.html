@@ -23,6 +23,10 @@
       <li><a href="{% url 'appendix_va' %}">Appendix</a></li>
       <li><a href="{% url 'profile' %}">Profile</a></li>
       <li><a href="{% url 'add_so' %}">Add SO</a></li>
+      
+      {% elif user|is_significant_other %}
+      <li><a href="{% url 'graph' %}">Graph</a></li>
+      <li><a href="{% url 'profile' %}">Profile</a></li>
 
       {% else %}
       <li><a href="{% url 'graph' %}">Graph</a></li>

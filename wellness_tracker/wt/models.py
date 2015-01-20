@@ -349,3 +349,13 @@ def is_physician(user):
             return False
     return False
 
+def is_significant_other(user):
+    if user.is_authenticated():
+        if user.is_superuser:
+            return False
+        try:
+            sigOther = SignificantOther.objects.get(user=user)
+            return True
+        except SignificantOther.DoesNotExist:
+            return False
+    return False
