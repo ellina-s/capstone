@@ -98,6 +98,15 @@ class PreQuestion(models.Model):
                                      null=False,
                                      blank=False,
                                      help_text='Importance of Strategy (1-4) 4=extremely important')
+    activated = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Is this gold selected?')
+    needsplanning = models.IntegerField(default=0,
+                                        null=False,
+                                        blank=False,
+                                        help_text='A flag for adding planning step to selected strategies')
+
     def __unicode__(self):
         return self.text
 

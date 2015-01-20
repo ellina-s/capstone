@@ -1,0 +1,76 @@
+{% extends 'base.html' %}
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - GAS Follow Up Meeting Goal Create{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block script %}
+{{ block.super }}
+<script src="{% static 'jquery/jquery.js' %}"></script>
+<script>
+  $(function() {
+    $( "#type" ).change(function() {
+      $(".conditional-questions > div").hide();
+      $(".conditional-questions #" + $(this).val()).show();
+    });
+    $("#type").prop('selectedIndex', -1);
+  });
+  function add_category() {
+    var num = $("#cat-list > input").length + 1;
+    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
+    $("#cat-list > input").last().focus();
+  }
+</script>
+{% endblock %}
+
+{% block content %}
+<h2>Follow Up Meeting - Goal Create - {% firstof patient.get_full_name patient.username|title %}</h2>
+
+
+<h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</center></h4>
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_create' patient.id %}" method="post">
+  {% csrf_token %}
+         <div class="New Patient Information">
+           <div class="form-group">
+           <label for="goal1" class="col-sm-3 control-label">Goal</label>
+           <div class="col-sm-9">
+             <input type="text" name="goal1" class="form-control" id="question" placeholder="Become healthier...">
+             <p class="help-block">Enter a goal for the patient</a>
+           </div>
+         </div>
+
+        <div class="form-group">
+          <label for="environmentalassessment1" class="col-sm-3 control-label">Environmental Assessment</label>
+          <div class="col-sm-9">
+            <input type="text" name="environmentalassessment1" class="form-control" id="question" placeholder="Placeholder">
+            <p class="help-block">Describe the Enviroment</p>
+          </div>
+         </div>
+
+
+<!-- Drop Down Select Question -->
+
+<div class="form-group">
+    <label for="createanother" class="col-sm-3 control-label"></label>
+    <div class="col-sm-9"><p>Would you like to create another goal?</p>
+      <select id="type" name="createanother" class="form-control">
+        <option value="yes">Yes, Create another goal.</option>
+        <option value="no">No, Continue to the next step.</option>
+      </select>
+    </div>
+  </div>
+
+  </div>
+
+</div>
+<div class="submit text-center">
+   <input type="submit" class="btn btn-info btn-lg">
+  </div>
+</form>
+
+
+{% endblock %}

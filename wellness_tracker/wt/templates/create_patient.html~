@@ -39,7 +39,7 @@
   <div class="form-group">
     <label for="question" class="col-sm-3 control-label">Password</label>
     <div class="col-sm-9">
-      <input type="password" name="password" class="form-control" id="password" placeholder="Type in password">
+      <input name="password" class="form-control" id="id_password" type="password" placeholder="Type in password">
       <p class="help-block">Make sure the patient can easily remember the password</p>
     </div>
   </div>
