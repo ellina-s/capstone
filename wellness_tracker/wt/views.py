@@ -14,6 +14,8 @@ from django.shortcuts import render, get_object_or_404
 from django.template import RequestContext
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
+from django.db import IntegrityError
+from smtplib import SMTPRecipientsRefused
 # Import custom forms
 from wt.forms import PasswordForm
 from django import forms
@@ -72,6 +74,10 @@ def patient_list(request):
 #Creating a new patient
 @user_passes_test(is_physician)
 def create_patient(request):
+    status={}
+    status['duplicate_username'] = False # default
+    status['smtp_error'] = False # default
+    status['missing_info'] = False #default
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -79,33 +85,52 @@ def create_patient(request):
         for k, v in response.items():
             new_patient_data[str(k)] = v.pop()
 	
-	#Create a new user object
-	tempuser = User.objects.create_user(new_patient_data['userid'],
+        # Check for empty stings in forms
+        if new_patient_data['userid'] == "" or new_patient_data['useremail'] == "" or new_patient_data['password'] == "":
+            #print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
+            status['missing_info'] = True
+            return render(request, 'create_patient.html', {'status': status})
+    
+        #Create a new user object
+        try:
+            tempuser = User.objects.create_user(new_patient_data['userid'],
 					    new_patient_data['useremail'],
 					    new_patient_data['password'])
-	# At this point, tempuser is a User object that has already been saved
-	# to the database. You can continue to change its attributes
-	# if you want to change other fields.
+        except IntegrityError as e:
+            #print ' * Detected an integrity error'
+            print e
+            status['duplicate_username'] = True
+            return render(request, 'create_patient.html', {'status': status})
+            
+        # At this point, tempuser is a User object that has already been saved
+        # to the database. You can continue to change its attributes
+        # if you want to change other fields.
 
-	#get physician object(s)
-	currentdoctors = Physician.objects.get(user=request.user)
-	#create Patient
-	newpatient = Patient(user = tempuser)
-	#save Patient
-	newpatient.save()
-	#add physicians
-	#Note: the corresponding Patient object has to be created and saved by this point
-	newpatient.physicians.add(currentdoctors)
-	#update Patient
-	newpatient.save()
+        #get physician object(s)
+        currentdoctors = Physician.objects.get(user=request.user)
+        #create Patient
+        newpatient = Patient(user = tempuser)
+        #save Patient
+        newpatient.save()
+        #add physicians
+        #Note: the corresponding Patient object has to be created and saved by this point
+        newpatient.physicians.add(currentdoctors)
+        #update Patient
+        newpatient.save()
 
-	# Send an email
-	#email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
-	email = EmailMessage('Django Testing -- New User',
-		'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
-		'wtdev.testing@gmail.com',
-		[new_patient_data['useremail']] )
-	email.send()
+        # Send an email
+        #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+        email = EmailMessage('Django Testing -- New User',
+            'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
+            'wtdev.testing@gmail.com',
+            [new_patient_data['useremail']] )
+        try:
+            email.send()
+        except SMTPRecipientsRefused as e:
+            #print ' * Error when sending email'
+            print e
+            status['smtp_error'] = True
+            return render(request, 'create_patient.html', {'status': status})
 
     return render(request, 'create_patient.html')
 
@@ -1344,7 +1369,6 @@ def followup_overall_summary(request, user_id):
 # This view handles the password change.
 def profile(request):
     user = request.user
-    #profile_context = {'profile_user': my_user} # user info that will be passed to the template
     errors_dictionary = {} # a dictionary to hold errors that will be passed to the template
 
     # if this is a POST request we need to process the form data
@@ -1353,51 +1377,129 @@ def profile(request):
         form = PasswordForm(request.POST)
         # check whether it's valid:
         if form.is_valid():
-            # process the data in form.cleaned_data as required
-
             old_password = form.cleaned_data['old_password']
             new_password = form.cleaned_data['new_password']
             confirm_new_password = form.cleaned_data['confirm_new_password']
-            #print old_password
             
-            #Validates that the old_password field is correct.
+            #Validate that the old_password field is correct.
             if user.check_password(old_password):
-                print "Old password is correct YAY"
+                #print "Old password is correct YAY"
                 errors_dictionary['old_pass_flag'] = False
                 if new_password == confirm_new_password:
-                    print "Passwords match YAY"
+                    #print "Passwords match YAY"
                     errors_dictionary['new_pass_flag'] = False
                     user.set_password(new_password)
                     user.save()
                     print "Password updated"
-                    # redirect to the profile:
-                    return HttpResponseRedirect('/profile_success/')
+                    
+                    update_success = {}
+                    update_success['flag'] = True
+                    empty_form = PasswordForm() # return an empty form to prevent displaying password data
+                    # render a template for successful password update:
+                    return render(request, 'profile.html', {'form': empty_form, 'profile_user': user,
+                                                            'any_errors': errors_dictionary,
+                                                            'update_success': update_success })
                 else:
-                    print "Passwords do not match NNNAY"
+                    #print "Passwords do not match NNNAY"
                     errors_dictionary['new_pass_flag'] = True
-                    errors_dictionary['new_pass'] = 'Passwords do not match. Please, try again'
             else:
-                print "Old password is not correct NNNAY"
+                #print "Old password is not correct NNNAY"
                 errors_dictionary['old_pass_flag'] = True
-                errors_dictionary['old_pass'] = 'You entered incorrect current password. Please, try again'
 
-            print "** VIEWS SAYS form is VALID"
+            #print "** VIEWS SAYS form is VALID"
             # render a template with form, user data, and errors dictionaries:
             return render(request, 'profile.html', {'form': form, 'profile_user': user, 'any_errors': errors_dictionary})
-        else:
-            print "** VIEWS SAYS form is INVALID"
-            print form.errors
+        #else:
+            #print "** VIEWS SAYS form is INVALID"
+            #print form.errors
 
-    # if a GET (or any other method) we'll create a blank form
+    # if a GET (or any other method), create a blank form
     else:
         form = PasswordForm()
     
-    print "** VIEWS SAYS final return"
+    #print " * Rendering the bottom-most return statement"
     return render(request, 'profile.html', {'form': form, 'profile_user': user})
 
 
-# Confirmation view dipslayed when a password is updated successfully
-def profile_success(request):
-    user = request.user
-    profile_context = {'profile_user': user} # user info that will be passed to the template
-    return render(request, 'profile_success.html', profile_context)
+# Add a significant other
+@user_passes_test(is_physician)
+def add_so(request):
+    # Retrieve patients
+    patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    status_dictionary={}
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        so_data = {}
+        for k, v in response.items():
+            so_data[str(k)] = v.pop()
+        
+        status_dictionary['missing_info'] = False # Remove this line when form validation is done.
+        status_dictionary['duplicate_username'] = False # default
+        status_dictionary['so_created'] = False # default
+        status_dictionary['no_patient'] = False # default
+        status_dictionary['smtp_error'] = False # default
+        
+        if so_data['choosepatient'] == "none":
+            #print " * Error: You didn\'t select any patient"
+            status_dictionary['no_patient'] = True
+            if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
+                status_dictionary['missing_info'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+        
+        # Check for empty stings in forms
+        if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
+            #print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
+            status_dictionary['missing_info'] = True
+            if so_data['choosepatient'] == "none":
+                #print " * Error: You didn\'t select any patient"
+                status_dictionary['no_patient'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+        
+        # Create a new user object
+        try:
+            tempuser = User.objects.create_user(so_data['userid'],
+					    so_data['useremail'],
+					    so_data['password'])
+        except IntegrityError as e:
+            #print ' * Detected an integrity error'
+            print e
+            status_dictionary['duplicate_username'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            
+        # At this point, tempuser is a User object that has already been saved
+        # to the database. You can continue to change its attributes if you want.
+        
+        # get the current physician's object
+        doctor = Physician.objects.get(user=request.user)
+        # get patient for whom the significant other is created for
+        patient_user = get_object_or_404(User, pk=int(so_data['choosepatient']))
+        patient = Patient.objects.get(user=patient_user)
+        # create Significant Other (SO)
+        newSigOther = SignificantOther(user = tempuser)
+        # save SO
+        newSigOther.save()
+        # add doctor and patient
+        # Note: the corresponding SignificantOther object has to be created and saved by this point
+        newSigOther.physicians.add(doctor)
+        newSigOther.patients.add(patient)
+        # update SO
+        newSigOther.save()
+
+        status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
+
+        # Send an email
+        #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+        email = EmailMessage('Wellness Tracker -- New Sig Other',
+            'Dear user ' + so_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'],
+            'wtdev.testing@gmail.com',
+            [so_data['useremail']] )
+        try:
+            email.send()
+        except SMTPRecipientsRefused as e:
+            #print ' * Error when sending email'
+            print e
+            status_dictionary['smtp_error'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+        
+    return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})

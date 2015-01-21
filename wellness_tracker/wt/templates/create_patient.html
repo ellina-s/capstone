@@ -19,21 +19,41 @@
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_patient' %}" method="post">
 {% csrf_token %}
 
-  <div class="New Patient Information">
-
+<div class="New Patient Information">
+    
+    {% if status.missing_info %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Missing a username, password, or email.", "error");
+        </script>
+    {% endif %}
+    
+    {% if status.duplicate_username %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Duplicate username. Please select another username.", "error");
+        </script>
+    {% endif %}
+    
+    {% if status.smtp_error %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Email error", "error");
+        </script>
+    {% endif %}
 
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Name</label>
     <div class="col-sm-9">
       <input type="text" name="userid" class="form-control" id="userid" placeholder="Type in username">
-      <p class="help-block">Create a user name for the new patient</a>
+      <p class="help-block">Create a user name for the new patient</p>
     </div>
   </div>
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Email</label>
     <div class="col-sm-9">
       <input type="text" name="useremail" class="form-control" id="useremail" placeholder="Type in user email">
-      <p class="help-block">Enter an email address of the new patient</a>
+      <p class="help-block">Enter an email address of the new patient</p>
     </div>
   </div>
   <div class="form-group">
