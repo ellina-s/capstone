@@ -768,6 +768,7 @@ def add_so(request):
         status_dictionary['duplicate_username'] = False # default
         status_dictionary['so_created'] = False # default
         status_dictionary['no_patient'] = False # default
+        status_dictionary['smtp_error'] = False # default
         
         if so_data['choosepatient'] == "none":
             print " * Error: You didn\'t select any patient"
@@ -831,6 +832,20 @@ def add_so(request):
         newSigOther.save()
 
         status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
+
+        # Send an email
+        #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+        email = EmailMessage('Wellness Tracker -- New Sig Other',
+            'Dear user ' + so_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'],
+            'wtdev.testing@gmail.com',
+            [so_data['useremail']] )
+        try:
+            email.send()
+        except SMTPRecipientsRefused as e:
+            print ' * Error when sending email'
+            print e
+            status_dictionary['smtp_error'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
 
         '''
         print 'Chosen patient ID is'
