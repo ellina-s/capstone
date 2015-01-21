@@ -67,6 +67,7 @@ def create_patient(request):
     status={}
     status['duplicate_username'] = False # default
     status['smtp_error'] = False # default
+    status['missing_info'] = False #default
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -74,6 +75,12 @@ def create_patient(request):
         for k, v in response.items():
             new_patient_data[str(k)] = v.pop()
 	
+        # Check for empty stings in forms
+        if new_patient_data['userid'] == "" or new_patient_data['useremail'] == "" or new_patient_data['password'] == "":
+            print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
+            status['missing_info'] = True
+            return render(request, 'create_patient.html', {'status': status})
+    
         #Create a new user object
         try:
             tempuser = User.objects.create_user(new_patient_data['userid'],
@@ -84,6 +91,7 @@ def create_patient(request):
             print e
             status['duplicate_username'] = True
             return render(request, 'create_patient.html', {'status': status})
+            
         # At this point, tempuser is a User object that has already been saved
         # to the database. You can continue to change its attributes
         # if you want to change other fields.
