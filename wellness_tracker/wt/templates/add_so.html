@@ -16,28 +16,28 @@
   <div class="New Significant Other">
 
     {% if status.no_patient %}
-        <script type "text/javascript">
+        <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("No patient selected. Please select a patient.", "error");
         </script>
     {% endif %}
     
     {% if status.so_created %}
-        <script type "text/javascript">
+        <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("Added a significant other", "success");
         </script>
     {% endif %}
     
     {% if status.missing_info %}
-        <script type "text/javascript">
+        <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("Missing a username, password, or email.", "error");
         </script>
     {% endif %}
     
     {% if status.duplicate_username %}
-        <script type "text/javascript">
+        <script type="text/javascript">
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("Duplicate username. Please select another username.", "error");
         </script>

@@ -349,6 +349,7 @@ def is_physician(user):
             return False
     return False
 
+# Custom filter to check if a user is a significant other
 def is_significant_other(user):
     if user.is_authenticated():
         if user.is_superuser:
