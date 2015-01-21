@@ -15,6 +15,7 @@ from django.template import RequestContext
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.db import IntegrityError
+from smtplib import SMTPRecipientsRefused
 # Import custom forms
 from wt.forms import PasswordForm
 from django import forms
@@ -63,6 +64,9 @@ def patient_list(request):
 #Creating a new patient
 @user_passes_test(is_physician)
 def create_patient(request):
+    status={}
+    status['duplicate_username'] = False # default
+    status['smtp_error'] = False # default
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -70,33 +74,45 @@ def create_patient(request):
         for k, v in response.items():
             new_patient_data[str(k)] = v.pop()
 	
-	#Create a new user object
-	tempuser = User.objects.create_user(new_patient_data['userid'],
+        #Create a new user object
+        try:
+            tempuser = User.objects.create_user(new_patient_data['userid'],
 					    new_patient_data['useremail'],
 					    new_patient_data['password'])
-	# At this point, tempuser is a User object that has already been saved
-	# to the database. You can continue to change its attributes
-	# if you want to change other fields.
+        except IntegrityError as e:
+            print ' * Detected an integrity error'
+            print e
+            status['duplicate_username'] = True
+            return render(request, 'create_patient.html', {'status': status})
+        # At this point, tempuser is a User object that has already been saved
+        # to the database. You can continue to change its attributes
+        # if you want to change other fields.
 
-	#get physician object(s)
-	currentdoctors = Physician.objects.get(user=request.user)
-	#create Patient
-	newpatient = Patient(user = tempuser)
-	#save Patient
-	newpatient.save()
-	#add physicians
-	#Note: the corresponding Patient object has to be created and saved by this point
-	newpatient.physicians.add(currentdoctors)
-	#update Patient
-	newpatient.save()
+        #get physician object(s)
+        currentdoctors = Physician.objects.get(user=request.user)
+        #create Patient
+        newpatient = Patient(user = tempuser)
+        #save Patient
+        newpatient.save()
+        #add physicians
+        #Note: the corresponding Patient object has to be created and saved by this point
+        newpatient.physicians.add(currentdoctors)
+        #update Patient
+        newpatient.save()
 
-	# Send an email
-	#email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
-	email = EmailMessage('Django Testing -- New User',
-		'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
-		'wtdev.testing@gmail.com',
-		[new_patient_data['useremail']] )
-	email.send()
+        # Send an email
+        #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+        email = EmailMessage('Django Testing -- New User',
+            'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
+            'wtdev.testing@gmail.com',
+            [new_patient_data['useremail']] )
+        try:
+            email.send()
+        except SMTPRecipientsRefused as e:
+            print ' * Error when sending email'
+            print e
+            status['smtp_error'] = True
+            return render(request, 'create_patient.html', {'status': status})
 
     return render(request, 'create_patient.html')
 
@@ -758,7 +774,7 @@ def add_so(request):
         
         # Check for empty stings in forms
         if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
-            print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
+            #print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
             status_dictionary['missing_info'] = True
             
             if so_data['choosepatient'] == "none":
