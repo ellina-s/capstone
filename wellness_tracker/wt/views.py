@@ -65,10 +65,37 @@ def questions(request):
 
     return render(request, "questions.html", {"formset": formset})
 
-
+'''
 @user_passes_test(is_physician)
 def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    return render(request, 'patient_list.html', {'patients': patients})
+'''
+    
+def patient_list(request):
+    
+    try:
+        print ' * Is it a physician making request\?' # Ellina
+        physician = Physician.objects.get(user=request.user)
+    except Physician.DoesNotExist:
+        physician = None
+        print ' * No, it is not a physician' # Ellina
+
+    # Check if the user of the request is a significant other
+    try:
+        print ' * Is it a Sig.Other making request\?' # Ellina
+        sig_other = SignificantOther.objects.get(user=request.user)
+    except SignificantOther.DoesNotExist:
+        sig_other = None
+        print ' * No, it is not a Sig.Other' # Ellina
+    
+    if physician:
+            patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    elif sig_other:
+            patients = sig_other.patients.all()
+    else:
+        return render(request, '404.html')
+        
     return render(request, 'patient_list.html', {'patients': patients})
 
 #Creating a new patient
