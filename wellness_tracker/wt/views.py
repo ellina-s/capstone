@@ -78,6 +78,7 @@ def create_patient(request):
     status['duplicate_username'] = False # default
     status['smtp_error'] = False # default
     status['missing_info'] = False #default
+    status['patient_created'] = False #default
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -118,6 +119,8 @@ def create_patient(request):
         #update Patient
         newpatient.save()
 
+        status['patient_created'] = True #set the flag to True if SO is successfully created
+
         # Send an email
         #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
         email = EmailMessage('Django Testing -- New User',
@@ -132,7 +135,7 @@ def create_patient(request):
             status['smtp_error'] = True
             return render(request, 'create_patient.html', {'status': status})
 
-    return render(request, 'create_patient.html')
+    return render(request, 'create_patient.html', {'status': status})
 
 
 #--------------------------------------------------Goal Attainment Wizard Page1 ---------------------------
@@ -575,11 +578,20 @@ def appendix_vb(request):
 
 def graph(request, user_id=None):
     try:
+        #print ' * Is it a physician making request\?' # Ellina
         physician = Physician.objects.get(user=request.user)
     except Physician.DoesNotExist:
         physician = None
+        #print ' * No, it is not a physician' # Ellina
 
-    
+    # Check if the user of the request is a significant other
+    try:
+        #print ' * Is it a SigOther making request\?' # Ellina
+        sig_other = SignificantOther.objects.get(user=request.user)
+    except SignificantOther.DoesNotExist:
+        sig_other = None
+        #print ' * No, it is not a SigOther' # Ellina
+
     # Get the right user for the graph
     # For a physician, this means checking that they are,
     # a physician for the patient they are requesting to view.
@@ -587,9 +599,16 @@ def graph(request, user_id=None):
         user = get_object_or_404(User, pk=int(user_id))
         if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
             raise Http404
+    elif sig_other:
+        #print ' * Significant other' # Ellina
+        # get a patient object from this particular sig.other
+        so_patient_list = sig_other.patients.all()
+        for pat in so_patient_list:
+            print ' * Patient: ' + pat.user.username + ' with id: ' + str(pat.user.id)
+            user = pat.user # set the user to the latest patient interatec over
     else:
         user = request.user
-	
+        #print ' * Someone else (patient\?)' # Ellina
 
     patient = user
     at_least_1_goal = 'nogoal'
