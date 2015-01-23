@@ -600,8 +600,7 @@ def graph(request, user_id=None):
         if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
             raise Http404
     elif sig_other:
-        #print ' * Significant other' # Ellina
-        # get a patient object from this particular sig.other
+        # get patients of this particular significant other
         so_patient_list = sig_other.patients.all()
         for pat in so_patient_list:
             print ' * Patient: ' + pat.user.username + ' with id: ' + str(pat.user.id)
