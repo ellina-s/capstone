@@ -65,13 +65,20 @@ def questions(request):
 
     return render(request, "questions.html", {"formset": formset})
 
-'''
+
 @user_passes_test(is_physician)
 def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
+
+# _________ A list of patients that a significant other is following ___________
+@user_passes_test(is_significant_other)
+def following_list(request):
+    # Retrieve patients associated with the given significant other
+    patients = SignificantOther.objects.get(user=request.user).patients.all()
+    return render(request, 'following.html', {'patients': patients})
+
 '''
-    
 def patient_list(request):
     
     try:
@@ -94,9 +101,10 @@ def patient_list(request):
     elif sig_other:
             patients = sig_other.patients.all()
     else:
-        return render(request, '404.html')
+        return render(request, 'login.html')
         
     return render(request, 'patient_list.html', {'patients': patients})
+'''
 
 #Creating a new patient
 @user_passes_test(is_physician)
@@ -631,7 +639,7 @@ def graph(request, user_id=None):
         so_patient_list = sig_other.patients.all()
         for pat in so_patient_list:
             print ' * Patient: ' + pat.user.username + ' with id: ' + str(pat.user.id)
-            user = pat.user # set the user to the latest patient interatec over
+            user = pat.user # set the user to the latest patient interated over
     else:
         user = request.user
         #print ' * Someone else (patient\?)' # Ellina
