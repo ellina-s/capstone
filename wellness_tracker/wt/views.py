@@ -33,6 +33,8 @@ from pprint import pformat as pprint
 def home(request):
     if is_physician(request.user):
         return patient_list(request)
+    elif is_significant_other(request.user):
+        return following_list(request)
     else:
         return graph(request)
 
@@ -65,11 +67,18 @@ def questions(request):
 
     return render(request, "questions.html", {"formset": formset})
 
-
+# _________ Physician's list of patients _________
 @user_passes_test(is_physician)
 def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
+
+# _________ Significant Other's list of patients _________
+@user_passes_test(is_significant_other)
+def following_list(request):
+    # Retrieve patients associated with the given significant other
+    patients = SignificantOther.objects.get(user=request.user).patients.all()
+    return render(request, 'following.html', {'patients': patients})
 
 #Creating a new patient
 @user_passes_test(is_physician)
@@ -78,6 +87,7 @@ def create_patient(request):
     status['duplicate_username'] = False # default
     status['smtp_error'] = False # default
     status['missing_info'] = False #default
+    status['patient_created'] = False #default
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -118,6 +128,8 @@ def create_patient(request):
         #update Patient
         newpatient.save()
 
+        status['patient_created'] = True #set the flag to True if SO is successfully created
+
         # Send an email
         #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
         email = EmailMessage('Django Testing -- New User',
@@ -132,7 +144,7 @@ def create_patient(request):
             status['smtp_error'] = True
             return render(request, 'create_patient.html', {'status': status})
 
-    return render(request, 'create_patient.html')
+    return render(request, 'create_patient.html', {'status': status})
 
 
 #--------------------------------------------------Goal Attainment Wizard Page1 ---------------------------
@@ -575,21 +587,46 @@ def appendix_vb(request):
 
 def graph(request, user_id=None):
     try:
+        #print ' * Is it a physician making request\?'
         physician = Physician.objects.get(user=request.user)
     except Physician.DoesNotExist:
         physician = None
+        #print ' * No, it is not a physician'
 
-    
+    # Check if the user of the request is a significant other
+    try:
+        #print ' * Is it a SigOther making request\?'
+        sig_other = SignificantOther.objects.get(user=request.user)
+    except SignificantOther.DoesNotExist:
+        sig_other = None
+        #print ' * No, it is not a SigOther'
+
     # Get the right user for the graph
     # For a physician, this means checking that they are,
     # a physician for the patient they are requesting to view.
     if user_id and physician:
         user = get_object_or_404(User, pk=int(user_id))
-        if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
+        try:
+            if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
+                #print ' * This patient is not associated with this doctor'
+                raise Http404
+        except Patient.DoesNotExist as e:
+            #print ' * Exception: Patient does not exists'
+            #print e
+            raise Http404
+    elif user_id and sig_other:
+        user = get_object_or_404(User, pk=int(user_id))
+        try:
+            patient_given_id = Patient.objects.get(user=user)
+        except Patient.DoesNotExist as e:
+            #print ' * Exception: Patient does not exists'
+            #print e
+            raise Http404
+        if not sig_other.patients.filter(pk=patient_given_id.pk).exists():
+            #print ' * This patient is not associated with this SO'
             raise Http404
     else:
         user = request.user
-	
 
     patient = user
     at_least_1_goal = 'nogoal'

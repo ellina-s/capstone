@@ -41,6 +41,13 @@
             $.notify("Email error", "error");
         </script>
     {% endif %}
+    
+    {% if status.patient_created %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Patient has been created successfully", "success");
+        </script>
+    {% endif %}
 
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Name</label>
