@@ -26,7 +26,6 @@
       
       {% elif user|is_significant_other %}
       <li><a href="{% url 'following_list' %}">Following</a></li>
-      <li><a href="{% url 'graph' %}">Graph</a></li>
       <li><a href="{% url 'profile' %}">Profile</a></li>
 
       {% else %}
