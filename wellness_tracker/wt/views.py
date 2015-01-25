@@ -616,20 +616,17 @@ def graph(request, user_id=None):
         print ' * Checking the patient for this SO...'
         user_given_id = get_object_or_404(User, pk=int(user_id))
         user = user_given_id # user becomes patient and graph_user later in this view
-        patient_given_id = Patient.objects.get(user=user_given_id)
+        try:
+            patient_given_id = Patient.objects.get(user=user_given_id)
+        except Patient.DoesNotExist as e:
+            print ' * Exception: Patient does not exists'
+            print e
+            raise Http404
         if not sig_other.patients.filter(pk=patient_given_id.pk).exists():
             print ' * This patient for this SO does not exists'
             raise Http404
         else:
             print ' * Patient for this SO exists'
-        '''
-        elif sig_other:
-            # get patients of this particular significant other
-            so_patient_list = sig_other.patients.all()
-            for pat in so_patient_list:
-                print ' * Patient: ' + pat.user.username + ' with id: ' + str(pat.user.id)
-                user = pat.user # set the user to the latest patient interated over
-        '''
     else:
         user = request.user
         #print ' * Someone else (patient\?)' # Ellina
