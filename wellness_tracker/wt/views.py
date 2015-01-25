@@ -587,19 +587,19 @@ def appendix_vb(request):
 
 def graph(request, user_id=None):
     try:
-        #print ' * Is it a physician making request\?' # Ellina
+        #print ' * Is it a physician making request\?'
         physician = Physician.objects.get(user=request.user)
     except Physician.DoesNotExist:
         physician = None
-        #print ' * No, it is not a physician' # Ellina
+        #print ' * No, it is not a physician'
 
     # Check if the user of the request is a significant other
     try:
-        #print ' * Is it a SigOther making request\?' # Ellina
+        #print ' * Is it a SigOther making request\?'
         sig_other = SignificantOther.objects.get(user=request.user)
     except SignificantOther.DoesNotExist:
         sig_other = None
-        #print ' * No, it is not a SigOther' # Ellina
+        #print ' * No, it is not a SigOther'
 
     # Get the right user for the graph
     # For a physician, this means checking that they are,
@@ -608,30 +608,25 @@ def graph(request, user_id=None):
         user = get_object_or_404(User, pk=int(user_id))
         try:
             if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
-                print ' * Patient for this doctor does not exists. User of this user_id is valid'
+                #print ' * This patient is not associated with this doctor'
                 raise Http404
         except Patient.DoesNotExist as e:
-            print ' * Exception: Patient does not exists'
-            print e
+            #print ' * Exception: Patient does not exists'
+            #print e
             raise Http404
     elif user_id and sig_other:
-        print ' * Checking the patient for this SO...'
-        user_given_id = get_object_or_404(User, pk=int(user_id))
-        user = user_given_id # user becomes patient and graph_user later in this view
+        user = get_object_or_404(User, pk=int(user_id))
         try:
-            patient_given_id = Patient.objects.get(user=user_given_id)
+            patient_given_id = Patient.objects.get(user=user)
         except Patient.DoesNotExist as e:
-            print ' * Exception: Patient does not exists'
-            print e
+            #print ' * Exception: Patient does not exists'
+            #print e
             raise Http404
         if not sig_other.patients.filter(pk=patient_given_id.pk).exists():
-            print ' * This patient for this SO does not exists'
+            #print ' * This patient is not associated with this SO'
             raise Http404
-        else:
-            print ' * Patient for this SO exists'
     else:
         user = request.user
-        #print ' * Someone else (patient\?)' # Ellina
 
     patient = user
     at_least_1_goal = 'nogoal'
