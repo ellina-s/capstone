@@ -33,6 +33,8 @@ from pprint import pformat as pprint
 def home(request):
     if is_physician(request.user):
         return patient_list(request)
+    elif is_significant_other(request.user):
+        return following_list(request)
     else:
         return graph(request)
 
