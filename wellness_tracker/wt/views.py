@@ -65,46 +65,18 @@ def questions(request):
 
     return render(request, "questions.html", {"formset": formset})
 
-
+# _________ Physician's list of patients _________
 @user_passes_test(is_physician)
 def patient_list(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     return render(request, 'patient_list.html', {'patients': patients})
 
-# _________ A list of patients that a significant other is following ___________
+# _________ Significant Other's list of patients _________
 @user_passes_test(is_significant_other)
 def following_list(request):
     # Retrieve patients associated with the given significant other
     patients = SignificantOther.objects.get(user=request.user).patients.all()
     return render(request, 'following.html', {'patients': patients})
-
-'''
-def patient_list(request):
-    
-    try:
-        print ' * Is it a physician making request\?' # Ellina
-        physician = Physician.objects.get(user=request.user)
-    except Physician.DoesNotExist:
-        physician = None
-        print ' * No, it is not a physician' # Ellina
-
-    # Check if the user of the request is a significant other
-    try:
-        print ' * Is it a Sig.Other making request\?' # Ellina
-        sig_other = SignificantOther.objects.get(user=request.user)
-    except SignificantOther.DoesNotExist:
-        sig_other = None
-        print ' * No, it is not a Sig.Other' # Ellina
-    
-    if physician:
-            patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
-    elif sig_other:
-            patients = sig_other.patients.all()
-    else:
-        return render(request, 'login.html')
-        
-    return render(request, 'patient_list.html', {'patients': patients})
-'''
 
 #Creating a new patient
 @user_passes_test(is_physician)
@@ -633,13 +605,26 @@ def graph(request, user_id=None):
     if user_id and physician:
         user = get_object_or_404(User, pk=int(user_id))
         if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
+            print ' * Patient for this doctor does not exists'
             raise Http404
-    elif sig_other:
-        # get patients of this particular significant other
-        so_patient_list = sig_other.patients.all()
-        for pat in so_patient_list:
-            print ' * Patient: ' + pat.user.username + ' with id: ' + str(pat.user.id)
-            user = pat.user # set the user to the latest patient interated over
+    elif user_id and sig_other:
+        print ' * Checking the patient for this SO...'
+        user_given_id = get_object_or_404(User, pk=int(user_id))
+        user = user_given_id # user becomes patient and graph_user later in this view
+        patient_given_id = Patient.objects.get(user=user_given_id)
+        if not sig_other.patients.filter(pk=patient_given_id.pk).exists():
+            print ' * This patient for this SO does not exists'
+            raise Http404
+        else:
+            print ' * Patient for this SO exists'
+        '''
+        elif sig_other:
+            # get patients of this particular significant other
+            so_patient_list = sig_other.patients.all()
+            for pat in so_patient_list:
+                print ' * Patient: ' + pat.user.username + ' with id: ' + str(pat.user.id)
+                user = pat.user # set the user to the latest patient interated over
+        '''
     else:
         user = request.user
         #print ' * Someone else (patient\?)' # Ellina
