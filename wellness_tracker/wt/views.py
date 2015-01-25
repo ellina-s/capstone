@@ -604,8 +604,13 @@ def graph(request, user_id=None):
     # a physician for the patient they are requesting to view.
     if user_id and physician:
         user = get_object_or_404(User, pk=int(user_id))
-        if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
-            print ' * Patient for this doctor does not exists'
+        try:
+            if not Patient.objects.get(user=user).physicians.filter(pk=physician.pk).exists():
+                print ' * Patient for this doctor does not exists. User of this user_id is valid'
+                raise Http404
+        except Patient.DoesNotExist as e:
+            print ' * Exception: Patient does not exists'
+            print e
             raise Http404
     elif user_id and sig_other:
         print ' * Checking the patient for this SO...'
