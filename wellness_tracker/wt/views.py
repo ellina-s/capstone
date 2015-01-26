@@ -15,7 +15,7 @@ from django.template import RequestContext
 from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.db import IntegrityError
-from smtplib import SMTPRecipientsRefused
+from smtplib import SMTPException
 # Import custom forms
 from wt.forms import PasswordForm
 from django import forms
@@ -130,19 +130,21 @@ def create_patient(request):
 
         status['patient_created'] = True #set the flag to True if SO is successfully created
 
-        # Send an email
-        #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
-        email = EmailMessage('Django Testing -- New User',
-            'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
-            'wtdev.testing@gmail.com',
-            [new_patient_data['useremail']] )
-        try:
-            email.send()
-        except SMTPRecipientsRefused as e:
-            #print ' * Error when sending email'
-            print e
-            status['smtp_error'] = True
-            return render(request, 'create_patient.html', {'status': status})
+        email_flag = False
+        if (email_flag):
+            # Send an email
+            #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+            email = EmailMessage('Django Testing -- New User',
+                'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
+                'wtdev.testing@gmail.com',
+                [new_patient_data['useremail']] )
+            try:
+                email.send()
+            except SMTPException as e:
+                #print ' * Error when sending email'
+                print e
+                status['smtp_error'] = True
+                return render(request, 'create_patient.html', {'status': status})
 
     return render(request, 'create_patient.html', {'status': status})
 
@@ -1525,18 +1527,20 @@ def add_so(request):
 
         status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
 
-        # Send an email
-        #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
-        email = EmailMessage('Wellness Tracker -- New Sig Other',
-            'Dear user ' + so_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'],
-            'wtdev.testing@gmail.com',
-            [so_data['useremail']] )
-        try:
-            email.send()
-        except SMTPRecipientsRefused as e:
-            #print ' * Error when sending email'
-            print e
-            status_dictionary['smtp_error'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
-        
+        email_flag = False
+        if (email_flag):
+            # Send an email
+            #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
+            email = EmailMessage('Wellness Tracker -- New Sig Other',
+                'Dear user ' + so_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'],
+                'wtdev.testing@gmail.com',
+                [so_data['useremail']] )
+            try:
+                email.send()
+            except SMTPException as e:
+                #print ' * Error when sending email'
+                print e
+                status_dictionary['smtp_error'] = True
+                return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+    
     return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
