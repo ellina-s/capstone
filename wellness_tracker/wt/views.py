@@ -1547,12 +1547,89 @@ def add_so(request):
 
 @user_passes_test(is_physician)
 def manage_surveys(request):
-    return render (request, 'manage_surveys.html')
+    surveys = PreSurvey.objects.all()
+    return render (request, 'manage_surveys.html', {'surveys': surveys})
 
 @user_passes_test(is_physician)
 def create_survey(request):
-    return render (request, 'create_survey.html')
+    status_dictionary={}
+    status_dictionary['no_title'] = False # default
+    # Retrieve patients of the current physician
+    patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    
+    if request.method == 'POST':
+        # retrieve a list of selected checkboxes with patients IDs
+        patients_ids = request.POST.getlist('chk_patients')
+        
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        pre_survey_data = {}
+        for k, v in response.items():
+            pre_survey_data[str(k)] = v.pop()
+            #print str(k)
+            #print pre_survey_data[str(k)]
+        #print ' * Done'
+        
+        if pre_survey_data['title'] == "":
+            status_dictionary['no_title'] = True
+            return render (request, 'create_survey.html', {'patients': patients, 'status': status_dictionary})
+        
+        pre_survey = PreSurvey(title=pre_survey_data['title']) 
+        pre_survey.save()
+        print ' * Created a PreSurvey with title'
+        print pre_survey_data['title']
+        
+        # add another checkbox value, because it is missing from the call to getlist() 
+        patients_ids.append(pre_survey_data['chk_patients'])
+        
+        # get patients from IDs
+        patients_users = []
+        patients_instances = []
+        
+        # Retrieve users and add them to a dictionary
+        for item in patients_ids:
+            print item
+            temp_patient_user = get_object_or_404(User, pk=int(item))
+            patients_users.append(temp_patient_user)
+            patient = Patient.objects.get(user=temp_patient_user)
+            patients_instances.append(patient)
+            # add to the presurvey
+            pre_survey.spatients.add(patient)
+            # update
+            pre_survey.save()
+        
+        '''
+        print ' * Usernames of patients:'
+        presurvey_patients = pre_survey.spatients.all()
+        for item in presurvey_patients:
+            print item.user.username
+        
+        print ' * Retrieved patients are as follows:'
+        for pat in patients_instances:
+            print pat.user.username
+        '''
+    return render (request, 'create_survey.html', {'patients': patients, 'status': status_dictionary})
 
 @user_passes_test(is_physician)
 def edit_survey(request):
     return render (request, 'edit_survey.html')
+
+@user_passes_test(is_physician)
+def survey_overview(request, survey_id):
+    survey = get_object_or_404(PreSurvey, pk=int(survey_id))
+    
+    #print ' * You choose survey titled'
+    print survey.title
+    
+    #print ' * Usernames of patients:'
+    presurvey_patients = survey.spatients.all()
+    #for item in presurvey_patients:
+        #print item.user.username
+    
+    return render (request, 'survey_overview.html', {'survey': survey, 'patients': presurvey_patients})
+    
+# new_question on line 754
+
+@user_passes_test(is_physician)
+def s_new_question(request):
+    return render (request, 's_new_question.html')

@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - Survey Overview{% endblock %}
+
+{% block css %}
+  {{ block.super }}
+{% endblock %}
+
+{% block content %}
+<h2>Survey - {{ survey.title }}</h2>
+<h3><i class="glyphicon glyphicon-wrench" ></i> In progress...</h3>
+
+<div class="text-center">
+    <h4><i class="glyphicon glyphicon-user" ></i> Patients assigned to this survey:</h4>
+    {% for patient in patients %}
+        <p>{{ patient.user.username }}  </p>
+    {% endfor %}
+</div>
+
+<div class="submit text-center">
+   <a href="{% url 'manage_surveys' %}" ><input type="submit" class="btn btn-lg btn-success" value="Back" </input></a>
+</div>
+
+{% endblock %}

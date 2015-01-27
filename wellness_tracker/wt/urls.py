@@ -37,4 +37,6 @@ urlpatterns = patterns( '',
     url( r'^manage_surveys/', views.manage_surveys, name='manage_surveys'),
     url( r'^create_survey/', views.create_survey, name='create_survey'),
     url( r'^edit_survey/', views.edit_survey, name='edit_survey'),
+    url( r'^survey_overview/(?P<survey_id>\d+)/', views.survey_overview, name='survey_overview'),
+    url( r'^s_new_question/', views.s_new_question, name='s_new_question'),
 )
