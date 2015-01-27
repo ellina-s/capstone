@@ -34,4 +34,7 @@ urlpatterns = patterns( '',
     url( r'^followup_strategy_create/(?P<user_id>\d+)/', views.followup_strategy_create, name='followup_strategy_create'),
     url( r'^followup_strategy_selection/(?P<user_id>\d+)/', views.followup_strategy_selection, name='followup_strategy_selection'),
     url( r'^followup_strategy_planning/(?P<user_id>\d+)/', views.followup_strategy_planning, name='followup_strategy_planning'),
+    url( r'^manage_surveys/', views.manage_surveys, name='manage_surveys'),
+    url( r'^create_survey/', views.create_survey, name='create_survey'),
+    url( r'^edit_survey/', views.edit_survey, name='edit_survey'),
 )

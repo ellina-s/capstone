@@ -1544,3 +1544,15 @@ def add_so(request):
                 return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
     
     return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+
+@user_passes_test(is_physician)
+def manage_surveys(request):
+    return render (request, 'manage_surveys.html')
+
+@user_passes_test(is_physician)
+def create_survey(request):
+    return render (request, 'create_survey.html')
+
+@user_passes_test(is_physician)
+def edit_survey(request):
+    return render (request, 'edit_survey.html')
