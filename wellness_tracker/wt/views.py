@@ -1467,42 +1467,32 @@ def add_so(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     status_dictionary={}
     if request.method == 'POST':
-        
-        # retrieve a list of selected checkboxes with patients IDs
+        # Retrieve a list of patients IDs that were selected via checkboxes
         patients_ids = request.POST.getlist('chk_patients')
-        
+        # Retrieve response data
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
         so_data = {}
         for k, v in response.items():
             so_data[str(k)] = v.pop()
         
-        # add another checkbox value, because it is missing from the call to getlist()
-        # First, check that chk_patients exists in the response data.
-        # If a user did not check any checkboxes,
-        #then there would be no chk_patients in response data.
+        # Check that chk_patients exists in the response data.
+        # It wouldn't exist, if user did not check any checkboxes.
+        # If it does, that add it, because it is missing from the call to getlist()
         if 'chk_patients' in so_data:
             patients_ids.append(so_data['chk_patients'])
-            print ' * You choose a patient'
         else:
-            print ' * You did not choose a patient'
             status_dictionary['no_patient'] = True
             if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
                 status_dictionary['missing_info'] = True
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         
-        # Retrieve selected patients and add them to a dictionary
-        patients_instances = []
+        # Retrieve selected patients by their IDs, and add them to a dictionary
+        selected_patients = []
         for item in patients_ids:
-            print item
             temp_patient_user = get_object_or_404(User, pk=int(item))
             patient = Patient.objects.get(user=temp_patient_user)
-            patients_instances.append(patient)
-            
-        print ' * Retrieved patients are as follows:'
-        for pat in patients_instances:
-            print pat.user.username
-        
+            selected_patients.append(patient)
         #---------------------------------------------------------------
         status_dictionary['missing_info'] = False # Remove this line when form validation is done.
         status_dictionary['duplicate_username'] = False # default
@@ -1510,24 +1500,9 @@ def add_so(request):
         status_dictionary['no_patient'] = False # default
         status_dictionary['smtp_error'] = False # default
         
-        '''
-        if so_data['choosepatient'] == "none":
-            #print " * Error: You didn\'t select any patient"
-            status_dictionary['no_patient'] = True
-            if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
-                status_dictionary['missing_info'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
-        '''
-        
         # Check for empty stings in forms
         if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
-            #print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
             status_dictionary['missing_info'] = True
-            '''
-            if so_data['choosepatient'] == "none":
-                #print " * Error: You didn\'t select any patient"
-                status_dictionary['no_patient'] = True
-            '''
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Create a new user object
@@ -1536,7 +1511,6 @@ def add_so(request):
 					    so_data['useremail'],
 					    so_data['password'])
         except IntegrityError as e:
-            #print ' * Detected an integrity error'
             print e
             status_dictionary['duplicate_username'] = True
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
@@ -1546,9 +1520,6 @@ def add_so(request):
         
         # get the current physician's object
         doctor = Physician.objects.get(user=request.user)
-        # get patient for whom the significant other is created for
-        #patient_user = get_object_or_404(User, pk=int(so_data['choosepatient']))
-        #patient = Patient.objects.get(user=patient_user)
         # create Significant Other (SO)
         newSigOther = SignificantOther(user = tempuser)
         # save SO
@@ -1556,10 +1527,9 @@ def add_so(request):
         # add doctor and patient
         # Note: the corresponding SignificantOther object has to be created and saved by this point
         newSigOther.physicians.add(doctor)
-        
-        for pat in patients_instances:
-            newSigOther.patients.add(pat)
-            print ' * Added ' + pat.user.username
+        # add patient(s)
+        for eachpatient in selected_patients:
+            newSigOther.patients.add(eachpatient)
         # update SO
         newSigOther.save()
 
