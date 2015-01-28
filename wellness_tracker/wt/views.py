@@ -1547,8 +1547,8 @@ def add_so(request):
         # get the current physician's object
         doctor = Physician.objects.get(user=request.user)
         # get patient for whom the significant other is created for
-        patient_user = get_object_or_404(User, pk=int(so_data['choosepatient']))
-        patient = Patient.objects.get(user=patient_user)
+        #patient_user = get_object_or_404(User, pk=int(so_data['choosepatient']))
+        #patient = Patient.objects.get(user=patient_user)
         # create Significant Other (SO)
         newSigOther = SignificantOther(user = tempuser)
         # save SO
@@ -1556,7 +1556,10 @@ def add_so(request):
         # add doctor and patient
         # Note: the corresponding SignificantOther object has to be created and saved by this point
         newSigOther.physicians.add(doctor)
-        newSigOther.patients.add(patient)
+        
+        for pat in patients_instances:
+            newSigOther.patients.add(pat)
+            print ' * Added ' + pat.user.username
         # update SO
         newSigOther.save()
 
