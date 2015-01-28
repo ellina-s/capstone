@@ -1467,32 +1467,63 @@ def add_so(request):
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     status_dictionary={}
     if request.method == 'POST':
+        
+        # retrieve a list of selected checkboxes with patients IDs
+        patients_ids = request.POST.getlist('chk_patients')
+        
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
         so_data = {}
         for k, v in response.items():
             so_data[str(k)] = v.pop()
         
+        # add another checkbox value, because it is missing from the call to getlist()
+        # First, check that chk_patients exists in the response data.
+        # If a user did not check any checkboxes,
+        #then there would be no chk_patients in response data.
+        if 'chk_patients' in so_data:
+            patients_ids.append(so_data['chk_patients'])
+            print ' * You choose a patient'
+        else:
+            print ' * You did not choose a patient'
+        
+        # Retrieve selected patients and add them to a dictionary
+        patients_instances = []
+        for item in patients_ids:
+            print item
+            temp_patient_user = get_object_or_404(User, pk=int(item))
+            patient = Patient.objects.get(user=temp_patient_user)
+            patients_instances.append(patient)
+            
+        print ' * Retrieved patients are as follows:'
+        for pat in patients_instances:
+            print pat.user.username
+        
+        #---------------------------------------------------------------
         status_dictionary['missing_info'] = False # Remove this line when form validation is done.
         status_dictionary['duplicate_username'] = False # default
         status_dictionary['so_created'] = False # default
         status_dictionary['no_patient'] = False # default
         status_dictionary['smtp_error'] = False # default
         
+        '''
         if so_data['choosepatient'] == "none":
             #print " * Error: You didn\'t select any patient"
             status_dictionary['no_patient'] = True
             if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
                 status_dictionary['missing_info'] = True
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+        '''
         
         # Check for empty stings in forms
         if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
             #print ' * NO USERNAME OR EMAIL OR PASSWORD SET'
             status_dictionary['missing_info'] = True
+            '''
             if so_data['choosepatient'] == "none":
                 #print " * Error: You didn\'t select any patient"
                 status_dictionary['no_patient'] = True
+            '''
             return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Create a new user object
