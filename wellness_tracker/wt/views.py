@@ -1486,6 +1486,10 @@ def add_so(request):
             print ' * You choose a patient'
         else:
             print ' * You did not choose a patient'
+            status_dictionary['no_patient'] = True
+            if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
+                status_dictionary['missing_info'] = True
+            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Retrieve selected patients and add them to a dictionary
         patients_instances = []
