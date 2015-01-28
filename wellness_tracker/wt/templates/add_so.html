@@ -3,10 +3,10 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - Add a Significant Other{% endblock %}
+{% block title %}{{ block.super }} - Add Significant Other{% endblock %}
 
 {% block content %}
-<h2>Add Significant Other</h2>
+<h2>Add a Significant Other</h2>
 <hr />
 
 
@@ -75,7 +75,7 @@
   </div>
   
 <!-- Drop Down Patients List -->
-
+<!---
 <div class="form-group">
     <label for="choosepatient" class="col-sm-3 control-label"></label>
     <div class="col-sm-9"><p>Select a patient for whom the significant other is created for:</p>
@@ -85,6 +85,17 @@
           <option value="{{patient.user.id}}">{% firstof patient.user.get_full_name patient.user.username|title %}</option>
           {% endfor %}
       </select>
+    </div>
+</div>
+-->
+
+<!-- Patient List Checkboxes -->
+<div class="form-group">
+    <label for="choosepatient" class="col-sm-3 control-label"> <!-- Select patient(s)--></label>
+        <div class="col-sm-9"><p>Select patient(s) for whom the significant other is created for:</p>
+        {% for patient in patients %}
+        <input type="checkbox" name="chk_patients" value="{{patient.user.id}}" />{% firstof patient.user.get_full_name patient.user.username|title %}<br />
+        {% endfor %}
     </div>
 </div>
 
