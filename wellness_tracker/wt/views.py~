@@ -775,7 +775,7 @@ def followup_goaledit(request, user_id):
     #for astrat in active_strategy_list:
 	#print astrat.title
     navselecterror = 'good'
-    #print request.POST
+    print request.POST
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -963,13 +963,13 @@ def followup_strategyedit(request, user_id):
 
     #Need to find all strategies so I guess we need to check every type of question?...
     #Find all selected freeform strategies
-    selected_freeform_strategy_list = FreeForm.objects.filter(patient=patient, activated='1')
+    selected_freeform_strategy_list = FreeForm.objects.filter(patient=patient, gasgoal=selected_goal, activated='1')
 	    
     #Find all non activated freeform strategies
-    nonactive_freeform_strategy_list = FreeForm.objects.filter(patient=patient, activated='0')
+    nonactive_freeform_strategy_list = FreeForm.objects.filter(patient=patient, gasgoal=selected_goal, activated='0')
 
     #Find all prequestion strategies
-    prequestion_strategy_list = PreQuestion.objects.filter(patient=patient, activated='0')
+    prequestion_strategy_list = PreQuestion.objects.filter(patient=patient, gasgoal=selected_goal, activated='0')
 
     #Find all active strategies
     #active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated='1')
