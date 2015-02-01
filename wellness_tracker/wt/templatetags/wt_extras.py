@@ -3,6 +3,7 @@ from django import template
 from django.utils.safestring import mark_safe
 
 from wt.models import is_physician as model_is_physician
+from wt.models import is_significant_other as model_is_significant_other
 
 register = template.Library()
 
@@ -27,3 +28,7 @@ def is_physician(user):
 @register.filter
 def json(value):
     return mark_safe(json_orig.dumps(value, default=date_handler))
+
+@register.filter
+def is_significant_other(user):
+    return model_is_significant_other(user)

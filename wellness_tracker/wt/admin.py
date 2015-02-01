@@ -9,4 +9,5 @@ admin.site.register(FreeForm)
 admin.site.register(Slider)
 admin.site.register(Patient)
 admin.site.register(Physician)
-
+admin.site.register(SignificantOther)
+admin.site.register(PreSurvey)

@@ -23,6 +23,14 @@ class Patient(models.Model):
     def __unicode__(self):
         return self.user.username
 
+class SignificantOther(models.Model):
+    user = models.OneToOneField(User)
+    physicians = models.ManyToManyField(Physician, blank=False)
+    patients = models.ManyToManyField(Patient, blank=False)
+    
+    def __unicode__(self):
+        return self.user.username
+
 class GASGoals(models.Model):
     goal1 = models.CharField(max_length=128,
                              null=False,
@@ -334,6 +342,58 @@ class AnswerForm(ModelForm):
         model = Answer
         fields = ['value', 'patient', 'question', 'comment']
 
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
+class Squestion(ShowFieldType, PolymorphicModel):
+    title = models.CharField(max_length=32,
+                             null=False,
+                             blank=False,
+                             help_text='One word title to descript your question')
+
+    text = models.CharField(max_length=128,
+                            null=False,
+                            blank=False,
+                            help_text='The questions your would like to ask.')
+
+    description = models.CharField(max_length=512,
+                                   blank=True,
+                                   help_text='A brief description of the question instructions.')
+
+    target = models.IntegerField(default=0,
+                            	 null=False,
+                            	 blank=False,
+                            	 help_text='The target of the strategy')
+
+    def __unicode__(self):
+        return self.text
+
+class Survey(models.Model):
+    title = models.CharField(max_length=32,
+                            null=False,
+                            blank=False,
+                            help_text='Survey title.')
+
+    squestions = models.ManyToManyField(Squestion, blank=False)
+    spatients = models.ManyToManyField(Patient, blank=False)
+
+    def __unicode__(self):
+        return self.title
+
+class PreSurvey(models.Model):
+    title = models.CharField(max_length=32,
+                            null=False,
+                            blank=False,
+                            help_text='Survey title.')
+
+    spatients = models.ManyToManyField(Patient, blank=False)
+
+    def __unicode__(self):
+        return self.title
+        
+# ----------------------------------------------------------------------
+# ----------------------------------------------------------------------
+
 def is_physician(user):
     if user.is_authenticated():
         if user.is_superuser:
@@ -345,3 +405,14 @@ def is_physician(user):
             return False
     return False
 
+# Custom filter to check if a user is a significant other
+def is_significant_other(user):
+    if user.is_authenticated():
+        if user.is_superuser:
+            return False
+        try:
+            sigOther = SignificantOther.objects.get(user=user)
+            return True
+        except SignificantOther.DoesNotExist:
+            return False
+    return False
