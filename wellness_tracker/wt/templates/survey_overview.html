@@ -14,6 +14,13 @@
 <h3><i class="glyphicon glyphicon-wrench" ></i> In progress...</h3>
 
 <div class="text-center">
+    <h4><i class="glyphicon glyphicon-question-sign"></i> Questions:</h4>
+    {% for que in questions %}
+        <p>{{ que.text }}  </p>
+    {% endfor %}
+</div>
+
+<div class="text-center">
     <h4><i class="glyphicon glyphicon-user" ></i> Patients assigned to this survey:</h4>
     {% for patient in patients %}
         <p>{{ patient.user.username }}  </p>

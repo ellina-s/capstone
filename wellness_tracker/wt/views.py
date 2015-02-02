@@ -1571,24 +1571,102 @@ def create_survey(request):
         
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
         pre_survey_data = {}
         for k, v in response.items():
             pre_survey_data[str(k)] = v.pop()
-            #print str(k)
-            #print pre_survey_data[str(k)]
-        #print ' * Done'
+            print str(k)
+            print pre_survey_data[str(k)]
+        print ' * Done'
+
         
-        if pre_survey_data['title'] == "":
-            status_dictionary['no_title'] = True
+        
+        
+        if pre_survey_data['surveytitle'] == "":
+            status_dictionary['surveytitle'] = True
+            print ' * No survey title provided'
             return render (request, 'create_survey.html', {'patients': patients, 'status': status_dictionary})
         
-        pre_survey = PreSurvey(title=pre_survey_data['title']) 
+        pre_survey = PreSurvey(title=pre_survey_data['surveytitle']) 
         pre_survey.save()
         print ' * Created a PreSurvey with title'
-        print pre_survey_data['title']
+        print pre_survey_data['surveytitle']
+        
+        
+        # Check that chk_patients exists in the response data.
+        # It wouldn't exist, if user did not check any checkboxes.
+        # If it does, that add it, because it is missing from the call to getlist()
+        if 'chk_patients' in pre_survey_data:
+            patients_ids.append(pre_survey_data['chk_patients'])
+        else:
+            print ' * No patients for the survey were selected'
+        
         
         # add another checkbox value, because it is missing from the call to getlist() 
-        patients_ids.append(pre_survey_data['chk_patients'])
+        #patients_ids.append(pre_survey_data['chk_patients'])
+        
+        print ' * Patients ids from checkboxes:'
+        for item in patients_ids:
+            print item
+        print ' * Done'
+        
+        
+        # --------------------------------------------------------------
+        if t == "[u'boolean']": # new question is boolean
+            print ' * You chose boolean question'
+            boolean = Sboolean(title=pre_survey_data['title'],
+                              text=pre_survey_data['text'],
+                              description=pre_survey_data['description'],
+                              target=int(pre_survey_data['goal']))
+            boolean.save()
+            # add to the presurvey
+            pre_survey.squestions.add(boolean)
+            # update the presurvey
+            pre_survey.save()
+            print ' * Added a boolean Q to presurvey'
+
+        elif t == "[u'category']": # new question is categorical
+            print ' * You chose categorical question'
+            category_list = []
+
+            i = 1
+            while 'cat' + str(i) in question_data:
+                category = Scategory(name=pre_survey_data['cat' + str(i)].lower(), value=i-1)
+                category_list.append(pre_survey_data['cat'+ str(i)].lower())
+                i = i + 1
+
+            categorical = Scategorical(title=pre_survey_data['title'],
+                                        text=pre_survey_data['text'],
+                                        description=pre_survey_data['description'],
+                                        categories=pre_survey_data)
+
+            if pre_survey_data['goal'].lower() in category_list: # check for numerical or text goal
+                categorical.target = category_list.index(pre_survey_data['goal'].lower())
+            else:
+                categorical.target = int(pre_survey_data['goal'])
+
+            categorical.save()
+
+        elif t == "[u'integer']": # new question is free form
+            print ' * You chose free form question'
+            free_form = SfreeForm(title=pre_survey_data['title'],
+                                text=pre_survey_data['text'],
+                                description=pre_survey_data['description'],
+                                target = int(pre_survey_data['goal']),
+                                units=pre_survey_data['units'])
+            free_form.save()
+
+        elif t == "[u'slider']": # new question is slider
+            print ' * You chose slider question'
+            slider = Sslider(title=pre_survey_data['title'],
+                            text=pre_survey_data['text'],
+                            description=pre_survey_data['description'],
+                            target = int(pre_survey_data['goal']),
+                            max_value=pre_survey_data['max_value'],
+                            min_value=pre_survey_data['min_value'],
+                            increment=pre_survey_data['increment'])
+            slider.save()
+        # --------------------------------------------------------------
         
         # get patients from IDs
         patients_users = []
@@ -1633,8 +1711,9 @@ def survey_overview(request, survey_id):
     presurvey_patients = survey.spatients.all()
     #for item in presurvey_patients:
         #print item.user.username
+    presurvey_questions = survey.squestions.all()
     
-    return render (request, 'survey_overview.html', {'survey': survey, 'patients': presurvey_patients})
+    return render (request, 'survey_overview.html', {'survey': survey, 'patients': presurvey_patients, 'questions': presurvey_questions})
     
 # new_question on line 754
 

@@ -368,6 +368,80 @@ class Squestion(ShowFieldType, PolymorphicModel):
     def __unicode__(self):
         return self.text
 
+class Sboolean(Squestion):
+    def __unicode__(self):
+        return self.text
+
+
+class Scategory(models.Model):
+    name = models.CharField(max_length=32,
+                            null=False,
+                            blank=False,
+                            help_text='Category name.')
+
+    value = models.IntegerField(null=False,
+                                blank=False,
+                                help_text='Value for this category.')
+
+    def __unicode__(self):
+        return self.name
+
+class Scategorical(Squestion):
+    categories = models.ManyToManyField(Category,
+                                        null=False,
+                                        blank=False,
+                                        help_text='Categories in this question.')
+    _categories = []
+
+    def __init__(self, *args, **kwargs):
+        self._categories = kwargs.pop('categories', None)
+        super(Categorical, self).__init__(*args, **kwargs)
+
+    def __unicode__(self):
+        return self.text
+
+    def save(self, *args, **kwargs):
+        # Save the categorical question first, then
+        # save and add the categories to it.
+        super(Categorical, self).save(*args, **kwargs)
+        if self._categories:
+            for value, category in enumerate(self._categories):
+                cat = Category(name=category, value=value)
+                cat.save()
+                self.categories.add(cat)
+
+    def get_query_set(self):
+        # Always pull the categories when pulling the question
+        return super(Categorical, self).get_query_set().select_related('category')
+
+class Sslider(Squestion):
+    min_value = models.IntegerField(default=0,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Minimum value for the slider.')
+
+    max_value = models.IntegerField(default=100,
+                                    null=False,
+                                    blank=False,
+                                    help_text='Maximum value for the slider.')
+
+    increment = models.IntegerField(default=1,
+                                    null=False,
+                                    blank=False,
+                                    help_text='The step (granularity) of the slider.')
+
+    def __unicode__(self):
+        return self.text
+
+class SfreeForm(Squestion):
+    units = models.CharField(max_length=32,
+                             null=False,
+                             blank=False,
+                             help_text='The units this quetsion is measured in.')
+    def __unicode__(self):
+        return self.text
+
+#-----------------------------------------------------------------------------------
 class Survey(models.Model):
     title = models.CharField(max_length=32,
                             null=False,
@@ -387,6 +461,7 @@ class PreSurvey(models.Model):
                             help_text='Survey title.')
 
     spatients = models.ManyToManyField(Patient, blank=False)
+    squestions = models.ManyToManyField(Squestion, blank=False)
 
     def __unicode__(self):
         return self.title
