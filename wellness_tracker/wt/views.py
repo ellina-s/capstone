@@ -145,9 +145,19 @@ def create_patient(request):
                 print e
                 status['smtp_error'] = True
                 return render(request, 'create_patient.html', {'status': status})
-
+    
+    if(status['patient_created']):
+        #print ' * New Patient ID is'
+        #print newpatient.user.id
+        return render(request, 'start_gas.html', {'patient': newpatient, 'status': status})
+    
     return render(request, 'create_patient.html', {'status': status})
+    
 
+# Upon successful creation of a patient, suggest to start the GAS process
+@user_passes_test(is_physician)
+def start_gas(request):
+    return render(request, 'start_gas.html') 
 
 #--------------------------------------------------Goal Attainment Wizard Page1 ---------------------------
 #    gas_step1
@@ -1579,9 +1589,6 @@ def create_survey(request):
             print pre_survey_data[str(k)]
         print ' * Done'
 
-        
-        
-        
         if pre_survey_data['surveytitle'] == "":
             status_dictionary['surveytitle'] = True
             print ' * No survey title provided'
@@ -1720,3 +1727,8 @@ def survey_overview(request, survey_id):
 @user_passes_test(is_physician)
 def s_new_question(request):
     return render (request, 's_new_question.html')
+
+@user_passes_test(is_physician)
+def new_survey_question(request):
+    return render (request, 'new_survey_question.html')
+    
