@@ -54,10 +54,14 @@ svg {
 {% block content %}
 <h2>
 
-  Wellness Graph
-  {% if user != graph_user %}
+{% if user|is_physician %}
+    Follow-up Graph
+    {% if user != graph_user %}
     - {% firstof graph_user.get_full_name graph_user.username|title %}
-  {% endif %}
+    {% endif %}
+{% else %}
+    Wellness Graph
+{% endif %}
 
  <!-- 
   {% if user|is_physician %}
@@ -65,8 +69,6 @@ svg {
   <a href="{% url 'followup_goaledit' graph_user.id %}">Follow Up Meeting </a>
   {% endif %} -->
  
-
-
 </h2>
 
 <hr />
