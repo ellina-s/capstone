@@ -49,18 +49,14 @@ svg {
 {% endblock %}
 
 {% block script %}
-
 <script>
-
-function hide_an_seek(caller){
-    console.log("You clicked on symptom");
-    var domElem = $(caller).attr('data-poem');
-    console.log(domElem, "Datapoem value is this");
-    $(".poem > div").hide();
-    $(".poem #" + domElem).show();
+function show_question(caller){
+    var strategy_tag = $(caller).attr('data-tag');
+    //console.log(strategy_tag, "Data_tag value");
+    $(".strategy-questions > div").hide();
+    $(".strategy-questions #" + strategy_tag).show();
 }
 </script>
-
 {% endblock %}
 
 {% block content %}
@@ -89,11 +85,11 @@ function hide_an_seek(caller){
 {% else %}
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
     {% if user|is_physician %}
-        <div class="poem">
-        {% for itemy in strategy_questions %}
-            <div id="{{itemy.key}}" style="display: none;">Strategy Question: {{itemy.thequestion}} </div>
+        <div class="strategy-questions">
+        {% for item in strategy_questions %}
+            <div id="{{item.key}}" style="display: none;">Strategy Question: {{item.thequestion}}</div>
         {% empty %}
-        <!-- NO STRATEGIES -->
+        <!-- No strategies for this goals-->
         {% endfor %}
         </div>
     {% endif %}
@@ -124,7 +120,7 @@ function hide_an_seek(caller){
         <h4>Strategies</h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
-          <a href="#" onClick="hide_an_seek(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-poem="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+          <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
           {% endfor %}
           {% if user|is_physician %}
 	  <!-- Original (Add this back, "Add new strategy"
