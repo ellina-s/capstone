@@ -70,11 +70,11 @@ svg {
 </h2>
 
 <hr />
-{% if selected_goal == '-1' %}
-<h4>There is no goals created or selected for this patient.</h4>
+<!--{% if selected_goal == '-1' %}
+<h4>There are no goals created or selected for this patient.</h4>
 {% else %}
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
-{% endif %}
+{% endif %} -->
 <div class="row">
   <div id="graph" class="text-left col-md-9 gui-container">
     <div id="chart" class='with-3d-shadow with-transitions'>
@@ -92,10 +92,56 @@ svg {
 	  {% if at_least_1_goal == 'nogoal' %}
 	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
 	  {% else %}
-	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Follow Up Meeting</a></center>
+	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Decision Making</a></center>
 	  {% endif %}
 	</div>
 	{% endif %}
+
+
+<!-- Popup inforamtion -->
+<!-- Modal -->
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+      </div>
+      <div class="modal-body">
+        ...
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <button type="button" class="btn btn-primary">Save changes</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!--End popup inforamtion -->
+
+	<h4> <!-- Dropdown menus more information -->
+	  <div class="dropdown">
+	Goal
+	    <button class="pull-right btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+	    
+	      <span class="caret"></span>
+	    </button>
+	    <ul class="pull-right dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+	      <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#myModal">More Information</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Create</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Edit</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Select</a></li>
+	    </ul>
+	  </div>
+	</h4>
+
+        <div id="symptoms" class="list-group">
+          <a href="#" class="symptom list-group-item inactive"> {{ selected_goal.goal1 }}</a>
+          {% if user|is_physician %}
+	  
+	  <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a> 
+          {% endif %}
+        </div>
 
         <h4>Strategies</h4>
         <div id="symptoms" class="list-group">
@@ -103,8 +149,8 @@ svg {
           <a href="#" class="symptom list-group-item inactive">{{ symptom.displayedscore }} {{ symptom.key }}</a>
           {% endfor %}
           {% if user|is_physician %}
-	  <!-- Original (Add this back, "Add new strategy"
-	  <a href="{% url 'new_question' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Symptom</a> -->
+	  
+	  <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a> 
           {% endif %}
         </div>
       </div>
@@ -112,6 +158,9 @@ svg {
         <h4>Data Analysis</h4>
         <div id="data-analysis" class="list-group">
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
+	{% if user|is_physician %}
+	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
+	{% endif %}
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
           <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>
         </div>

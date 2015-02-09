@@ -860,7 +860,7 @@ def followup_goaledit(request, user_id):
 	if question_data['navselect'] == 'keep':
 	    return render(request, 'followup_strategyedit_forward.html', context_dict)
 	if question_data['navselect'] == 'edit':
-	    return render(request, 'planning_forward.html', context_dict)
+	    return render(request, 'followup_goal_planning_forward.html', context_dict)
 	if question_data['navselect'] == 'select':
 	    return render(request, 'followup_goal_selection_forward.html', context_dict)
 	if question_data['navselect'] == 'create':
