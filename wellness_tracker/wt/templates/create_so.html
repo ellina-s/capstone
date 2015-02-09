@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% load wt_extras %}
+
+{% block title %}{{ block.super }} - Create Significant Other{% endblock %}
+
+{% block content %}
+<h2>Create a Significant Other</h2>
+<hr />
+
+
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_so' %}" method="post">
+{% csrf_token %}
+
+  <div class="New Significant Other">
+
+    {% if status.no_patient %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("No patient selected. Please select a patient.", "error");
+        </script>
+    {% endif %}
+    
+    {% if status.so_created %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Added a significant other", "success");
+        </script>
+    {% endif %}
+    
+    {% if status.missing_info %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Missing a username, password, or email.", "error");
+        </script>
+    {% endif %}
+    
+    {% if status.duplicate_username %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Duplicate username. Please select another username.", "error");
+        </script>
+    {% endif %}
+    
+    {% if status.smtp_error %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("Email error", "error");
+        </script>
+    {% endif %}
+
+<div class="form-group">
+    <label for="title" class="col-sm-3 control-label">User Name</label>
+    <div class="col-sm-9">
+      <input type="text" name="userid" class="form-control" id="userid" placeholder="Type in username">
+      <p class="help-block">Create a user name for the significant other</a>
+    </div>
+  </div>
+<div class="form-group">
+    <label for="title" class="col-sm-3 control-label">User Email</label>
+    <div class="col-sm-9">
+      <input type="text" name="useremail" class="form-control" id="useremail" placeholder="Type in user email">
+      <p class="help-block">Enter an email address of the significant other</a>
+    </div>
+  </div>
+  <div class="form-group">
+    <label for="question" class="col-sm-3 control-label">Password</label>
+    <div class="col-sm-9">
+      <input type="text" name="password" class="form-control" id="password" placeholder="Type in password">
+      <p class="help-block">Make sure the user can easily remember the password</p>
+    </div>
+  </div>
+
+  </div>
+  
+<!-- Drop Down Patients List -->
+<!---
+<div class="form-group">
+    <label for="choosepatient" class="col-sm-3 control-label"></label>
+    <div class="col-sm-9"><p>Select a patient for whom the significant other is created for:</p>
+      <select id="type" name="choosepatient" class="form-control">
+          <option value="none">Select a patient...</option>
+          {% for patient in patients %}
+          <option value="{{patient.user.id}}">{% firstof patient.user.get_full_name patient.user.username|title %}</option>
+          {% endfor %}
+      </select>
+    </div>
+</div>
+-->
+
+<!-- Patient List Checkboxes -->
+<div class="form-group">
+    <label for="choosepatient" class="col-sm-3 control-label"> <!-- Select patient(s)--></label>
+        <div class="col-sm-9"><p>Select patient(s) for whom the significant other is created for:</p>
+        {% for patient in patients %}
+        <input type="checkbox" name="chk_patients" value="{{patient.user.id}}" />{% firstof patient.user.get_full_name patient.user.username|title %}<br />
+        {% endfor %}
+    </div>
+</div>
+
+</div>
+<div class="submit text-center">
+    <input type="submit" class="btn btn-lg btn-success" value="Create"></input>
+  </div>
+</form>
+{% endblock %}
