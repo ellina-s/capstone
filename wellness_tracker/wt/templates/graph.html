@@ -49,6 +49,18 @@ svg {
 {% endblock %}
 
 {% block script %}
+
+<script>
+
+function hide_an_seek(caller){
+    console.log("You clicked on symptom");
+    var domElem = $(caller).attr('data-poem');
+    console.log(domElem, "Datapoem value is this");
+    $(".poem > div").hide();
+    $(".poem #" + domElem).show();
+}
+</script>
+
 {% endblock %}
 
 {% block content %}
@@ -76,7 +88,17 @@ svg {
 <h4>There are no goals created or selected for this patient.</h4>
 {% else %}
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
+    {% if user|is_physician %}
+        <div class="poem">
+        {% for itemy in strategy_questions %}
+            <div id="{{itemy.key}}" style="display: none;">Strategy Question: {{itemy.thequestion}} </div>
+        {% empty %}
+        <!-- NO STRATEGIES -->
+        {% endfor %}
+        </div>
+    {% endif %}
 {% endif %}
+
 <div class="row">
   <div id="graph" class="text-left col-md-9 gui-container">
     <div id="chart" class='with-3d-shadow with-transitions'>
@@ -102,7 +124,7 @@ svg {
         <h4>Strategies</h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
-          <a href="#" class="symptom list-group-item inactive">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+          <a href="#" onClick="hide_an_seek(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-poem="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
           {% endfor %}
           {% if user|is_physician %}
 	  <!-- Original (Add this back, "Add new strategy"

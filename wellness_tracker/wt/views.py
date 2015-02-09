@@ -719,6 +719,11 @@ def graph(request, user_id=None):
         grouped_answers[ans.question.title].append(ans)
 
 
+    # A list to hold strategy questions (text fields)
+    strategy_questions_list = []
+    #counter for a list of strategy questions
+    icount = 0
+
     # Build nvd3 json
     data = []
     for k,v in grouped_answers.iteritems():
@@ -739,6 +744,15 @@ def graph(request, user_id=None):
 	for eachquestion in question_list:
 	    if k == eachquestion.title:
 		displayedscoretemp = eachquestion.displayedscore
+		#populate a list with strategy questions
+		sub_question = {}
+		sub_question['key'] = "line-" + str(icount)
+		sub_question['thequestion'] = eachquestion.text
+		strategy_questions_list.append(sub_question)
+		#print 'Current count: ' + str(icount)
+		#count_str = "line-" + str(icount)
+		#print count_str
+		icount = icount + 1
 
         data.append(
                 {'key':k,
@@ -749,6 +763,7 @@ def graph(request, user_id=None):
                  'targ': v[0].question.target,
                  'std1': avg+stdev,
                  'std2': avg-stdev,
+		 'datatag': sub_question['key'],
                  })
 
     return render(request, "graph.html",
@@ -757,7 +772,8 @@ def graph(request, user_id=None):
              "graph_user": user,
 	     "selected_goal": selected_goal,
 	     "question_list": question_list,
-	     "at_least_1_goal": at_least_1_goal})
+	     "at_least_1_goal": at_least_1_goal,
+	     "strategy_questions": strategy_questions_list})
 
 
 @user_passes_test(is_physician)
@@ -1721,8 +1737,6 @@ def survey_overview(request, survey_id):
     presurvey_questions = survey.squestions.all()
     
     return render (request, 'survey_overview.html', {'survey': survey, 'patients': presurvey_patients, 'questions': presurvey_questions})
-    
-# new_question on line 754
 
 @user_passes_test(is_physician)
 def s_new_question(request):
