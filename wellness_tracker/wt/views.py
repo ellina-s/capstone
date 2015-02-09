@@ -1488,7 +1488,7 @@ def profile(request):
 
 # Add a significant other
 @user_passes_test(is_physician)
-def add_so(request):
+def create_so(request):
     # Retrieve patients
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     status_dictionary={}
@@ -1511,7 +1511,7 @@ def add_so(request):
             status_dictionary['no_patient'] = True
             if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
                 status_dictionary['missing_info'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Retrieve selected patients by their IDs, and add them to a dictionary
         selected_patients = []
@@ -1529,7 +1529,7 @@ def add_so(request):
         # Check for empty stings in forms
         if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
             status_dictionary['missing_info'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Create a new user object
         try:
@@ -1539,7 +1539,7 @@ def add_so(request):
         except IntegrityError as e:
             print e
             status_dictionary['duplicate_username'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
             
         # At this point, tempuser is a User object that has already been saved
         # to the database. You can continue to change its attributes if you want.
@@ -1575,9 +1575,9 @@ def add_so(request):
                 #print ' * Error when sending email'
                 print e
                 status_dictionary['smtp_error'] = True
-                return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+                return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
     
-    return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+    return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
 
 @user_passes_test(is_physician)
 def manage_surveys(request):
