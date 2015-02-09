@@ -29,41 +29,11 @@
 {% endblock %}
 
 {% block content %}
-<h2>Create a new survey</h2>
+<h2>Add another question to survey</h2>
 <hr />
 
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_survey' %}" method="post">
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_survey_question' %}" method="post">
     {% csrf_token %}
-
-    {% if status.no_title %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("No title provided. Please, enter a title.", "error");
-        </script>
-    {% endif %}
-
-    <div class="New Survey">
-        
-    <div class="form-group">
-        <label for="title" class="col-sm-3 control-label">Title</label>
-        <div class="col-sm-9">
-            <input type="text" name="surveytitle" class="form-control" id="surveytitle" placeholder="Type in title">
-            <p class="help-block">Give a title to this survey</p>
-        </div>
-    </div>
-
-    <div class="form-group">
-        <label for="choosepatient" class="col-sm-3 control-label">Select patient(s)</label>
-        <div class="col-sm-9"> <!-- <p>Select patient(s) for this survey:</p> -->
-        {% for patient in patients %}
-        <input type="checkbox" name="chk_patients" value="{{patient.user.id}}" />{% firstof patient.user.get_full_name patient.user.username|title %}<br />
-        {% endfor %}
-        </div>
-    </div>
-    </div>
-    
-    <h2>Add New Question</h2>
-    <hr />
     
     <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
@@ -136,16 +106,17 @@
       </div>
     </div>
   </div>
-    
-    
-    
-    <center><a href="{% url 'new_survey_question' %}" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Next Question</a></center>
-    <center><a href="{% url 'create_survey' %}" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Select Question from the bank</a></center>
-
-    <div class="submit text-center">
-        <input type="submit" class="btn btn-lg btn-success" value="Create"></input>
-        <a href="{% url 'manage_surveys' %}" class="btn btn-lg btn-success">Back</a>
-    </div>
+  
+  <!--
+  <center><a href="{% url 'new_survey_question' %}" type="submit" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Next Question</a></center>
+  <center><a href="{% url 'new_survey_question' %}" class="list-group-item inactive"><i class="glyphicon glyphicon-ok text-success" style="margin-right: 10px;"></i>Finalize the Survey</a></center>
+  -->
+  
+  <div class="submit text-center">
+        <input type="submit" class="btn btn-lg btn-success" value="Save this question"></input>
+        <!--<input type="submit" class="btn btn-lg btn-success" value="Finalize Button"></input> -->
+        <!-- <a href="{% url 'manage_surveys' %}" class="btn btn-lg btn-success">Finalize Link</a> -->
+  </div>
+  
 </form>
-
 {% endblock %}

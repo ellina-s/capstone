@@ -49,15 +49,27 @@ svg {
 {% endblock %}
 
 {% block script %}
+<script>
+function show_question(caller){
+    var strategy_tag = $(caller).attr('data-tag');
+    //console.log(strategy_tag, "Data_tag value");
+    $(".strategy-questions > div").hide();
+    $(".strategy-questions #" + strategy_tag).show();
+}
+</script>
 {% endblock %}
 
 {% block content %}
 <h2>
 
-  Wellness Graph
-  {% if user != graph_user %}
+{% if user|is_physician %}
+    Follow-up Graph
+    {% if user != graph_user %}
     - {% firstof graph_user.get_full_name graph_user.username|title %}
-  {% endif %}
+    {% endif %}
+{% else %}
+    Wellness Graph
+{% endif %}
 
  <!-- 
   {% if user|is_physician %}
@@ -65,8 +77,6 @@ svg {
   <a href="{% url 'followup_goaledit' graph_user.id %}">Follow Up Meeting </a>
   {% endif %} -->
  
-
-
 </h2>
 
 <hr />
@@ -74,7 +84,17 @@ svg {
 <h4>There are no goals created or selected for this patient.</h4>
 {% else %}
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
+    {% if user|is_physician %}
+        <div class="strategy-questions">
+        {% for item in strategy_questions %}
+            <div id="{{item.key}}" style="display: none;">Strategy Question: {{item.thequestion}}</div>
+        {% empty %}
+        <!-- No strategies for this goals-->
+        {% endfor %}
+        </div>
+    {% endif %}
 {% endif %}
+
 <div class="row">
   <div id="graph" class="text-left col-md-9 gui-container">
     <div id="chart" class='with-3d-shadow with-transitions'>
@@ -100,7 +120,7 @@ svg {
         <h4>Strategies</h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
-          <a href="#" class="symptom list-group-item inactive">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+          <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
           {% endfor %}
           {% if user|is_physician %}
 	  <!-- Original (Add this back, "Add new strategy"

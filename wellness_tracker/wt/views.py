@@ -145,9 +145,19 @@ def create_patient(request):
                 print e
                 status['smtp_error'] = True
                 return render(request, 'create_patient.html', {'status': status})
-
+    
+    if(status['patient_created']):
+        #print ' * New Patient ID is'
+        #print newpatient.user.id
+        return render(request, 'start_gas.html', {'patient': newpatient, 'status': status})
+    
     return render(request, 'create_patient.html', {'status': status})
+    
 
+# Upon successful creation of a patient, suggest to start the GAS process
+@user_passes_test(is_physician)
+def start_gas(request):
+    return render(request, 'start_gas.html') 
 
 #--------------------------------------------------Goal Attainment Wizard Page1 ---------------------------
 #    gas_step1
@@ -709,6 +719,11 @@ def graph(request, user_id=None):
         grouped_answers[ans.question.title].append(ans)
 
 
+    # A list to hold strategy questions (text fields)
+    strategy_questions_list = []
+    #counter for a list of strategy questions
+    icount = 0
+
     # Build nvd3 json
     data = []
     for k,v in grouped_answers.iteritems():
@@ -729,6 +744,15 @@ def graph(request, user_id=None):
 	for eachquestion in question_list:
 	    if k == eachquestion.title:
 		displayedscoretemp = eachquestion.displayedscore
+		#populate a list with strategy questions
+		sub_question = {}
+		sub_question['key'] = "line-" + str(icount)
+		sub_question['thequestion'] = eachquestion.text
+		strategy_questions_list.append(sub_question)
+		#print 'Current count: ' + str(icount)
+		#count_str = "line-" + str(icount)
+		#print count_str
+		icount = icount + 1
 
         data.append(
                 {'key':k,
@@ -739,6 +763,7 @@ def graph(request, user_id=None):
                  'targ': v[0].question.target,
                  'std1': avg+stdev,
                  'std2': avg-stdev,
+		 'datatag': sub_question['key'],
                  })
 
     return render(request, "graph.html",
@@ -747,7 +772,8 @@ def graph(request, user_id=None):
              "graph_user": user,
 	     "selected_goal": selected_goal,
 	     "question_list": question_list,
-	     "at_least_1_goal": at_least_1_goal})
+	     "at_least_1_goal": at_least_1_goal,
+	     "strategy_questions": strategy_questions_list})
 
 
 @user_passes_test(is_physician)
@@ -1462,7 +1488,7 @@ def profile(request):
 
 # Add a significant other
 @user_passes_test(is_physician)
-def add_so(request):
+def create_so(request):
     # Retrieve patients
     patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
     status_dictionary={}
@@ -1485,7 +1511,7 @@ def add_so(request):
             status_dictionary['no_patient'] = True
             if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
                 status_dictionary['missing_info'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Retrieve selected patients by their IDs, and add them to a dictionary
         selected_patients = []
@@ -1503,7 +1529,7 @@ def add_so(request):
         # Check for empty stings in forms
         if so_data['userid'] == "" or so_data['useremail'] == "" or so_data['password'] == "":
             status_dictionary['missing_info'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
         
         # Create a new user object
         try:
@@ -1513,7 +1539,7 @@ def add_so(request):
         except IntegrityError as e:
             print e
             status_dictionary['duplicate_username'] = True
-            return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+            return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
             
         # At this point, tempuser is a User object that has already been saved
         # to the database. You can continue to change its attributes if you want.
@@ -1549,9 +1575,9 @@ def add_so(request):
                 #print ' * Error when sending email'
                 print e
                 status_dictionary['smtp_error'] = True
-                return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+                return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
     
-    return render(request, 'add_so.html', {'patients': patients, 'status': status_dictionary})
+    return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
 
 @user_passes_test(is_physician)
 def manage_surveys(request):
@@ -1571,24 +1597,99 @@ def create_survey(request):
         
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
         pre_survey_data = {}
         for k, v in response.items():
             pre_survey_data[str(k)] = v.pop()
-            #print str(k)
-            #print pre_survey_data[str(k)]
-        #print ' * Done'
-        
-        if pre_survey_data['title'] == "":
-            status_dictionary['no_title'] = True
+            print str(k)
+            print pre_survey_data[str(k)]
+        print ' * Done'
+
+        if pre_survey_data['surveytitle'] == "":
+            status_dictionary['surveytitle'] = True
+            print ' * No survey title provided'
             return render (request, 'create_survey.html', {'patients': patients, 'status': status_dictionary})
         
-        pre_survey = PreSurvey(title=pre_survey_data['title']) 
+        pre_survey = PreSurvey(title=pre_survey_data['surveytitle']) 
         pre_survey.save()
         print ' * Created a PreSurvey with title'
-        print pre_survey_data['title']
+        print pre_survey_data['surveytitle']
+        
+        
+        # Check that chk_patients exists in the response data.
+        # It wouldn't exist, if user did not check any checkboxes.
+        # If it does, that add it, because it is missing from the call to getlist()
+        if 'chk_patients' in pre_survey_data:
+            patients_ids.append(pre_survey_data['chk_patients'])
+        else:
+            print ' * No patients for the survey were selected'
+        
         
         # add another checkbox value, because it is missing from the call to getlist() 
-        patients_ids.append(pre_survey_data['chk_patients'])
+        #patients_ids.append(pre_survey_data['chk_patients'])
+        
+        print ' * Patients ids from checkboxes:'
+        for item in patients_ids:
+            print item
+        print ' * Done'
+        
+        
+        # --------------------------------------------------------------
+        if t == "[u'boolean']": # new question is boolean
+            print ' * You chose boolean question'
+            boolean = Sboolean(title=pre_survey_data['title'],
+                              text=pre_survey_data['text'],
+                              description=pre_survey_data['description'],
+                              target=int(pre_survey_data['goal']))
+            boolean.save()
+            # add to the presurvey
+            pre_survey.squestions.add(boolean)
+            # update the presurvey
+            pre_survey.save()
+            print ' * Added a boolean Q to presurvey'
+
+        elif t == "[u'category']": # new question is categorical
+            print ' * You chose categorical question'
+            category_list = []
+
+            i = 1
+            while 'cat' + str(i) in question_data:
+                category = Scategory(name=pre_survey_data['cat' + str(i)].lower(), value=i-1)
+                category_list.append(pre_survey_data['cat'+ str(i)].lower())
+                i = i + 1
+
+            categorical = Scategorical(title=pre_survey_data['title'],
+                                        text=pre_survey_data['text'],
+                                        description=pre_survey_data['description'],
+                                        categories=pre_survey_data)
+
+            if pre_survey_data['goal'].lower() in category_list: # check for numerical or text goal
+                categorical.target = category_list.index(pre_survey_data['goal'].lower())
+            else:
+                categorical.target = int(pre_survey_data['goal'])
+
+            categorical.save()
+
+        elif t == "[u'integer']": # new question is free form
+            print ' * You chose free form question'
+            free_form = SfreeForm(title=pre_survey_data['title'],
+                                text=pre_survey_data['text'],
+                                description=pre_survey_data['description'],
+                                target = int(pre_survey_data['goal']),
+                                units=pre_survey_data['units'])
+            free_form.save()
+
+        elif t == "[u'slider']": # new question is slider
+            print ' * You chose slider question'
+            slider = Sslider(title=pre_survey_data['title'],
+                            text=pre_survey_data['text'],
+                            description=pre_survey_data['description'],
+                            target = int(pre_survey_data['goal']),
+                            max_value=pre_survey_data['max_value'],
+                            min_value=pre_survey_data['min_value'],
+                            increment=pre_survey_data['increment'])
+            slider.save()
+        # --------------------------------------------------------------
         
         # get patients from IDs
         patients_users = []
@@ -1633,11 +1734,15 @@ def survey_overview(request, survey_id):
     presurvey_patients = survey.spatients.all()
     #for item in presurvey_patients:
         #print item.user.username
+    presurvey_questions = survey.squestions.all()
     
-    return render (request, 'survey_overview.html', {'survey': survey, 'patients': presurvey_patients})
-    
-# new_question on line 754
+    return render (request, 'survey_overview.html', {'survey': survey, 'patients': presurvey_patients, 'questions': presurvey_questions})
 
 @user_passes_test(is_physician)
 def s_new_question(request):
     return render (request, 's_new_question.html')
+
+@user_passes_test(is_physician)
+def new_survey_question(request):
+    return render (request, 'new_survey_question.html')
+    
