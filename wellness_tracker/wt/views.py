@@ -517,7 +517,7 @@ def new_strategy_planning(request, user_id):
 				     scorepos2=question_data['scorepos2'],
 				     scorepos1=question_data['scorepos1'],
 				     scoreneg1=question_data['scoreneg1'],
-				     scoreneg2=question_data['scoreneg1'],
+				     scoreneg2=question_data['scoreneg2'],
 				     activated=1,
 				     needsplanning=0)
 		print 'Saved the freeform'
@@ -651,10 +651,11 @@ def graph(request, user_id=None):
         if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
 
-    print at_least_1_goal
+    #print at_least_1_goal
     # Pull the questions for this user
-    question_list = Question.objects.filter(patient=user, gasgoal=selected_goal)
-    questions = Question.objects.filter(patient=user, gasgoal=selected_goal).get_real_instances(question_list)
+    question_list = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1)
+    questions = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1).get_real_instances(question_list)
+    active_questions = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1)
 
     latest_datetime = []
     latest_datetime = Answer.objects.extra(
@@ -664,7 +665,9 @@ def graph(request, user_id=None):
 
 
 
-    answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
+    #literally gay... but original answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
+    answers = Answer.objects.filter(question__in=questions).order_by('date')
+    
     #check most recent point and base gasscore on most recent point. Check for type fo question as well.
     #for tempanswer in answers:
 	#most_recent_value=tempanswer.value
@@ -723,7 +726,7 @@ def graph(request, user_id=None):
     strategy_questions_list = []
     #counter for a list of strategy questions
     icount = 0
-
+ 
     # Build nvd3 json
     data = []
     for k,v in grouped_answers.iteritems():
@@ -739,6 +742,9 @@ def graph(request, user_id=None):
         avg = mean(values)
         stdev = std(values)
 
+	#print k
+	#print values
+	
 	#find displayedscore of each question (compare tile of question). Note: Bad way to do it since there could be another
 	#question with the same name..... must find a better way.
 	for eachquestion in question_list:
@@ -753,6 +759,7 @@ def graph(request, user_id=None):
 		#count_str = "line-" + str(icount)
 		#print count_str
 		icount = icount + 1
+	    
 
         data.append(
                 {'key':k,
@@ -766,6 +773,7 @@ def graph(request, user_id=None):
 		 'datatag': sub_question['key'],
                  })
 
+
     return render(request, "graph.html",
             {"data_json": json.dumps(data),
              "data": data,
@@ -773,7 +781,8 @@ def graph(request, user_id=None):
 	     "selected_goal": selected_goal,
 	     "question_list": question_list,
 	     "at_least_1_goal": at_least_1_goal,
-	     "strategy_questions": strategy_questions_list})
+	     "strategy_questions": strategy_questions_list,
+	     "questions": active_questions})
 
 
 @user_passes_test(is_physician)
