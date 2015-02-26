@@ -657,15 +657,17 @@ def graph(request, user_id=None):
     questions = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1).get_real_instances(question_list)
     active_questions = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1)
 
-    latest_datetime = []
-    latest_datetime = Answer.objects.extra(
-            select={'the_date': 'date(date)' }
-        ).values_list('the_date').annotate(max_date=Max('date'))
-    max_dates = [item[1] for item in latest_datetime]
+    #start of original
+    #latest_datetime = []
+    #latest_datetime = Answer.objects.extra(
+    #        select={'the_date': 'date(date)' }
+    #    ).values_list('the_date').annotate(max_date=Max('date'))
+    #max_dates = [item[1] for item in latest_datetime]
 
 
 
     #literally gay... but original answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
+    #end of original
     answers = Answer.objects.filter(question__in=questions).order_by('date')
     
     #check most recent point and base gasscore on most recent point. Check for type fo question as well.
