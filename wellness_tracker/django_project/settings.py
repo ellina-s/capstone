@@ -12,6 +12,7 @@ DATABASE_PATH = os.path.join( PROJECT_PATH, 'project.db' )    # contains path to
 
 DEBUG = True
 TEMPLATE_DEBUG = DEBUG
+TEST_RUNNER = 'django.test.runner.DiscoverRunner'
 
 ADMINS = (
     # ('Your Name', 'your_email@example.com'),
