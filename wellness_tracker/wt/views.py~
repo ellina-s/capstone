@@ -1422,7 +1422,7 @@ def followup_strategy_planning(request, user_id):
         for k, v in response.items():
             question_data[str(k)] = v.pop()
 
-	
+	print question_data
 	if question_data['text'] == '':
 	    print 'These is no followup strategy planning data.'
 	elif type_selected_strategy == 'freeform':

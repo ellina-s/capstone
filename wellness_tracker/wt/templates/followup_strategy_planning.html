@@ -41,13 +41,12 @@
 
   {% csrf_token %}
 
-<!-- ---------------------------------------------------for PreQuestion Entry -->
+<!-- ------------------------------------------------for Prequestion Entry -->
 {% if type_selected_strategy == 'prequestion' %}
-
   <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
     <div class="col-sm-10">
-      <p class="help-block">{{ selected_strategy.title }}</p>
+      <input type="text" name="title" class="form-control" id="title" value="{{ selected_strategy.title }">
     </div>
   </div>
   <div class="form-group">
@@ -150,8 +149,6 @@
     </div>
 
 <!--Bootstrap Table, should scale with mobile devices-->
-
-
 <table>
 	<thead>
 	<tr>
@@ -205,14 +202,13 @@
 	</tbody>
 </table>
 
-{% endif %}
+{% else %}
 
-<!-- ------------------------------------------------for Freeform Entry -->
-{% if type_selected_strategy == 'freeform' %}
+<!-- ------------------------------------------------------------------Depending on type of question -->
 <div class="form-group">
     <label for="title" class="col-sm-2 control-label">Title</label>
     <div class="col-sm-10">
-      <p class="help-block">{{ selected_strategy.title }}</p>
+      <input type="text" name="title" class="form-control" id="title" value="{{ selected_strategy.title }}">
     </div>
   </div>
   <div class="form-group">
@@ -269,14 +265,47 @@
           </div>
          </div>
 
+
+
+
+<!-- ------------------------------------------------for Freeform Entry -->
+{% if type_selected_strategy == 'freeform' %}
 <div class="form-group">
     <label for="question_type" class="col-sm-2 control-label">Type</label>
     <div class="col-sm-10">
-      <select id="type" name="type" class="form-control">
-        <option value="slider">Slider</option>
-        <option value="category">Category</option>
-        <option value="boolean">Yes / No</option>
+      <select value= "Numerical" selected="slider" id="type" name="type" class="form-control">
         <option selected="selected" value="integer">Numerical</option>
+      </select>
+    </div>
+  </div>
+  <div class="conditional-questions">
+    <div id="integer" class="form-group" style="display: none;">
+      <label for="units" class="col-sm-2 control-label">Units</label>
+      <div class="col-sm-10">
+        <input type="text" name="units" id="units" class="form-control" value="{{ selected_strategy.units }}">
+      </div>
+    </div>
+{% endif %}
+
+<!-- ------------------------------------------------for Boolean Entry -->
+{% if type_selected_strategy == 'boolean' %}
+<div class="form-group">
+    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <div class="col-sm-10">
+      <select value="hi" id="type" name="type" class="form-control">
+        <option value="boolean" selected="selected">Yes / No</option>
+      </select>
+    </div>
+  </div>
+{% endif %}
+
+<!-- ------------------------------------------------for Slider Entry -->
+{% if type_selected_strategy == 'slider' %}
+<div class="form-group">
+    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <div class="col-sm-10">
+      <select value="slider" selected="slider" id="type" name="type" class="form-control">
+        <option value="slider">Slider</option>
       </select>
     </div>
   </div>
@@ -286,33 +315,21 @@
       <div class="row text-center">
         <div class="col-sm-4">
           <label for="slider-min_value">Lower Bound</label>
-          <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="0">
+          <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="{{ selected_strategy.min_value }}">
         </div>
         <div class="col-sm-4">
           <label for="slider-max_value">Uppper Bound</label>
-          <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="100">
+          <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="{{ selected_strategy.max_value }}">
         </div>
         <div class="col-sm-4">
           <label for="slider-increment">Increment</label>
-          <input type="text" name="increment" id="slider-increment" class="form-control text-center" value="5">
+          <input type="text" name="increment" id="slider-increment" class="form-control text-center" value="{{ selected_strategy.increment }}">
         </div>
       </div>
     </div>
-    <div id="category" class="form-group" style="display: none;">
-      <p class="help-block">Add categories for this question</p>
-      <div id="cat-list">
-        <input type="text" id="cat1" name="cat1" class="form-control" placeholder="Category 1">
-      </div>
-      <div class="text-center">
-        <a href="#" onClick="add_category()" class="btn btn-default text-center"><i class="glyphicon glyphicon-plus text-success"></i> Add Category</a>
-      </div>
     </div>
-    <div id="integer" class="form-group" style="display: none;">
-      <label for="units" class="col-sm-2 control-label">Units</label>
-      <div class="col-sm-10">
-        <input type="text" name="units" id="units" class="form-control" value="{{ selected_strategy.units }}">
-      </div>
-    </div>
+{% endif %}
+
 
 <!--Bootstrap Table, should scale with mobile devices-->
 
@@ -346,7 +363,15 @@
 		<td>+1</td>
 	</tr>
 	
-
+	<tr>
+		<td>Target</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="target2" class="form-control" id="question" value="{{ selected_strategy.target }}">
+                </div>
+		</td>
+		<td>0</td>
+	</tr>
 
 	<tr>
 		<td>Slightly Worse than Expected Outcome</td>
@@ -369,10 +394,11 @@
 	</tr>
 	</tbody>
 </table>
-{% endif %}
+<!-- ------------------------------------------------------------------END - Depending on type of question -->
+{% endif %}  
   </div>
   <div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
+    <input value="Save" type="submit" class="btn btn-lg btn-success"></input>
   </div>
 </form>
 {% endblock %}

@@ -82,8 +82,11 @@ function show_question(caller){
 <hr />
 {% if selected_goal == '-1' %}
 <h4>There are no goals created or selected for this patient.</h4>
-{% else %}
+{% endif %}
+<!-- else statement, uncomment and add endif at the end
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
+ -->
+
     {% if user|is_physician %}
         <div class="strategy-questions">
         {% for item in strategy_questions %}
@@ -93,7 +96,8 @@ function show_question(caller){
         {% endfor %}
         </div>
     {% endif %}
-{% endif %}
+
+
 
 <div class="row">
   <div id="graph" class="text-left col-md-9 gui-container">
@@ -112,19 +116,164 @@ function show_question(caller){
 	  {% if at_least_1_goal == 'nogoal' %}
 	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
 	  {% else %}
-	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Follow Up Meeting</a></center>
+	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Decision Making</a></center>
 	  {% endif %}
 	</div>
 	{% endif %}
 
-        <h4>Strategies</h4>
+
+<!-- Goal Popup inforamtion -->
+<!-- Modal -->
+<div class="modal fade" id="goalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Goal - More Information</h4>
+      </div>
+      <div class="modal-body">
+	    <div class="col-md-offset-1">
+		<div>
+		  <label>Goal:</label>
+			{{ selected_goal.goal1 }}<br>
+		  <label>Environmental Assessment:</label>
+			{{ selected_goal.environmentalassessment1 }}<br>
+		  <label>Baseline:</label>
+			{{ selected_goal.baseline }}<br>
+		  <label>Target:</label>
+			{{ selected_goal.target }}<br>
+		  <label>Timeline:</label>
+			{{ selected_goal.timeline }}<br>
+		  <label>Indicator:</label>
+			{{ selected_goal.indicator }}<br>
+		  <label>Gas Score +2:</label>
+			{{ selected_goal.scorepos2 }}<br>
+		  <label>Gas Score +1:</label>
+			{{ selected_goal.scorepos1 }}<br>
+		  <label>Gas Score 0:</label>
+			{{ selected_goal.target }}<br>
+		  <label>Gas Score -1:</label>
+			{{ selected_goal.scoreneg1 }}<br>
+		  <label>Gas Score -2:</label>
+			{{ selected_goal.scoreneg2 }}<br>
+
+		</div>
+	    </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!--<button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+<!--End Goal popup inforamtion -->
+
+<!-- Strategy Popup inforamtion -->
+<!-- Modal -->
+<div class="modal fade" id="strategyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="myModalLabel">Strategy - More Information</h4>
+      </div>
+      <div class="modal-body">
+	    <div class="col-md-offset-1">
+		{% for eachquestion in questions %} 
+		<div>
+		  <h4><strong>
+			{{ eachquestion.title }}</strong></h4>
+		  <label>Question:</label>
+			{{ eachquestion.text }}<br>
+		  <label>Description:</label>
+			{{ eachquestion.description }}<br>
+		  <label>Importance:</label>
+			{{ eachquestion.importance }}<br>
+		  <label>Difficulty:</label>
+			{{ eachquestion.difficulty }}<br>
+		  <label>Baseline:</label>
+			{{ eachquestion.baseline }}<br>
+		  <label>Target:</label>
+			{{ eachquestion.target }}<br>
+		  <label>Timeline:</label>
+			{{ eachquestion.timeline }}<br>
+		  <label>Indicator:</label>
+			{{ eachquestion.indicator }}<br>
+		  <label>Gas Score +2:</label>
+			{{ eachquestion.scorepos2 }}<br>
+		  <label>Gas Score +1:</label>
+			{{ eachquestion.scorepos1 }}<br>
+		  <label>Gas Score 0:</label>
+			{{ eachquestion.target }}<br>
+		  <label>Gas Score -1:</label>
+			{{ eachquestion.scoreneg1 }}<br>
+		  <label>Gas Score -2:</label>
+			{{ eachquestion.scoreneg2 }}<br><hr>
+
+		</div>
+	        {% endfor %}
+	    </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+        <!--<button type="button" class="btn btn-primary">Save changes</button> -->
+      </div>
+    </div>
+  </div>
+</div>
+<!--End strategy popup inforamtion -->
+
+	<h4> <!-- Goal dropdown menus more information -->
+	  <div class="dropdown">
+	Goal
+	    <button class="pull-right btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+	    
+	      <span class="caret"></span>
+	    </button>
+	    <ul class="pull-right dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
+	      <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#goalModal">More Information</a></li>
+	      <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Create</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Edit</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Select</a></li> -->
+	    </ul>
+	  </div>
+	</h4>
+
+<!-- End Goal dropdown menus more information -->
+        <div id="symptoms" class="list-group">
+	{% if at_least_1_goal == 'goalpresent'  %}
+          <a href="#" class="symptom list-group-item inactive"> {{ selected_goal.goal1 }}</a>
+	{% endif %}
+          {% if user|is_physician %}
+	  
+	  <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a> 
+          {% endif %}
+        </div>
+
+        <h4>	  
+	  <div class="dropdown">
+	Strategies
+	    <button class="pull-right btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
+	    
+	      <span class="caret"></span>
+	    </button>
+	    <ul class="pull-right dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
+	      <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#strategyModal">More Information</a></li>
+	      <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Create</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Edit</a></li>
+	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Select</a></li> -->
+	    </ul>
+	  </div></h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
           <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
           {% endfor %}
           {% if user|is_physician %}
-	  <!-- Original (Add this back, "Add new strategy"
-	  <a href="{% url 'new_question' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-plus text-success" style="margin-right: 10px;"></i>Add Symptom</a> -->
+	  
+	  <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a> 
           {% endif %}
         </div>
       </div>
@@ -132,6 +281,9 @@ function show_question(caller){
         <h4>Data Analysis</h4>
         <div id="data-analysis" class="list-group">
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
+	{% if user|is_physician %}
+	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
+	{% endif %}
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
           <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>
         </div>
