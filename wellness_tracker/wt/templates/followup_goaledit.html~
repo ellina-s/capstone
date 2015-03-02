@@ -42,29 +42,54 @@
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goaledit' patient.id %}" method="post">
 {% csrf_token %}
     </br></br>      
-   <div class="form-group">
-     <label for="goal" class="col-sm-4 control-label">Current Selected Goal:</label>
-     <div class="col-sm-8">
-       <p class="help-block">{{ selected_goal.goal1 }}</p>
-     </div>
+   <div class="row">
+        <div class="col-md-4"><label for="goal">Current Selected Goal:</label></div>
+	<div class="col-md-5" style="color:#737373">{{ selected_goal.goal1 }}</div>
+	<div class="col-md-3">
+	    <input value="Edit" name="edit{{ selected_goal.id }}" type="submit" class="btn btn-lg btn-info" style="padding:5px 10px; margin-bottom:2px; "></input><br>
+	    <input value="Edit Strategies" name="select{{ selected_goal.id }}" type="submit" class="btn btn-lg btn-success" style="padding:5px 10px; margin-bottom:2px;"></input>
+	</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-1"></div>
+	<div class="col-md-10"><hr></div>
+	<div class="col-md-1"></div>
    </div>
 
 {% if banked_goals_list %}
           
     {% for gasgoal in banked_goals_list %}
+   <div class="row">
+	<div class="col-md-4"><label for="goal">Banked Goal:</label></div>
+	<div class="col-md-5" style="color:#737373">{{ gasgoal.goal1 }}</div>
+	<div class="col-md-3">
+	    <input value="Edit and Activate" name="{{ gasgoal.id }}" type="submit" class="btn btn-lg btn-info" style="padding:5px 10px; margin-bottom:2px"></input>
+	    <input value="Edit" name="edit{{ gasgoal.id }}" type="submit" class="btn btn-info" style="padding:5px 10px; margin-bottom:2px; display:none;"></input>
+	</div>
+   </div>
+
+
+<!--working
    <div class="form-group">
      <label for="goal" class="col-sm-4 control-label">Banked Goal:</label>
-     <div class="col-sm-8">
-       <p class="help-block">{{ gasgoal.goal1 }}</p>
+     <div class="col-sm-5">
+       <p class="help-block">{{ gasgoal.goal1 }}<input value="Select{{ gasgoal.id }}" name="select{{ gasgoal.id }}" type="submit" class="btn btn-info pull-right"></input></p>
+	
      </div>
    </div>
+-->
 
 {% endfor %}
             
 {% else %}
             <strong>There are no banked goals present.</strong><br/>
 {% endif %}
-
+</br>
+<div class="submit text-center">
+    <input value="Create New Goal" name="ext" type="submit" class="btn btn-lg btn-success"></input>
+    <input value="Next" name="ext" type="submit" class="btn btn-lg btn-success" style="display:none;"></input>
+  </div>
 
 </br>
 
@@ -119,7 +144,7 @@
 
 
   <div class="submit text-center">
-    <input value="Bernie" type="submit" class="btn btn-lg btn-success"></input>
+    <input value="Next ->" name="ext" type="submit" class="btn btn-lg btn-success"></input>
   </div>
 </form>
 {% endblock %}
