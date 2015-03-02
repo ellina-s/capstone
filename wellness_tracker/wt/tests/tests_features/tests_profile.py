@@ -1,7 +1,9 @@
+# ----------------------------------------------------
 # Phase 2 of Wellness Tracker
 # Tests for changing the password in the profile page
 # How to run these tests with unittest:
 # python -m unittest discover -v
+# ----------------------------------------------------
 
 import unittest
 from selenium import webdriver
@@ -56,6 +58,9 @@ class WTProfileTest(unittest.TestCase):
         driver.find_element_by_id("id_confirm_new_password").clear()
         driver.find_element_by_id("id_confirm_new_password").send_keys("who")
         driver.find_element_by_xpath("//input[@type='submit']").click()
+        assert "Password updated successfully" in driver.page_source
+        assert "Incorrect current password" not in driver.page_source
+        assert "New passwords do not macth" not in driver.page_source
 
     # Test for incorrect current password
     def test_incorrect_current_password(self):

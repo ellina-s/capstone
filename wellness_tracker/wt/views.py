@@ -1448,15 +1448,14 @@ def profile(request):
             
             #Validate that the old_password field is correct.
             if user.check_password(old_password):
-                #print "Old password is correct YAY"
+                #print " * Old password is correct"
                 errors_dictionary['old_pass_flag'] = False
                 if new_password == confirm_new_password:
-                    #print "Passwords match YAY"
+                    #print " * New passwords match YAY"
                     errors_dictionary['new_pass_flag'] = False
                     user.set_password(new_password)
                     user.save()
-                    print "Password updated"
-                    
+
                     update_success = {}
                     update_success['flag'] = True
                     empty_form = PasswordForm() # return an empty form to prevent displaying password data
@@ -1465,18 +1464,17 @@ def profile(request):
                                                             'any_errors': errors_dictionary,
                                                             'update_success': update_success })
                 else:
-                    #print "Passwords do not match NNNAY"
+                    #print " * New passwords do not match"
                     errors_dictionary['new_pass_flag'] = True
             else:
-                #print "Old password is not correct NNNAY"
+                #print " * Old password is not correct"
                 errors_dictionary['old_pass_flag'] = True
+                if new_password != confirm_new_password:
+                    #print ' * New passwords do not match'
+                    errors_dictionary['new_pass_flag'] = True
 
-            #print "** VIEWS SAYS form is VALID"
             # render a template with form, user data, and errors dictionaries:
             return render(request, 'profile.html', {'form': form, 'profile_user': user, 'any_errors': errors_dictionary})
-        #else:
-            #print "** VIEWS SAYS form is INVALID"
-            #print form.errors
 
     # if a GET (or any other method), create a blank form
     else:
