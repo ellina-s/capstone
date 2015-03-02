@@ -79,6 +79,36 @@ class WTBaseTest(unittest.TestCase):
         driver.find_element_by_link_text("Goal Attainment Wizard").click()
         self.assertIn("WellnessTracker - GAS Step1", driver.title)
 
+    #Test for creating a patient with duplicate username
+    def test_create_duplicate_patient(self):
+        driver = self.driver
+        driver.get(self.base_url + "/login/")
+        self.assertIn("WellnessTracker - Login", driver.title)
+        driver.find_element_by_id("id_username").clear()
+        driver.find_element_by_id("id_username").send_keys("doctoraj")
+        driver.find_element_by_id("id_password").clear()
+        driver.find_element_by_id("id_password").send_keys("ajp")
+        driver.find_element_by_xpath("//button[@type='submit']").click()
+        driver.find_element_by_link_text("Add Patient").click()
+        # Check that status messages are not present
+        assert "Patient has been created successfully" not in driver.page_source
+        assert "Missing a username, password, or email." not in driver.page_source
+        assert "Duplicate username. Please select another username." not in driver.page_source
+        assert "Email error" not in driver.page_source
+        # Fill in the data and submit
+        driver.find_element_by_id("userid").clear()
+        driver.find_element_by_id("userid").send_keys("Jannis")
+        driver.find_element_by_id("useremail").clear()
+        driver.find_element_by_id("useremail").send_keys("jannis@example.com")
+        driver.find_element_by_id("password").clear()
+        driver.find_element_by_id("password").send_keys("jannisp")
+        driver.find_element_by_xpath("//input[@type='submit']").click()
+        #Check that duplicate username is caught
+        assert "Duplicate username. Please select another username." in driver.page_source
+        assert "Patient has been created successfully" not in driver.page_source
+        assert "Missing a username, password, or email." not in driver.page_source
+        assert "Email error" not in driver.page_source
+
     def tearDown(self):
         self.driver.close()
         
