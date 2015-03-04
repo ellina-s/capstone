@@ -37,79 +37,68 @@
 <h4><center><br>Goal Summary<br><br></center></h4>
 <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
 <dir class="form-horizontal col-md-6 col-md-offset-3">
+          
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Goal:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal.goal1 }}</div>
+   </div>
 
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Environmental Assessment:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal.environmentalassessment1 }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Question:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.text }}</div>
+   </div>
+
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Baseline:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.baseline }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Target:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.target }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Timeline:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.timeline }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Indicator:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.indicator }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score +2:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos2 }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score +1:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos1 }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score 0 (Target):</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.target }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score -1:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scoreneg1 }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score -2:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scoreneg2 }}</div>
+   </div>
 </br>
-
-   <div class="row">
-	<div class="col-md-3"><label for="goal">Goal:</label></div>
-	<div class="col-md-9" style="color:#737373">{{ selected_goal.goal1 }}</div>
-   </div>
-
-   <div class="row">
-	<div class="col-md-3"><label for="goal">Environmental Assessment:</label></div>
-	<div class="col-md-9" style="color:#737373">{{ selected_goal.environmentalassessment1 }}</div>
-   </div>
-
-   <div class="row">
-	<div class="col-md-3"><label for="goal">Baseline:</label></div>
-	<div class="col-sm-9" style="color:#737373">{{ selected_goal.baseline }}</div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Target:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.target }}</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Timeline:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.timeline }} Days</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Indicator:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.indicator }}</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Action:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.action }}</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Gas Score +2:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.scorepos2 }}</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Gas Score +1:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.scorepos1 }}</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Gas Score -1:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.scoreneg1 }}</p>
-     </div>
-   </div>
-
-   <div class="form-group">
-     <label for="goal" class="col-sm-3 control-label">Gas Score -2:</label>
-     <div class="col-sm-9">
-       <p class="help-block">{{ selected_goal.scoreneg2 }}</p>
-     </div>
-   </div>
 
 <!-- Display Strategies -->
 {% if active_strategy_list %}
@@ -118,89 +107,65 @@
 
          <h5><center>Strategy - {{ question.title }}</center></h5>
 
-         <div class="form-group">
-           <label for="goal" class="col-sm-3 control-label">Strategy Title:</label>
-           <div class="col-sm-9">
-             <p class="help-block">{{ question.title }}</p>
-           </div>
-	 </div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Strategy Title:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.title }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Question:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.text }}</div>
+   </div>
           
-        <div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Question:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.text }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Description:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.description }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Description:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.description }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Target:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.target }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Target:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.Target }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Baseline:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.baseline }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Baseline:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.baseline }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Timeline:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.timeline }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Timeline:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.timeline }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Importance:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.importance }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">Importance:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.importance }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Difficulty:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.difficulty }}</div>
+   </div>
 
-	<div class="form-group">        
-          <label for="question" class="col-sm-3 control-label">Difficulty:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.difficulty }}</p>
-          </div>
-         </div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score +2:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.scorepos2 }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">GAS Score +2:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.scorepos2 }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score +1:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.scorepos1 }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">GAS Score +1:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.scorepos1 }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score -1:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.scoreneg1 }}</div>
+   </div>
 
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">GAS Score -1:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.scoreneg1 }}</p>
-          </div>
-	</div>
-
-	<div class="form-group">
-          <label for="question" class="col-sm-3 control-label">GAS Score -2:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.scoreneg2 }}</p>
-          </div>
-	</div>
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score -2:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.scoreneg2 }}</div>
+   </div>
 
     {% endfor %}
             

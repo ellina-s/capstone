@@ -41,7 +41,7 @@
   	   <div class="col-sm-7"><p class="help-block">1 = not difficult to 4 = extremely difficult</a></div>
 	   
 <!-- Drop Down Select Question -->
-<div class="form-group">
+<!--<div class="form-group">
     <label for="createanother" class="col-sm-3 control-label"></label>
     <div class="col-sm-9"><p>Would you like to create another strategy?</p>
       <select id="type" name="createanotherstrategy" class="form-control">
@@ -49,7 +49,7 @@
         <option value="no">No, Continue to the next step.</option>
       </select>
     </div>
-  </div>
+  </div>-->
 
 
 <!--   Note:   some info from patient_list that i didnt like
@@ -58,8 +58,10 @@
   {% endfor %} -->
 
 </div>
-  <div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
+<div class="submit text-center">
+   <input value="Create Another Strategy" name="button" type="submit" class="btn btn-success btn-lg" style="margin-bottom:2px; ">
+   <input value="Next" name="button" type="submit" class="btn btn-success btn-lg" style="margin-bottom:2px; ">
   </div>
+</form>
 </form>
 {% endblock %}
