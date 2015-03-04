@@ -133,31 +133,42 @@ function show_question(caller){
       </div>
       <div class="modal-body">
 	    <div class="col-md-offset-1">
-		<div>
-		  <label>Goal:</label>
-			{{ selected_goal.goal1 }}<br>
-		  <label>Environmental Assessment:</label>
-			{{ selected_goal.environmentalassessment1 }}<br>
-		  <label>Baseline:</label>
-			{{ selected_goal.baseline }}<br>
-		  <label>Target:</label>
-			{{ selected_goal.target }}<br>
-		  <label>Timeline:</label>
-			{{ selected_goal.timeline }}<br>
-		  <label>Indicator:</label>
-			{{ selected_goal.indicator }}<br>
-		  <label>Gas Score +2:</label>
-			{{ selected_goal.scorepos2 }}<br>
-		  <label>Gas Score +1:</label>
-			{{ selected_goal.scorepos1 }}<br>
-		  <label>Gas Score 0:</label>
-			{{ selected_goal.target }}<br>
-		  <label>Gas Score -1:</label>
-			{{ selected_goal.scoreneg1 }}<br>
-		  <label>Gas Score -2:</label>
-			{{ selected_goal.scoreneg2 }}<br>
-
-		</div>
+		
+		{% for eachquestion in questions %} 
+		{% if eachquestion.isgoalplanningdata = 1 %}
+			<div>
+			  <h4><strong>
+			  <label>Goal:</label>
+				{{ eachquestion.title }}</strong></h4>
+			  <label>Question:</label>
+				{{ eachquestion.text }}<br>
+			  <label>Description:</label>
+				{{ eachquestion.description }}<br>
+			  <label>Importance:</label>
+				{{ eachquestion.importance }}<br>
+			  <label>Difficulty:</label>
+				{{ eachquestion.difficulty }}<br>
+			  <label>Baseline:</label>
+				{{ eachquestion.baseline }}<br>
+			  <label>Target:</label>
+				{{ eachquestion.target }}<br>
+			  <label>Timeline:</label>
+				{{ eachquestion.timeline }}<br>
+			  <label>Indicator:</label>
+				{{ eachquestion.indicator }}<br>
+			  <label>Gas Score +2:</label>
+				{{ eachquestion.scorepos2 }}<br>
+			  <label>Gas Score +1:</label>
+				{{ eachquestion.scorepos1 }}<br>
+			  <label>Gas Score 0:</label>
+				{{ eachquestion.target }}<br>
+			  <label>Gas Score -1:</label>
+				{{ eachquestion.scoreneg1 }}<br>
+			  <label>Gas Score -2:</label>
+				{{ eachquestion.scoreneg2 }}<br>
+			</div>
+		{% endif %}
+		{% endfor %}
 	    </div>
 
       </div>
@@ -182,6 +193,7 @@ function show_question(caller){
       <div class="modal-body">
 	    <div class="col-md-offset-1">
 		{% for eachquestion in questions %} 
+		{% if eachquestion.isgoalplanningdata = 0 %}
 		<div>
 		  <h4><strong>
 			{{ eachquestion.title }}</strong></h4>
@@ -213,6 +225,7 @@ function show_question(caller){
 			{{ eachquestion.scoreneg2 }}<br><hr>
 
 		</div>
+		{% endif %}
 	        {% endfor %}
 	    </div>
 
@@ -244,9 +257,13 @@ function show_question(caller){
 
 <!-- End Goal dropdown menus more information -->
         <div id="symptoms" class="list-group">
-	{% if selected_goal.goal1 == 's'  %}
-          <a href="#" class="symptom list-group-item inactive"> {{ selected_goal.goal1 }}</a>
-	{% endif %}
+	{% if at_least_1_goal == 'goalpresent'  %}
+          <!--{% for symptom in data %}
+		{% if symptom.isgoalplanningdata == 1 %} 
+          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+		{% endif %}
+          {% endfor %}
+	{% endif %}-->
           {% if user|is_physician %}
 	  
 	  <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a> 
@@ -269,7 +286,12 @@ function show_question(caller){
 	  </div></h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
-          <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+	    <!--{% if symptom.isgoalplanningdata == 0 %}-->
+              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+	    <!--{% else %} 
+	      <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}" style="display: none">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+	    {% endif %}	   -->
+
           {% endfor %}
           {% if user|is_physician %}
 	  

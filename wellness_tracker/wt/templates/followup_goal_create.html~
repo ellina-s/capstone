@@ -2,7 +2,7 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - GAS Step1{% endblock %}
+{% block title %}{{ block.super }} - GAS Follow Up Meeting Goal Create{% endblock %}
 
 {% block css %}
   {{ block.super }}
@@ -28,11 +28,11 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step1 - {% firstof patient.get_full_name patient.username|title %}</h2>
+<h2>Follow Up Meeting - Goal Create - {% firstof patient.get_full_name patient.username|title %}</h2>
 
 
 <h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</center></h4>
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_step1' patient.id %}" method="post">
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_create' patient.id %}" method="post">
   {% csrf_token %}
          <div class="New Patient Information">
            <div class="form-group">
@@ -53,7 +53,7 @@
 
 
 <!-- Drop Down Select Question -->
-
+<!--
 <div class="form-group">
     <label for="createanother" class="col-sm-3 control-label"></label>
     <div class="col-sm-9"><p>Would you like to create another goal?</p>
@@ -62,13 +62,14 @@
         <option value="no">No, Continue to the next step.</option>
       </select>
     </div>
-  </div>
+  </div>-->
 
-  </div>
+
 
 </div>
 <div class="submit text-center">
-   <input type="submit" class="btn btn-info btn-lg">
+   <input value="Create Another Goal" name="button" type="submit" class="btn btn-info btn-lg" style="margin-bottom:2px; ">
+   <input value="Save + Continue" name="button" type="submit" class="btn btn-info btn-lg" style="margin-bottom:2px; ">
   </div>
 </form>
 

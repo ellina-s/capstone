@@ -164,6 +164,7 @@ def start_gas(request):
 @user_passes_test(is_physician)
 def gas_step1(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
+    pageforward = 'unknown'
     #print request.POST
     if request.method == 'POST':
         response = dict(request.POST)
@@ -171,6 +172,16 @@ def gas_step1(request, user_id):
         t = str(response.get('type'))
         gasgoals_data = {}
         for k, v in response.items():
+	    #checking for "Create Another Goal" button pressed
+	    if str(v) == "[u'Create Another Goal']":
+		pageforward = 'createanothergoal'
+	    #Done - checking for "Create Another Goal" button pressed
+
+	    #checking for "Next" button pressed
+	    if str(v) == "[u'Next']":
+		pageforward = 'next'
+	    #Done - checking for "Create New Goal" button pressed
+
             gasgoals_data[str(k)] = v.pop()
 
 	print gasgoals_data
@@ -181,6 +192,12 @@ def gas_step1(request, user_id):
 			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
 			         patient=patient)
             gas_goals.save()
+
+	if pageforward == 'createanothergoal':
+	    return render(request, 'gas_step1.html', {'patient': patient})
+	if pageforward == 'next':
+	    return render(request, 'gas_goal_selection_forward.html', {'patient': patient})
+	
 	if gasgoals_data['createanother'] == 'yes': 
             return render(request, 'gas_step1.html', {'patient': patient})
 	else:
@@ -266,16 +283,111 @@ def planning(request, user_id):
 	if question_data['baseline'] == '':
 	    print 'No goal planning data in the form'
 	else:
-	    selected_goal.baseline = question_data['baseline']
-	    selected_goal.target = question_data['target']
-	    selected_goal.timeline = question_data['timeline']
-	    selected_goal.indicator = question_data['indicator']
-	    selected_goal.scorepos2 = question_data['scorepos2']
-	    selected_goal.scorepos1 = question_data['scorepos1']
-	    selected_goal.scoreneg1 = question_data['scoreneg1']
-	    selected_goal.scoreneg2 = question_data['scoreneg2']
-	
-	    selected_goal.save()
+	    #create a new strategy (question) with isgoalplanningdata flag = 1 (goal info, no a strategy)
+	    if t == "[u'boolean']": # new question is boolean
+                boolean = Boolean(title=question_data['title'],
+				  text=question_data['text'],
+                                  description=question_data['description'],
+                                  target=int(question_data['goal']),
+                                  patient=patient,
+				  gasgoal=selected_goal,
+				  importance=0,
+				  difficulty=0,
+				  baseline=question_data['baseline'],
+				  action=question_data['action'],
+				  timeline=question_data['timeline'],
+				  indicator=question_data['indicator'],
+				  scorepos2=question_data['scorepos2'],
+				  scorepos1=question_data['scorepos1'],
+				  scoreneg1=question_data['scoreneg1'],
+				  scoreneg2=question_data['scoreneg1'],
+				  activated=1,
+				  needsplanning=0,
+				  isgoalplanningdata = 1)
+                boolean.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+
+            elif t == "[u'category']": # new question is categorical
+                category_list = []
+
+                i = 1
+                while 'cat' + str(i) in question_data:
+                    category = Category(name=question_data['cat' + str(i)].lower(), value=i-1)
+                    category_list.append(question_data['cat'+ str(i)].lower())
+                    i = i + 1
+
+                categorical = Categorical(title=selected_strategy.title,
+					    text=question_data['text'],
+                                            description=question_data['description'],
+                                            categories=category_list,
+                                            patient=patient)
+
+                if question_data['goal'].lower() in category_list: # check for numerical or text goal
+                    categorical.target = category_list.index(question_data['goal'].lower())
+                else:
+                    categorical.target = int(question_data['goal'])
+
+                categorical.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+            elif t == "[u'integer']": # new question is free form
+		#selected_strategy.text = question_data['text']
+		#selected_strategy.description = question_data['description']
+		#selected_strategy.target = question_data['target']
+		#selected_strategy.text = question_data['units']
+
+                free_form = FreeForm(title=question_data['title'],
+				     text=question_data['text'],
+                                     description=question_data['description'],
+                                     target = int(question_data['goal']),
+                                     patient=patient,
+                                     units=question_data['units'],
+				     gasgoal=selected_goal,
+				     importance=0,
+				     difficulty=0,
+				     baseline=question_data['baseline'],
+				     action=question_data['action'],
+				     timeline=question_data['timeline'],
+				     indicator=question_data['indicator'],
+				     scorepos2=question_data['scorepos2'],
+				     scorepos1=question_data['scorepos1'],
+				     scoreneg1=question_data['scoreneg1'],
+				     scoreneg2=question_data['scoreneg1'],
+				     activated=1,
+				     needsplanning=0,
+				     isgoalplanningdata = 1)
+		#print 'Saved the freeform'
+                free_form.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+            elif t == "[u'slider']": # new question is slider
+                slider = Slider(title=question_data['title'],
+				text=question_data['text'],
+                                description=question_data['description'],
+                                target = int(question_data['goal']),
+                                patient=patient,
+                                max_value=question_data['max_value'],
+                                min_value=question_data['min_value'],
+                                increment=question_data['increment'],
+				gasgoal=selected_goal,
+				importance=0,
+				difficulty=0,
+				baseline=question_data['baseline'],
+				action=question_data['action'],
+				timeline=question_data['timeline'],
+				indicator=question_data['indicator'],
+				scorepos2=question_data['scorepos2'],
+				scorepos1=question_data['scorepos1'],
+				scoreneg1=question_data['scoreneg1'],
+				scoreneg2=question_data['scoreneg1'],
+				activated=1,
+				needsplanning=0,
+				isgoalplanningdata = 1)
+                slider.save()
+
 
         return render(request, 'goal_summary_forward.html', context_dict)
 
@@ -298,7 +410,14 @@ def goal_summary(request, user_id):
         if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
 
-    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+    #find Goal Question (isgoalplanningdata = 1)
+    strategy_list = Question.objects.filter(gasgoal=selected_goal)
+    for each_strategy in strategy_list:
+	if each_strategy.isgoalplanningdata == 1:
+	    selected_goal_question = each_strategy
+    
+
+    context_dict = {'patient': patient, 'selected_goal': selected_goal, 'selected_goal_question': selected_goal_question}
     return render(request, 'goal_summary.html', context_dict)
 
 
@@ -666,7 +785,7 @@ def graph(request, user_id=None):
 
 
 
-    #literally gay... but original answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
+    #literally ... but original answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
     #end of original
     answers = Answer.objects.filter(question__in=questions).order_by('date')
     
@@ -729,6 +848,7 @@ def graph(request, user_id=None):
     #counter for a list of strategy questions
     icount = 0
  
+    print 'The order the Strategies a read (issue with displaying on graph correcly? Try)'
     # Build nvd3 json
     data = []
     for k,v in grouped_answers.iteritems():
@@ -747,11 +867,12 @@ def graph(request, user_id=None):
 	#print k
 	#print values
 	
-	#find displayedscore of each question (compare tile of question). Note: Bad way to do it since there could be another
+	#find displayedscore of each question (compare title of question). Note: Bad way to do it since there could be another
 	#question with the same name..... must find a better way.
 	for eachquestion in question_list:
 	    if k == eachquestion.title:
 		displayedscoretemp = eachquestion.displayedscore
+		isgoalplanningdata = eachquestion.isgoalplanningdata
 		#populate a list with strategy questions
 		sub_question = {}
 		sub_question['key'] = "line-" + str(icount)
@@ -762,10 +883,11 @@ def graph(request, user_id=None):
 		#print count_str
 		icount = icount + 1
 	    
-
+	#reorder data so goal question data is first???????????????????????????????????????????????????????????????????????
         data.append(
                 {'key':k,
 		 'displayedscore': displayedscoretemp,
+		 'isgoalplanningdata': isgoalplanningdata,
                  'values': point_list,
                  'disabled': True,
                  'avg': avg,
@@ -774,7 +896,7 @@ def graph(request, user_id=None):
                  'std2': avg-stdev,
 		 'datatag': sub_question['key'],
                  })
-
+	print k
 
     return render(request, "graph.html",
             {"data_json": json.dumps(data),
@@ -871,6 +993,14 @@ def followup_goaledit(request, user_id):
     #Find all banked goals
     banked_goals_list = GASGoals.objects.filter(patient=patient, activated='0')
 
+    #Find Question for Goal (isgoalplannning = 1) .
+    strategy_list = Question.objects.filter(gasgoal=selected_goal)
+    for each_strategy in strategy_list:
+	#print each_strategy.isgoalplanningdata
+	if each_strategy.isgoalplanningdata == 1:
+	    #print 'Goal Question '+each_strategy.text
+	    selected_goal_question = each_strategy
+
     #Find all active strategies
     #active_strategy_list = Question.objects.filter(gasgoal=selected_goal, activated='1')
     #for astrat in active_strategy_list:
@@ -898,12 +1028,19 @@ def followup_goaledit(request, user_id):
 			    tempGASGoals.save()
 			each_goal.activated = 1
 			each_goal.save()
+			#Find goal_question
+			strategy_list = Question.objects.filter(gasgoal=each_goal)
+			
+    			for each_strategy in strategy_list:
+			    if each_strategy.isgoalplanningdata == 1:
+	    		        #print 'Goal Question '+each_strategy.text
+	    			selected_goal_question = each_strategy
+				selected_goal_question.needsplanning = '1'
+	    			selected_goal_question.save()
 			pageforward = 'followup_goal_planning_forward.html'
 	    #Done - Checking for "edit and activate" a new goal
 
-	    #checking for "next" button pressed
-	    if str(v) == "[u'Next']":
-		pageforward = 'followup_strategyedit_forward.html'
+	    #checking for "Edit Strategies" button pressed
 	    if str(v) == "[u'Edit Strategies']":
 		pageforward = 'followup_strategyedit_forward.html'
 	    #Done - checking for "finish" button pressed
@@ -911,12 +1048,18 @@ def followup_goaledit(request, user_id):
 	    #checking for "edit" button pressed (edit select goal)
 	    if str(v) == "[u'Edit']":
 		pageforward = 'followup_goal_planning_forward.html'
+		for each_strategy in strategy_list:
+		    if each_strategy.isgoalplanningdata == 1:
+			each_strategy.needsplanning = '1'
+	    		each_strategy.save()
 	    #Done - checking for "edit" button pressed (edit select goal)
 
 	    #checking for "Create New Goal" button pressed
 	    if str(v) == "[u'Create New Goal']":
 		pageforward = 'followup_goal_create_forward.html'
 	    #Done - checking for "Create New Goal" button pressed
+
+
 
             question_data[str(k)] = v.pop()
 	    if k == 'navselect':
@@ -927,8 +1070,6 @@ def followup_goaledit(request, user_id):
 	#Next Page logic 
 	if pageforward == 'followup_strategyedit_forward.html':
 	    return render(request, 'followup_strategyedit_forward.html', context_dict)
-	if pageforward == 'followup_goal_planning_forward.html':
-	    return render(request, 'followup_goal_planning_forward.html', context_dict)
 	if pageforward == 'followup_goal_planning_forward.html':
 	    return render(request, 'followup_goal_planning_forward.html', context_dict)
 	if pageforward == 'followup_goal_create_forward.html':
@@ -967,6 +1108,16 @@ def followup_goal_create(request, user_id):
         t = str(response.get('type'))
         gasgoals_data = {}
         for k, v in response.items():
+	    #checking for "Create Another Goal" button pressed
+	    if str(v) == "[u'Create Another Goal']":
+		pageforward = 'createanothergoal'
+	    #Done - checking for "Create Another Goal" button pressed
+
+	    #checking for "Save + Continue" button pressed
+	    if str(v) == "[u'Save + Continue']":
+		pageforward = 'savecontinue'
+	    #Done - checking for "Create New Goal" button pressed
+
             gasgoals_data[str(k)] = v.pop()
 
 	print gasgoals_data
@@ -977,6 +1128,13 @@ def followup_goal_create(request, user_id):
 			         environmentalassessment1=gasgoals_data['environmentalassessment1'], 
 			         patient=patient)
             gas_goals.save()
+	
+	#check what page to forward to
+	if pageforward == 'createanothergoal':
+	    return render(request, 'followup_goal_create.html', {'patient': patient})
+	if pageforward == 'savecontinue':
+	    return render(request, 'followup_goaledit_forward.html', {'patient': patient})
+
 	if gasgoals_data['createanother'] == 'yes': 
             return render(request, 'gas_step1.html', {'patient': patient})
 	else:
@@ -1021,15 +1179,15 @@ def followup_goal_selection(request, user_id=0):
 	context_dict = {'gas_goals': gas_goals_list, 'patient': patient}
         return render(request, 'followup_goal_selection.html', context_dict)
 
-# ______________________________________________   Follow Up Meeting Goal Planning ___________________________________
+# ______________________________________________   Follow Up Meeting Goal Planning (old) ___________________________________
 @user_passes_test(is_physician)
-def followup_goal_planning_forward(request, user_id):
+def followup_goal_planning_forward_old(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
     #print request.POST
     return render(request, 'followup_goal_planning_forward.html', {'patient': patient})
 
 @user_passes_test(is_physician)
-def followup_goal_planning(request, user_id):
+def followup_goal_planning_old(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
     #Find selected goal to planning information
     gas_goals_list = GASGoals.objects.filter(patient=patient)
@@ -1058,6 +1216,7 @@ def followup_goal_planning(request, user_id):
 	    selected_goal.target = question_data['target']
 	    selected_goal.timeline = question_data['timeline']
 	    selected_goal.indicator = question_data['indicator']
+	    selected_goal.action = question_data['action']
 	    selected_goal.scorepos2 = question_data['scorepos2']
 	    selected_goal.scorepos1 = question_data['scorepos1']
 	    selected_goal.scoreneg1 = question_data['scoreneg1']
@@ -1067,6 +1226,265 @@ def followup_goal_planning(request, user_id):
 
         return render(request, 'followup_goal_summary_forward.html', context_dict)
 
+    return render(request, 'followup_goal_planning.html', context_dict)
+
+#__________________________________________ Follow Up Goal planning **NEW**___________________________________________
+def followup_goal_planning_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'followup_goal_planning_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_goal_planning(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+
+    #Find selected goal to create new strategy linked to selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    
+    for tempGASGoals in gas_goals_list:
+	print tempGASGoals.goal1
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+    found_strategy_yes = 'noneavailable'
+    type_selected_strategy = 'nothing'
+    #Find flagged (needsplanning) strategies and finish them 1 by 1
+    #Start with Prequestions then questions. (Therefore check prequestions last)
+    #Check Questions
+    #Check FreeForm First
+    freeform_strategy_list = FreeForm.objects.filter(gasgoal=selected_goal, isgoalplanningdata = '1')
+    for tempstrategy in freeform_strategy_list:
+	if tempstrategy.needsplanning == 1:
+	    selected_strategy = tempstrategy
+	    type_selected_strategy = 'freeform'
+	    found_strategy_yes = 'yes'
+    #Check Boolean
+    boolean_strategy_list = Boolean.objects.filter(gasgoal=selected_goal, isgoalplanningdata = '1')
+    for tempstrategy in boolean_strategy_list:
+	if tempstrategy.needsplanning == 1:
+	    selected_strategy = tempstrategy
+	    type_selected_strategy = 'boolean'
+	    found_strategy_yes = 'yes'
+    #Check slider
+    slider_strategy_list = Slider.objects.filter(gasgoal=selected_goal, isgoalplanningdata = '1')
+    for tempstrategy in slider_strategy_list:
+	if tempstrategy.needsplanning == 1:
+	    selected_strategy = tempstrategy
+	    type_selected_strategy = 'slider'
+	    found_strategy_yes = 'yes'
+
+    if found_strategy_yes == 'noneavailable':
+	print 'Couldnt find question for goal, please create one'
+	type_selected_strategy = 'noneavailable'
+	context_dict = {'patient': patient, 'selected_goal': selected_goal, 'type_selected_strategy': type_selected_strategy }
+    else:
+        #Create dict
+        context_dict = {'patient': patient, 'selected_goal': selected_goal, 'selected_strategy': selected_strategy, 'type_selected_strategy': type_selected_strategy }
+
+    #print request.POST
+    if request.method == 'POST':
+	if found_strategy_yes == 'yes':
+	    #unflag needsplanning for strategy submitted.
+	    selected_strategy.needsplanning = 0
+	    selected_strategy.activated = 1
+	    selected_strategy.save()
+
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+
+	#might have to move this
+	selected_goal.goal1=question_data['title']
+	selected_goal.environmentalassessment1=question_data['environmentalassessment1']
+	selected_goal.save()
+
+	if question_data['text'] == '':
+	    print 'These is no followup strategy planning data.'
+	elif type_selected_strategy == 'freeform':
+	    print 'Updating Freeform strategy'
+	    selected_strategy.title=question_data['title']
+	    selected_strategy.text=question_data['text']
+	    selected_strategy.description=question_data['description']
+	    selected_strategy.target = int(question_data['goal'])
+	    selected_strategy.units=question_data['units']
+	    selected_strategy.baseline=question_data['baseline']
+	    selected_strategy.action=question_data['action']
+	    selected_strategy.timeline=question_data['timeline']
+	    selected_strategy.indicator=question_data['indicator']
+	    selected_strategy.scorepos2=question_data['scorepos2']
+	    selected_strategy.scorepos1=question_data['scorepos1']
+	    selected_strategy.scoreneg1=question_data['scoreneg1']
+	    selected_strategy.scoreneg2=question_data['scoreneg2']
+	    selected_strategy.activated=1
+	    selected_strategy.needsplanning=0
+	    selected_strategy.isgoalplanningdata=1
+	    selected_strategy.save()
+
+	elif type_selected_strategy == 'boolean':
+	    print 'Updating Boolean strategy'
+	    selected_strategy.title=question_data['title']
+	    selected_strategy.text=question_data['text']
+	    selected_strategy.description=question_data['description']
+	    selected_strategy.target = int(question_data['goal'])
+	    selected_strategy.baseline=question_data['baseline']
+	    selected_strategy.action=question_data['action']
+	    selected_strategy.timeline=question_data['timeline']
+	    selected_strategy.indicator=question_data['indicator']
+	    selected_strategy.scorepos2=question_data['scorepos2']
+	    selected_strategy.scorepos1=question_data['scorepos1']
+	    selected_strategy.scoreneg1=question_data['scoreneg1']
+	    selected_strategy.scoreneg2=question_data['scoreneg2']
+	    selected_strategy.activated=1
+	    selected_strategy.needsplanning=0
+	    selected_strategy.isgoalplanningdata=1
+	    selected_strategy.save()
+
+	elif type_selected_strategy == 'slider':
+	    print 'Updating Slider strategy'
+	    selected_strategy.title=question_data['title']
+	    selected_strategy.text=question_data['text']
+	    selected_strategy.description=question_data['description']
+	    selected_strategy.target = int(question_data['goal'])
+	    selected_strategy.baseline=question_data['baseline']
+	    selected_strategy.action=question_data['action']
+	    selected_strategy.timeline=question_data['timeline']
+	    selected_strategy.indicator=question_data['indicator']
+	    selected_strategy.scorepos2=question_data['scorepos2']
+	    selected_strategy.scorepos1=question_data['scorepos1']
+	    selected_strategy.scoreneg1=question_data['scoreneg1']
+	    selected_strategy.scoreneg2=question_data['scoreneg2']
+	    selected_strategy.activated=1
+	    selected_strategy.needsplanning=0
+	    selected_strategy.min_value=question_data['min_value']
+	    selected_strategy.max_value=question_data['max_value']
+	    selected_strategy.increment=question_data['increment']
+	    selected_strategy.isgoalplanningdata=1
+	    selected_strategy.save()
+
+	else:
+            if t == "[u'boolean']": # new question is boolean
+                boolean = Boolean(title=question_data['title'],
+				  text=question_data['text'],
+                                  description=question_data['description'],
+                                  target=int(question_data['goal']),
+                                  patient=patient,
+				  gasgoal=selected_goal,
+				  #importance=selected_strategy.importance,
+				  #difficulty=selected_strategy.difficulty,
+				  baseline=question_data['baseline'],
+				  action=question_data['action'],
+				  timeline=question_data['timeline'],
+				  indicator=question_data['indicator'],
+				  scorepos2=question_data['scorepos2'],
+				  scorepos1=question_data['scorepos1'],
+				  scoreneg1=question_data['scoreneg1'],
+				  scoreneg2=question_data['scoreneg1'],
+				  activated=1,
+				  needsplanning=0,
+			          isgoalplanningdata=1)
+                boolean.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+
+            elif t == "[u'category']": # new question is categorical
+                category_list = []
+
+                i = 1
+                while 'cat' + str(i) in question_data:
+                    category = Category(name=question_data['cat' + str(i)].lower(), value=i-1)
+                    category_list.append(question_data['cat'+ str(i)].lower())
+                    i = i + 1
+
+                categorical = Categorical(title=selected_strategy.title,
+					    text=question_data['text'],
+                                            description=question_data['description'],
+                                            categories=category_list,
+                                            patient=patient)
+
+                if question_data['goal'].lower() in category_list: # check for numerical or text goal
+                    categorical.target = category_list.index(question_data['goal'].lower())
+                else:
+                    categorical.target = int(question_data['goal'])
+
+                categorical.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+            elif t == "[u'integer']": # new question is free form
+		#selected_strategy.text = question_data['text']
+		#selected_strategy.description = question_data['description']
+		#selected_strategy.target = question_data['target']
+		#selected_strategy.text = question_data['units']
+
+                free_form = FreeForm(title=question_data['title'],
+				     text=question_data['text'],
+                                     description=question_data['description'],
+                                     target = int(question_data['goal']),
+                                     patient=patient,
+                                     units=question_data['units'],
+				     gasgoal=selected_goal,
+				     #importance=selected_strategy.importance,
+				     #difficulty=selected_strategy.difficulty,
+				     baseline=question_data['baseline'],
+				     action=question_data['action'],
+				     timeline=question_data['timeline'],
+				     indicator=question_data['indicator'],
+				     scorepos2=question_data['scorepos2'],
+				     scorepos1=question_data['scorepos1'],
+				     scoreneg1=question_data['scoreneg1'],
+				     scoreneg2=question_data['scoreneg1'],
+				     activated=1,
+				     needsplanning=0,
+				     isgoalplanningdata=1)
+		print 'Saved the freeform'
+                free_form.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+            elif t == "[u'slider']": # new question is slider
+                slider = Slider(title=question_data['title'],
+				text=question_data['text'],
+                                description=question_data['description'],
+                                target = int(question_data['goal']),
+                                patient=patient,
+                                max_value=question_data['max_value'],
+                                min_value=question_data['min_value'],
+                                increment=question_data['increment'],
+				gasgoal=selected_goal,
+				#importance=selected_strategy.importance,
+				#difficulty=selected_strategy.difficulty,
+				baseline=question_data['baseline'],
+				action=question_data['action'],
+				timeline=question_data['timeline'],
+				indicator=question_data['indicator'],
+				scorepos2=question_data['scorepos2'],
+				scorepos1=question_data['scorepos1'],
+				scoreneg1=question_data['scoreneg1'],
+				scoreneg2=question_data['scoreneg1'],
+				activated=1,
+				needsplanning=0,
+				isgoalplanningdata=1)
+                slider.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+	#check if anymore strategies need planning, if so repeat strategy planning page
+	#if not, continue to overall summary page.
+	
+	for tempstrategy in freeform_strategy_list:
+	    if tempstrategy.needsplanning == 1: 
+                return render(request, 'followup_goal_planning_forward.html', context_dict)
+	for tempstrategy in boolean_strategy_list:
+	    if tempstrategy.needsplanning == 1: 
+                return render(request, 'followup_goal_planning_forward.html', context_dict)
+	for tempstrategy in slider_strategy_list:
+	    if tempstrategy.needsplanning == 1: 
+                return render(request, 'followup_goal_planning_forward.html', context_dict)
+	else:
+	    return render(request, 'followup_goaledit_forward.html', context_dict)
+    
     return render(request, 'followup_goal_planning.html', context_dict)
 
 # ______________________________________________   Follow Up Meeting Goal Summary ______________________________
@@ -1108,7 +1526,7 @@ def followup_strategyedit(request, user_id):
 	    selected_goal = tempGASGoals
 
     #Reset all needsplanning flags for questions and prequestions (so no multiple edits on strategy planning page
-    all_strategy_list = Question.objects.filter(patient=patient, gasgoal=selected_goal)
+    all_strategy_list = Question.objects.filter(patient=patient, gasgoal=selected_goal, isgoalplanningdata = '0')
     for each_strategy in all_strategy_list:
 	each_strategy.needsplanning = 0
 	each_strategy.save()
@@ -1120,10 +1538,10 @@ def followup_strategyedit(request, user_id):
     #Need to find all strategies so I guess we need to check every type of question?... no we dont yeah!
     #Note: selected_freeform_strategy_list wouldnt have freeform in it since its all selected strategies ---- please update!!!!
     #Find all selected freeform strategies
-    selected_freeform_strategy_list = Question.objects.filter(patient=patient, gasgoal=selected_goal, activated='1')
+    selected_freeform_strategy_list = Question.objects.filter(patient=patient, gasgoal=selected_goal, activated='1', isgoalplanningdata = '0')
 	    
     #Find all non activated freeform strategies
-    nonactive_freeform_strategy_list = Question.objects.filter(patient=patient, gasgoal=selected_goal, activated='0')
+    nonactive_freeform_strategy_list = Question.objects.filter(patient=patient, gasgoal=selected_goal, activated='0', isgoalplanningdata = '0')
 
     #Find all prequestion strategies
     prequestion_strategy_list = PreQuestion.objects.filter(patient=patient, gasgoal=selected_goal, activated='0')
@@ -1168,7 +1586,14 @@ def followup_strategyedit(request, user_id):
 	    #Done - checking for "deactivate" pressed for selected_freeform_strategy_list
 
 	    #checking for "edit+activate" button pressed for prequestion_strategy_list
-	    #add the stuff
+	    if str(v) == "[u'Edit + Activate']":
+	        for each_prequestion in prequestion_strategy_list:
+		    if str(k) == 'preedit' + str(each_prequestion.id):
+			print 'EditActivate button was pressed for:'+each_prequestion.title+'(id:' + str(each_prequestion.id)+')'
+			#Flag Strategy for needsplanning and forward to strategy planning page
+			each_prequestion.needsplanning = 1
+			each_prequestion.save()
+			pageforward = 'forward_followup_strategy_planning'
 	    #Done - checking for "edit+activate" button pressed for prequestion_strategy_list
 
 	    #checking for "edit" button pressed for selected_freeform_strategy_list and nonactive_freeform_strategy_list
@@ -1194,6 +1619,11 @@ def followup_strategyedit(request, user_id):
 		pageforward = 'graph_forward.html'
 	    #Done - checking for "finish" button pressed
 
+	    #checking for "Create New Strategy" button pressed
+	    if str(v) == "[u'Create New Strategy']":
+		pageforward = 'followup_strategy_create_forward.html'
+	    #Done - checking for "finish" button pressed
+
             question_data[str(k)] = v.pop()
 	    if k == 'navselect':
 		navselecterror = 'good'
@@ -1209,6 +1639,8 @@ def followup_strategyedit(request, user_id):
 	    return render(request, 'graph_forward.html', context_dict)
 	if pageforward == 'forward_followup_strategy_planning':
 	    return render(request, 'followup_strategy_planning_forward.html', context_dict)
+	if pageforward == 'followup_strategy_create_forward.html':
+	    return render(request, 'followup_strategy_create_forward.html', context_dict)
 	#done Next Page Logic
 
 	#Old code-----If user didnt select option., Return to page with error notification
@@ -1227,13 +1659,13 @@ def followup_strategyedit(request, user_id):
 
 ## ______________________________________________   Follow Up strategy create ______________________________________________
 @user_passes_test(is_physician)
-def followup_strategy_create_forward(request, user_id):
+def followup_strategy_create_forward_old(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
     #print request.POST
     return render(request, 'followup_strategy_create_forward.html', {'patient': patient})
 
 @user_passes_test(is_physician)
-def followup_strategy_create(request, user_id):
+def followup_strategy_create_old(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
     #Find selected goal to create new strategy linked to selected goal
     gas_goals_list = GASGoals.objects.filter(patient=patient)
@@ -1269,6 +1701,144 @@ def followup_strategy_create(request, user_id):
 	    return render(request, 'followup_strategy_create.html', context_dict)
 	else:
 	    return render(request, 'followup_strategy_selection_forward.html', context_dict)
+    else:
+
+        return render(request, 'followup_strategy_create.html', context_dict)
+
+## ______________________________________________   Follow Up strategy create **NEW**_____________________________________
+@user_passes_test(is_physician)
+def followup_strategy_create_forward(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #print request.POST
+    return render(request, 'followup_strategy_create_forward.html', {'patient': patient})
+
+@user_passes_test(is_physician)
+def followup_strategy_create(request, user_id):
+    patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal to create new strategy linked to selected goal
+    gas_goals_list = GASGoals.objects.filter(patient=patient)
+    for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        if tempGASGoals.activated == 1:
+	    selected_goal = tempGASGoals
+
+    #Create dict
+    context_dict = {'patient': patient, 'selected_goal': selected_goal}
+    print 'New strategy create page'
+    #print request.POST
+    if request.method == 'POST':
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        t = str(response.get('type'))
+        question_data = {}
+        for k, v in response.items():
+            question_data[str(k)] = v.pop()
+	#Check for blank title, if so dont save strategy
+	if question_data['title'] == '':
+	    print 'There is no strategy data'
+	else:
+	    #Save Question Title, Importance, and Difficulty to PreQuestion for further planning
+	    if t == "[u'boolean']": # new question is boolean
+                boolean = Boolean(title=question_data['title'],
+				  text=question_data['text'],
+                                  description=question_data['description'],
+                                  target=int(question_data['goal']),
+                                  patient=patient,
+				  gasgoal=selected_goal,
+				  importance=question_data['importance'],
+				  difficulty=question_data['difficulty'],
+				  baseline=question_data['baseline'],
+				  action=question_data['action'],
+				  timeline=question_data['timeline'],
+				  indicator=question_data['indicator'],
+				  scorepos2=question_data['scorepos2'],
+				  scorepos1=question_data['scorepos1'],
+				  scoreneg1=question_data['scoreneg1'],
+				  scoreneg2=question_data['scoreneg1'],
+				  activated=1,
+				  needsplanning=0)
+                boolean.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+
+            elif t == "[u'category']": # new question is categorical
+                category_list = []
+
+                i = 1
+                while 'cat' + str(i) in question_data:
+                    category = Category(name=question_data['cat' + str(i)].lower(), value=i-1)
+                    category_list.append(question_data['cat'+ str(i)].lower())
+                    i = i + 1
+
+                categorical = Categorical(title=selected_strategy.title,
+					    text=question_data['text'],
+                                            description=question_data['description'],
+                                            categories=category_list,
+                                            patient=patient)
+
+                if question_data['goal'].lower() in category_list: # check for numerical or text goal
+                    categorical.target = category_list.index(question_data['goal'].lower())
+                else:
+                    categorical.target = int(question_data['goal'])
+
+                categorical.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+
+            elif t == "[u'integer']": # new question is free form
+		#selected_strategy.text = question_data['text']
+		#selected_strategy.description = question_data['description']
+		#selected_strategy.target = question_data['target']
+		#selected_strategy.text = question_data['units']
+
+                free_form = FreeForm(title=question_data['title'],
+				     text=question_data['text'],
+                                     description=question_data['description'],
+                                     target = int(question_data['goal']),
+                                     patient=patient,
+                                     units=question_data['units'],
+				     gasgoal=selected_goal,
+				     importance=question_data['importance'],
+				     difficulty=question_data['difficulty'],
+				     baseline=question_data['baseline'],
+				     action=question_data['action'],
+				     timeline=question_data['timeline'],
+				     indicator=question_data['indicator'],
+				     scorepos2=question_data['scorepos2'],
+				     scorepos1=question_data['scorepos1'],
+				     scoreneg1=question_data['scoreneg1'],
+				     scoreneg2=question_data['scoreneg1'],
+				     activated=1,
+				     needsplanning=0)
+		#print 'Saved the freeform'
+                free_form.save()
+		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
+		#selected_strategy.delete()
+            elif t == "[u'slider']": # new question is slider
+                slider = Slider(title=question_data['title'],
+				text=question_data['text'],
+                                description=question_data['description'],
+                                target = int(question_data['goal']),
+                                patient=patient,
+                                max_value=question_data['max_value'],
+                                min_value=question_data['min_value'],
+                                increment=question_data['increment'],
+				gasgoal=selected_goal,
+				importance=question_data['importance'],
+				difficulty=question_data['difficulty'],
+				baseline=question_data['baseline'],
+				action=question_data['action'],
+				timeline=question_data['timeline'],
+				indicator=question_data['indicator'],
+				scorepos2=question_data['scorepos2'],
+				scorepos1=question_data['scorepos1'],
+				scoreneg1=question_data['scoreneg1'],
+				scoreneg2=question_data['scoreneg1'],
+				activated=1,
+				needsplanning=0)
+                slider.save()
+	return render(request, 'followup_strategyedit_forward.html', context_dict)
     else:
 
         return render(request, 'followup_strategy_create.html', context_dict)
@@ -1489,7 +2059,20 @@ def followup_strategy_planning(request, user_id):
 				  text=question_data['text'],
                                   description=question_data['description'],
                                   target=int(question_data['goal']),
-                                  patient=patient)
+                                  patient=patient,
+				  gasgoal=selected_strategy.gasgoal,
+				  importance=selected_strategy.importance,
+				  difficulty=selected_strategy.difficulty,
+				  baseline=question_data['baseline'],
+				  action=question_data['action'],
+				  timeline=question_data['timeline'],
+				  indicator=question_data['indicator'],
+				  scorepos2=question_data['scorepos2'],
+				  scorepos1=question_data['scorepos1'],
+				  scoreneg1=question_data['scoreneg1'],
+				  scoreneg2=question_data['scoreneg1'],
+				  activated=1,
+				  needsplanning=0)
                 boolean.save()
 		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
 		#selected_strategy.delete()

@@ -69,17 +69,6 @@
 	</div>
    </div>
 
-
-<!--working
-   <div class="form-group">
-     <label for="goal" class="col-sm-4 control-label">Banked Goal:</label>
-     <div class="col-sm-5">
-       <p class="help-block">{{ gasgoal.goal1 }}<input value="Select{{ gasgoal.id }}" name="select{{ gasgoal.id }}" type="submit" class="btn btn-info pull-right"></input></p>
-	
-     </div>
-   </div>
--->
-
 {% endfor %}
             
 {% else %}
@@ -88,12 +77,13 @@
 </br>
 <div class="submit text-center">
     <input value="Create New Goal" name="ext" type="submit" class="btn btn-lg btn-success"></input>
-    <input value="Next" name="ext" type="submit" class="btn btn-lg btn-success" style="display:none;"></input>
+    <input value="Graph" name="ext" type="submit" class="btn btn-lg btn-success""></input>
   </div>
 
 </br>
 
-<!-- User selection code -->
+<!-- Original radio method, not used anymore
+User selection code
 
     <div class="form-group">
      <label for="goal" class="col-sm-5 control-label">What would you like to do?</label>
@@ -145,6 +135,6 @@
 
   <div class="submit text-center">
     <input value="Next ->" name="ext" type="submit" class="btn btn-lg btn-success"></input>
-  </div>
+  </div> -->
 </form>
 {% endblock %}
