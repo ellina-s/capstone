@@ -53,15 +53,6 @@
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.text }}</div>
    </div>
 
-   <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Importance:</label></div>
-	<div class="col-md-7" style="color:#737373">{{ selected_goal.importance }}</div>
-   </div>
-
-   <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Difficulty:</label></div>
-	<div class="col-md-7" style="color:#737373">{{ selected_goal.difficulty }}</div>
-   </div>
 
    <div class="row">
 	<div class="col-md-5" style="text-align:right"><label for="goal">Baseline:</label></div>
@@ -91,6 +82,11 @@
    <div class="row">
 	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score +1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos1 }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score 0 (Target):</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.target }}</div>
    </div>
 
    <div class="row">
