@@ -51,7 +51,7 @@
     {% endwith %}
   {% endfor %}
   <div class="submit text-center">
-    <input value="Save" type="submit" class="btn btn-lg btn-success"></input>
+    <input type="submit" class="btn btn-lg btn-success"></input>
   </div>
 </form>
 {% else %}
