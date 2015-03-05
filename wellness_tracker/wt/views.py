@@ -40,12 +40,22 @@ def home(request):
 
 
 def questions(request):
+    #patient = get_object_or_404(User, pk=int(user_id))
+    #Find selected goal
+    #gas_goals_list = GASGoals.objects.filter(patient=patient)
+    #for tempGASGoals in gas_goals_list:
+	#print tempGASGoals.select
+        #if tempGASGoals.activated == 1:
+	    #selected_goal = tempGASGoals
+
     if request.method == "POST":
         AnswerFormSet2 = modelformset_factory(Answer, form=AnswerForm)
         formset = AnswerFormSet2(request.POST)
 
         if formset.is_valid():
             formset.save()
+	    return render(request, 'graphuser_forward.html')
+
         else:
             print formset.errors
 
@@ -800,6 +810,24 @@ def graph(request, user_id=None):
     question_list = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1)
     questions = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1).get_real_instances(question_list)
     active_questions = Question.objects.filter(patient=user, gasgoal=selected_goal, activated=1)
+	
+    #testing
+    order = []
+    for index in question_list:
+	if index.isgoalplanningdata == 1:
+	    order.append(index)
+    count = 1
+    for index in question_list:
+	if index.isgoalplanningdata == 0:
+	    order.append(index)
+	    count = count+1
+    #print 'Is this reordered?'
+    #print order
+    questions = order
+    question_list = order
+    active_questions = order
+    #print questions
+    #END Testing
 
     #start of original
     #latest_datetime = []
@@ -813,7 +841,8 @@ def graph(request, user_id=None):
     #literally ... but original answers = Answer.objects.filter(question__in=questions).filter(date__in=max_dates).order_by('date')
     #end of original
     answers = Answer.objects.filter(question__in=questions).order_by('date')
-    
+
+
     #check most recent point and base gasscore on most recent point. Check for type fo question as well.
     #for tempanswer in answers:
 	#most_recent_value=tempanswer.value
@@ -864,19 +893,44 @@ def graph(request, user_id=None):
 
     
     grouped_answers = defaultdict(list)
+    new_grouped_answers = defaultdict(list)
+    new_grouped_answers2 = defaultdict(list)
+    ordered_grouped_answers = defaultdict(list)
+    #old
     for ans in answers:
         grouped_answers[ans.question.title].append(ans)
+    #end old
+    #new
+    for ans in answers:
+	#print ans.question.isgoalplanningdata
+	if ans.question.isgoalplanningdata == 1:
+            new_grouped_answers[ans.question.title].append(ans)
+    #print 'Should be all goal question data'
+    #print new_grouped_answers
+    for ans in answers:
+	if ans.question.isgoalplanningdata == 0:
+            new_grouped_answers2[ans.question.title].append(ans)
+    #print 'Should be all just question data'
+    #print new_grouped_answers2
 
+    #print 'Unordered grouped answers'
+    #print grouped_answers
+
+
+
+    ordered_grouped_answers = grouped_answers
+    #print 'Ordered Grouped Answers'
+    #print ordered_grouped_answers
+    #end new
 
     # A list to hold strategy questions (text fields)
     strategy_questions_list = []
     #counter for a list of strategy questions
     icount = 0
- 
-    print 'The order the Strategies a read (issue with displaying on graph correcly? Try)'
+    print 'The order the Strategies read (issue with displaying on graph correcly? Try)'
     # Build nvd3 json
     data = []
-    for k,v in grouped_answers.iteritems():
+    for k,v in new_grouped_answers.iteritems():
         point_list = []
         for datum in v:
             point_list.append(
@@ -889,7 +943,7 @@ def graph(request, user_id=None):
         avg = mean(values)
         stdev = std(values)
 
-	#print k
+	print k
 	#print values
 	
 	#find displayedscore of each question (compare title of question). Note: Bad way to do it since there could be another
@@ -921,8 +975,56 @@ def graph(request, user_id=None):
                  'std2': avg-stdev,
 		 'datatag': sub_question['key'],
                  })
-	print k
 
+    #added another can delete probs
+    for k,v in new_grouped_answers2.iteritems():
+        point_list = []
+        for datum in v:
+            point_list.append(
+                {'x': int(datum.date.strftime("%s") + "000"),
+                 'y': datum.value,
+                 'comment':datum.comment,
+                })
+
+        values = list(point['y'] for point in point_list)
+        avg = mean(values)
+        stdev = std(values)
+
+	print k
+	#print values
+	
+	#find displayedscore of each question (compare title of question). Note: Bad way to do it since there could be another
+	#question with the same name..... must find a better way.
+	for eachquestion in question_list:
+	    if k == eachquestion.title:
+		displayedscoretemp = eachquestion.displayedscore
+		isgoalplanningdata = eachquestion.isgoalplanningdata
+		#populate a list with strategy questions
+		sub_question = {}
+		sub_question['key'] = "line-" + str(icount)
+		sub_question['thequestion'] = eachquestion.text
+		strategy_questions_list.append(sub_question)
+		#print 'Current count: ' + str(icount)
+		#count_str = "line-" + str(icount)
+		#print count_str
+		icount = icount + 1
+	    
+	#reorder data so goal question data is first???????????????????????????????????????????????????????????????????????
+        data.append(
+                {'key':k,
+		 'displayedscore': displayedscoretemp,
+		 'isgoalplanningdata': isgoalplanningdata,
+                 'values': point_list,
+                 'disabled': True,
+                 'avg': avg,
+                 'targ': v[0].question.target,
+                 'std1': avg+stdev,
+                 'std2': avg-stdev,
+		 'datatag': sub_question['key'],
+                 })
+        #END added another can delete probs
+    
+    
     return render(request, "graph.html",
             {"data_json": json.dumps(data),
              "data": data,
