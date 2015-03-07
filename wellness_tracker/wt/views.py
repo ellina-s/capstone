@@ -1186,6 +1186,11 @@ def followup_goaledit(request, user_id):
 		pageforward = 'followup_goal_create_forward.html'
 	    #Done - checking for "Create New Goal" button pressed
 
+	    #checking for "Graph" button pressed
+	    if str(v) == "[u'Graph']":
+		pageforward = 'graph_forward.html'
+	    #Done - checking for "Create New Goal" button pressed
+
 
 
             question_data[str(k)] = v.pop()
@@ -1201,6 +1206,8 @@ def followup_goaledit(request, user_id):
 	    return render(request, 'followup_goal_planning_forward.html', context_dict)
 	if pageforward == 'followup_goal_create_forward.html':
 	    return render(request, 'followup_goal_create_forward.html', context_dict)
+	if pageforward == 'graph_forward.html':
+	    return render(request, 'graph_forward.html', context_dict)
 	#done Next Page Logic
 
 	#If user didnt select option., Return to page with error notification
@@ -1741,8 +1748,8 @@ def followup_strategyedit(request, user_id):
 			pageforward = 'forward_followup_strategy_planning'
 	    #Done - checking for "edit" button pressed for prequestion_strategy_list
 
-	    #checking for "finish" button pressed
-	    if str(v) == "[u'Finish']":
+	    #checking for "Graph" button pressed
+	    if str(v) == "[u'Graph']":
 		pageforward = 'graph_forward.html'
 	    #Done - checking for "finish" button pressed
 
