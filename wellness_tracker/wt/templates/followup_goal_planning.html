@@ -11,6 +11,8 @@
 {% block script %}
 {{ block.super }}
 <script src="{% static 'jquery/jquery.js' %}"></script>
+<script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
+
 <script>
   $(function() {
     $( "#type" ).change(function() {
@@ -24,6 +26,11 @@
     $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
     $("#cat-list > input").last().focus();
   }
+
+  // Initialize all tooltips on this page.
+  $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 </script>
 {% endblock %}
 
@@ -31,85 +38,82 @@
 <h2>Follow Up Meeting - Goal Planning
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
-  {% endif %} - {{ selected_goal.goal1 }}
+  {% endif %}
 </h2>
 
-<h4><center><br>Goal's Planning Charter<br><br></center></h4>
-<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
-<!-- <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>-->
+<h4><center><br>Goal - {{ selected_goal.goal1 }}<br><br></center></h4>
+<!-- <h4><center><br>Goal's Planning Charter<br><br></center></h4>
+<h5><center></center></h5> -->
+<!-- <h5><center></center></h5>-->
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_planning' patient.id %}" method="post">
     {% csrf_token %}
 
-<!--------------------------------------------if no goal question, create one------->
+<!-- if no goal question, create one -->
 {% if type_selected_strategy == 'noneavailable' %}
 <div class="form-group">
-    <label for="title" class="col-sm-2 control-label">Title</label>
+    <a href="#"><label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Give a concise title to this goal">Title<sup>?</sup>:</label></a>
     <div class="col-sm-10">
       <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}">
     </div>
   </div>
 <div class="form-group">
-    <label for="title" class="col-sm-2 control-label">Environmental Assessment</label>
+    <a href="#"><label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment<sup>?</sup>:</label></a>
     <div class="col-sm-10">
       <input type="text" name="environmentalassessment1" class="form-control" id="title" value="{{ selected_goal.environmentalassessment1 }}">
     </div>
   </div>
   <div class="form-group">
-    <label for="question" class="col-sm-2 control-label">Question</label>
+    <a href="#"><label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Question that the patient is answering for this goal">Question<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <input type="text" name="text" class="form-control" id="question" placeholder="How many steps have you walked...">
+      <input type="text" name="text" class="form-control" id="question" placeholder="E.g. How many steps have you walked">
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label">Description</label>
+    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question">Description<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <input type="text" name="description" class="form-control" id="description" placeholder="Answer on a scale of 1-10">
+      <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10">
     </div>
   </div>
-          
+
 	   <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Baseline:</label>
+           <a href="#"><label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup>:</label></a>
            <div class="col-sm-10">
-             <input type="text" name="baseline" class="form-control" id="question" placeholder="Set Benchmark...">
-             
+             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline...">
            </div>
          </div>
 
 	  <div class="form-group">
-	    <label for="description" class="col-sm-2 control-label">Target</label>
+	    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this goal?">Target<sup>?</sup>:</label></a>
 	    <div class="col-sm-10">
-	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Target value for this question">
+	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value...">
 	    </div>
 	  </div>
 
          <div class="New Patient Information">
            <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Timeline:</label>
+           <a href="#"><label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline<sup>?</sup>:</label></a>
            <div class="col-sm-10">
-             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set Timeline...">
-             <p class="help-block">Enter a timeline for the goal (In days)</a>
+             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set timeline in days...">
            </div>
          </div>
 
         <div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Indicator:</label>
+          <a href="#"><label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator that will be used to track and evaluate the performance in this goal">Indicator<sup>?</sup>:</label></a>
           <div class="col-sm-10">
-            <input type="text" name="indicator" class="form-control" id="question" placeholder="Set Indicator">
-            <p class="help-block">Enter an Indicator for the goal</p>
+            <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator...">
           </div>
          </div>
 
 	<div class="form-group">
           <label for="question" class="col-sm-2 control-label">Action:</label>
           <div class="col-sm-10">
-            <input type="text" name="action" class="form-control" id="question" placeholder="Set Action">
-            <p class="help-block">Enter the action for the goal</p>
+            <input type="text" name="action" class="form-control" id="question" placeholder="Specify actions...">
           </div>
          </div>
 
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <a href="#"><label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup>:</label></a>
     <div class="col-sm-10">
       <select id="type" name="type" class="form-control">
         <option value="slider">Slider</option>
@@ -146,9 +150,9 @@
       </div>
     </div>
     <div id="integer" class="form-group" style="display: none;">
-      <label for="units" class="col-sm-2 control-label">Units</label>
+      <a href="#"><label for="units" class="col-sm-2 control-label" data-toggle="tooltip" title="Enter the units for this question">Units<sup>?</sup></label></a>
       <div class="col-sm-10">
-        <input type="text" name="units" id="units" class="form-control" placeholder="Kg, Hours, Snacks...">
+        <input type="text" name="units" id="units" class="form-control" placeholder="E.g. kg, hours, snacks...">
       </div>
     </div>
 
@@ -208,41 +212,40 @@
 {% else %}
 <!-- ------------------------------------------------------------------Depending on type of question -->
 <div class="form-group">
-    <label for="title" class="col-sm-2 control-label">Title</label>
+    <label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Give a concise title to this goal">Title<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}">
     </div>
   </div>
 <div class="form-group">
-    <label for="title" class="col-sm-2 control-label">Environmental Assessment</label>
+    <label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="environmentalassessment1" class="form-control" id="title" value="{{ selected_goal.environmentalassessment1 }}">
     </div>
   </div>
   <div class="form-group">
-    <label for="question" class="col-sm-2 control-label">Question</label>
+    <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Question that the patient is answering for this goal">Question<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="text" class="form-control" id="question"  value="{{ selected_strategy.text }}">
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label">Description</label>
+    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question">Description<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="description" class="form-control" id="description" value="{{ selected_strategy.description }}">
     </div>
   </div>
           
 	   <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Baseline:</label>
+           <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup></label>
            <div class="col-sm-10">
              <input type="text" name="baseline" class="form-control" id="question" value="{{ selected_strategy.baseline }}">
-             
            </div>
          </div>
 
 	  <div class="form-group">
-	    <label for="description" class="col-sm-2 control-label">Target</label>
+	    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this goal?">Target<sup>?</sup></label>
 	    <div class="col-sm-10">
 	      <input type="text" name="goal" class="form-control" id="goal" value="{{ selected_strategy.target }}">
 	    </div>
@@ -250,26 +253,23 @@
 
          <div class="New Patient Information">
            <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Timeline:</label>
+           <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline<sup>?</sup></label>
            <div class="col-sm-10">
              <input type="text" name="timeline" class="form-control" id="question" value="{{ selected_strategy.timeline }}">
-             <p class="help-block">Enter a timeline for the goal (In days)</a>
            </div>
          </div>
 
         <div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Indicator:</label>
+          <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup></label>
           <div class="col-sm-10">
             <input type="text" name="indicator" class="form-control" id="question" value="{{ selected_strategy.indicator }}">
-            <p class="help-block">Enter an Indicator for the goal</p>
           </div>
          </div>
 
 	<div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Action:</label>
+          <label for="question" class="col-sm-2 control-label">Action</label>
           <div class="col-sm-10">
             <input type="text" name="action" class="form-control" id="question" value="{{ selected_strategy.action }}">
-            <p class="help-block">Enter the action for the goal</p>
           </div>
          </div>
 
@@ -279,7 +279,7 @@
 <!-- ------------------------------------------------for Freeform Entry -->
 {% if type_selected_strategy == 'freeform' %}
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select value= "Numerical" selected="slider" id="type" name="type" class="form-control">
         <option selected="selected" value="integer">Numerical</option>
@@ -288,7 +288,7 @@
   </div>
   <div class="conditional-questions">
     <div id="integer" class="form-group" style="display: none;">
-      <label for="units" class="col-sm-2 control-label">Units</label>
+      <label for="units" class="col-sm-2 control-label" data-toggle="tooltip" title="Enter the units for this question">Units<sup>?</sup></label>
       <div class="col-sm-10">
         <input type="text" name="units" id="units" class="form-control" value="{{ selected_strategy.units }}">
       </div>
@@ -298,7 +298,7 @@
 <!-- ------------------------------------------------for Boolean Entry -->
 {% if type_selected_strategy == 'boolean' %}
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select value="hi" id="type" name="type" class="form-control">
         <option value="boolean" selected="selected">Yes / No</option>
@@ -310,7 +310,7 @@
 <!-- ------------------------------------------------for Slider Entry -->
 {% if type_selected_strategy == 'slider' %}
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select value="slider" selected="slider" id="type" name="type" class="form-control">
         <option value="slider">Slider</option>

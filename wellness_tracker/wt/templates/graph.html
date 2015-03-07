@@ -56,6 +56,11 @@ function show_question(caller){
     $(".strategy-questions > div").hide();
     $(".strategy-questions #" + strategy_tag).show();
 }
+
+// Initialize all tooltips on this page.
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+})
 </script>
 {% endblock %}
 
@@ -90,7 +95,7 @@ function show_question(caller){
     {% if user|is_physician %}
         <div class="strategy-questions">
         {% for item in strategy_questions %}
-            <div id="{{item.key}}" style="display: none;">Strategy Question: {{item.thequestion}}</div>
+            <div id="{{item.key}}" style="display: none;">Question: {{item.thequestion}}</div>
         {% empty %}
         <!-- No strategies for this goals-->
         {% endfor %}
@@ -140,31 +145,31 @@ function show_question(caller){
 			  <h4><strong>
 			  <label>Goal:</label>
 				{{ eachquestion.title }}</strong></h4>
-			  <label>Question:</label>
+			  <a href="#"><label data-toggle="tooltip" title="The question that the patient is answering for this goal">Question<sup>?</sup>:</label></a>
 				{{ eachquestion.text }}<br>
-			  <label>Description:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 				{{ eachquestion.description }}<br>
-			  <label>Importance:</label>
+			  <!-- <label>Importance:</label>
 				{{ eachquestion.importance }}<br>
 			  <label>Difficulty:</label>
-				{{ eachquestion.difficulty }}<br>
-			  <label>Baseline:</label>
+				{{ eachquestion.difficulty }}<br> -->
+			  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this goal">Baseline<sup>?</sup>:</label></a>
 				{{ eachquestion.baseline }}<br>
-			  <label>Target:</label>
+			  <a href="#"><label data-toggle="tooltip" title="The target outcome of this goal">Target<sup>?</sup>:</label></a>
 				{{ eachquestion.target }}<br>
-			  <label>Timeline:</label>
-				{{ eachquestion.timeline }}<br>
-			  <label>Indicator:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
+				{{ eachquestion.timeline }} days<br>
+			  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup>:</label></a>
 				{{ eachquestion.indicator }}<br>
-			  <label>Gas Score +2:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much better than target">GAS Score +2:</label></a>
 				{{ eachquestion.scorepos2 }}<br>
-			  <label>Gas Score +1:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly better than target">GAS Score +1:</label></a>
 				{{ eachquestion.scorepos1 }}<br>
-			  <label>Gas Score 0:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Expected outcome (target)">GAS Score 0:</label></a>
 				{{ eachquestion.target }}<br>
-			  <label>Gas Score -1:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly less than target">GAS Score -1:</label></a>
 				{{ eachquestion.scoreneg1 }}<br>
-			  <label>Gas Score -2:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much less than target">GAS Score -2:</label></a>
 				{{ eachquestion.scoreneg2 }}<br>
 			</div>
 		{% endif %}
@@ -197,31 +202,31 @@ function show_question(caller){
 		<div>
 		  <h4><strong>
 			{{ eachquestion.title }}</strong></h4>
-		  <label>Question:</label>
+		  <a href="#"><label data-toggle="tooltip" title="The question that the patient is answering for this strategy">Question<sup>?</sup>:</label></a>
 			{{ eachquestion.text }}<br>
-		  <label>Description:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 			{{ eachquestion.description }}<br>
-		  <label>Importance:</label>
-			{{ eachquestion.importance }}<br>
-		  <label>Difficulty:</label>
-			{{ eachquestion.difficulty }}<br>
-		  <label>Baseline:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Importance of this strategy">Importance<sup>?</sup>:</label></a>
+			{{ eachquestion.importance }} out of 4<br>
+		  <a href="#"><label data-toggle="tooltip" title="Difficulty of achieving this strategy">Difficulty<sup>?</sup>:</label></a>
+			{{ eachquestion.difficulty }} out of 4<br>
+		  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this strategy">Baseline<sup>?</sup>:</label></a>
 			{{ eachquestion.baseline }}<br>
-		  <label>Target:</label>
+		  <a href="#"><label data-toggle="tooltip" title="The target outcome of this strategy">Target<sup>?</sup>:</label></a>
 			{{ eachquestion.target }}<br>
-		  <label>Timeline:</label>
-			{{ eachquestion.timeline }}<br>
-		  <label>Indicator:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
+			{{ eachquestion.timeline }} days<br>
+		  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this strategy">Indicator<sup>?</sup>:</label></a>
 			{{ eachquestion.indicator }}<br>
-		  <label>Gas Score +2:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much better than target">GAS Score +2:</label></a>
 			{{ eachquestion.scorepos2 }}<br>
-		  <label>Gas Score +1:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly better than target">GAS Score +1:</label></a>
 			{{ eachquestion.scorepos1 }}<br>
-		  <label>Gas Score 0:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Expected outcome (target)">GAS Score 0:</label></a>
 			{{ eachquestion.target }}<br>
-		  <label>Gas Score -1:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly less than target">GAS Score -1:</label></a>
 			{{ eachquestion.scoreneg1 }}<br>
-		  <label>Gas Score -2:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much less than target">GAS Score -2:</label></a>
 			{{ eachquestion.scoreneg2 }}<br><hr>
 
 		</div>
@@ -260,7 +265,7 @@ function show_question(caller){
 	{% if at_least_1_goal == 'goalpresent'  %}
           {% for symptom in data %}
 		{% if symptom.isgoalplanningdata == 1 %} 
-          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
 		{% endif %}
           {% endfor %}
 	{% endif %}
@@ -287,9 +292,9 @@ function show_question(caller){
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
 	    {% if symptom.isgoalplanningdata == 0 %}
-              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
 	    {% else %} 
-	      <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}" style="display: none">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+	      <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}" style="display: none">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
 	    {% endif %}
 
           {% endfor %}
