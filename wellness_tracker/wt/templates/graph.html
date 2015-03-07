@@ -149,10 +149,6 @@ $(function() {
 				{{ eachquestion.text }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 				{{ eachquestion.description }}<br>
-			  <!-- <label>Importance:</label>
-				{{ eachquestion.importance }}<br>
-			  <label>Difficulty:</label>
-				{{ eachquestion.difficulty }}<br> -->
 			  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this goal">Baseline<sup>?</sup>:</label></a>
 				{{ eachquestion.baseline }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="The target outcome of this goal">Target<sup>?</sup>:</label></a>
@@ -218,6 +214,8 @@ $(function() {
 			{{ eachquestion.timeline }} days<br>
 		  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this strategy">Indicator<sup>?</sup>:</label></a>
 			{{ eachquestion.indicator }}<br>
+		  <a href="#"><label data-toggle="tooltip" title="Actions to be taken to achieve this strategy">Actions<sup>?</sup>:</label></a>
+			{{ eachquestion.action }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much better than target">GAS Score +2:</label></a>
 			{{ eachquestion.scorepos2 }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly better than target">GAS Score +1:</label></a>

@@ -1444,7 +1444,7 @@ def followup_goal_planning(request, user_id):
 	    selected_strategy.target = int(question_data['goal'])
 	    selected_strategy.units=question_data['units']
 	    selected_strategy.baseline=question_data['baseline']
-	    selected_strategy.action=question_data['action']
+	    #selected_strategy.action=question_data['action'] #Action is not applicable to goals
 	    selected_strategy.timeline=question_data['timeline']
 	    selected_strategy.indicator=question_data['indicator']
 	    selected_strategy.scorepos2=question_data['scorepos2']
@@ -1463,7 +1463,7 @@ def followup_goal_planning(request, user_id):
 	    selected_strategy.description=question_data['description']
 	    selected_strategy.target = int(question_data['goal'])
 	    selected_strategy.baseline=question_data['baseline']
-	    selected_strategy.action=question_data['action']
+	    #selected_strategy.action=question_data['action'] #Action is not applicable to goals
 	    selected_strategy.timeline=question_data['timeline']
 	    selected_strategy.indicator=question_data['indicator']
 	    selected_strategy.scorepos2=question_data['scorepos2']
@@ -1482,7 +1482,7 @@ def followup_goal_planning(request, user_id):
 	    selected_strategy.description=question_data['description']
 	    selected_strategy.target = int(question_data['goal'])
 	    selected_strategy.baseline=question_data['baseline']
-	    selected_strategy.action=question_data['action']
+	    #selected_strategy.action=question_data['action']  #Action is not applicable to goals
 	    selected_strategy.timeline=question_data['timeline']
 	    selected_strategy.indicator=question_data['indicator']
 	    selected_strategy.scorepos2=question_data['scorepos2']
@@ -1508,7 +1508,7 @@ def followup_goal_planning(request, user_id):
 				  #importance=selected_strategy.importance,
 				  #difficulty=selected_strategy.difficulty,
 				  baseline=question_data['baseline'],
-				  action=question_data['action'],
+				  #action=question_data['action'], #Action is not applicable to goals
 				  timeline=question_data['timeline'],
 				  indicator=question_data['indicator'],
 				  scorepos2=question_data['scorepos2'],
@@ -1563,7 +1563,7 @@ def followup_goal_planning(request, user_id):
 				     #importance=selected_strategy.importance,
 				     #difficulty=selected_strategy.difficulty,
 				     baseline=question_data['baseline'],
-				     action=question_data['action'],
+				     #action=question_data['action'], #Action is not applicable to goals
 				     timeline=question_data['timeline'],
 				     indicator=question_data['indicator'],
 				     scorepos2=question_data['scorepos2'],
@@ -1590,7 +1590,7 @@ def followup_goal_planning(request, user_id):
 				#importance=selected_strategy.importance,
 				#difficulty=selected_strategy.difficulty,
 				baseline=question_data['baseline'],
-				action=question_data['action'],
+				#action=question_data['action'], #Action is not applicable to goals
 				timeline=question_data['timeline'],
 				indicator=question_data['indicator'],
 				scorepos2=question_data['scorepos2'],
