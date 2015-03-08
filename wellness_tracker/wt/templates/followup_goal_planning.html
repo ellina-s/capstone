@@ -178,8 +178,18 @@
 		</td>
 		<td>+1</td>
 	</tr>
-	
 
+<!-- The value from this input is not recorded, because this is the same as target.
+     Instead, the value of the target is used througout the app. -->
+	<tr>
+		<td>Expected Outcome (Target)</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="same-as-target" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>0</td>
+	</tr>
 
 	<tr>
 		<td>Slightly Worse than Expected Outcome</td>
@@ -356,7 +366,7 @@
 	</tr>
 	
 	<tr>
-		<td>Target</td>
+		<td>Expected Outcome (Target)</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="target2" class="form-control" id="question" value="{{ selected_strategy.target }}">
