@@ -11,21 +11,6 @@
 
 {% block script %}
 {{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
 {% endblock %}
 
 {% block content %}
@@ -34,29 +19,28 @@
         {% csrf_token %}
 	<br/>
 
-
 {% if gas_goals %}
-          
     {% for gasgoals in gas_goals %}
-
     <div class="form-group">
-           <label for="goal" class="col-sm-3 control-label">Goal</label>
-           <div class="col-sm-8">
+        <label for="goal" class="col-sm-3 control-label">Goal</label>
+        <div class="col-sm-8">
              <p class="help-block">{{ gasgoals.goal1 }}</p>
-           </div>
-           <div class="col-sm-1">
-	     <label class="radio">
-	       <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}">
-	     </label>
-           </div>
-       
-          <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
-          <div class="col-sm-9">
+        </div>
+        <div class="col-sm-1">
+        <label class="radio">
+        {% if forloop.first %}
+            <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}" checked>
+        {% else %}
+            <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}">
+        {% endif %}
+        </label>
+        </div>
+        <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
+        <div class="col-sm-9">
             <p class="help-block">{{ gasgoals.environmentalassessment1 }}<br><br><br></p>
-          </div>
-         </div>
+        </div>
+    </div>
     {% endfor %}
-            
 {% else %}
             <strong>There are no goals present.</strong>
 {% endif %}
@@ -91,9 +75,8 @@
   <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
   {% endfor %} -->
 
-</div>
 <div class="submit text-center">
     <input value="Next" name="button" type="submit" class="btn btn-lg btn-success"></input>
-  </div>
+</div>
 </form>
 {% endblock %}

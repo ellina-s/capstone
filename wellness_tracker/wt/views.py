@@ -233,6 +233,12 @@ def gas_goal_selection(request, user_id=0):
         #print 'These are the id im looking for:' 
 	#print gas_goals_select['goalselect']
 	#print 'These are all the ids of each thing:'
+    
+        if 'goalselect' in gas_goals_select:
+            print ' * Goal was selected'
+            print gas_goals_select['goalselect']
+        else:
+            print ' * Goal was not selected'
 
 	for tempGASGoals in gas_goals_list:
 	    tempGASGoals.activated = 0
