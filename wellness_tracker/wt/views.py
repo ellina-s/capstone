@@ -140,12 +140,12 @@ def create_patient(request):
 
         status['patient_created'] = True #set the flag to True if SO is successfully created
 
-        email_flag = False
+        email_flag = True
         if (email_flag):
             # Send an email
             #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
-            email = EmailMessage('Django Testing -- New User',
-                'Dear user ' + new_patient_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'],
+            email = EmailMessage('Your Account on Welness Tracker',
+                'Dear ' + new_patient_data['userid'] + '\n\nThis is a message from the Wellness Tracker. You have been signed up for the Wellness Tracker. Here are the details of you account:\n\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'] + '\n\nSincerely,\nWellness Tracker Team',
                 'wtdev.testing@gmail.com',
                 [new_patient_data['useremail']] )
             try:
@@ -2464,12 +2464,12 @@ def create_so(request):
 
         status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
 
-        email_flag = False
+        email_flag = True
         if (email_flag):
             # Send an email
             #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
-            email = EmailMessage('Wellness Tracker -- New Sig Other',
-                'Dear user ' + so_data['userid'] + '\nThis is a message from Wellness Tracker.\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'],
+            email = EmailMessage('Wellness Tracker -- Your New Account',
+                'Dear ' + so_data['userid'] + '\n\nThis is a message from Wellness Tracker. You have been signed up for the Wellness Tracker as a significant other. Here are the details of you account:\n\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'] + '\n\nSincerely,\nWellness Tracker Team',
                 'wtdev.testing@gmail.com',
                 [so_data['useremail']] )
             try:

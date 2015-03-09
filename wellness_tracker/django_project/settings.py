@@ -183,3 +183,5 @@ EMAIL_HOST_PASSWORD = 'wtDev14j'
 # Port for sending e-mail
 EMAIL_PORT = 587
 
+# alternative email address
+# wellnesstracker.sup.ph2
