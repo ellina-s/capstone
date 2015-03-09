@@ -67,7 +67,7 @@ $(function() {
 {% block content %}
 <h2>
 
-{% if user|is_physician %}
+{% if user|is_physician or user|is_significant_other %}
     Follow-up Graph
     {% if user != graph_user %}
     - {% firstof graph_user.get_full_name graph_user.username|title %}
@@ -86,7 +86,15 @@ $(function() {
 
 <hr />
 {% if selected_goal == '-1' %}
-<h4>There are no goals created or selected for this patient.</h4>
+    {% if user|is_physician %}
+    <h4><p>Looks like this patient has no goals created or selected.</p>
+    Click the Goal Attainment Wizard button to start the goal attaining process.</h4>
+    {% elif user|is_significant_other %}
+    <h4><p>Looks like this patient doesn't have any goals set up yet.</p></h4>
+    {% else %}
+    <h4><p>Looks like you don't have any goals set up yet.</p>
+    Please, contact your physician to start the goal attaining process.</h4>
+    {% endif %}
 {% endif %}
 <!-- else statement, uncomment and add endif at the end
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
@@ -169,6 +177,16 @@ $(function() {
 				{{ eachquestion.scoreneg2 }}<br>
 			</div>
 		{% endif %}
+        {% empty %}
+            {% if user|is_physician %}
+                {% if at_least_1_goal == 'nogoal' %}
+                    This patient has no goals created or activated. To start the goal attaining process, click the Goal Attainment Wizard button.
+                {% else %}
+                    The goal set up was not finished. To finish, click the Decision Making or Edit Goals buttons.
+                {% endif %}
+            {% else %}
+                There are no goals created or activated yet. You will find the detailed information about the goal when it is created and activated.
+            {% endif %}
 		{% endfor %}
 	    </div>
 
@@ -229,7 +247,19 @@ $(function() {
 
 		</div>
 		{% endif %}
-	        {% endfor %}
+        {% empty %}
+            {% if user|is_physician %}
+                {% if at_least_1_goal == 'nogoal' %}
+                    There are no strategies created for this patient. To begin, click on the Goal Attainment Wizard button.
+                {% else %}
+                    Currently, there are no strategies created for this patient. Make sure to set up and activate a goal before setting up the strategies.
+                    <!-- Note: this message does not show up for Jannis. She has an active goal (which works well and shows up), but doesn't have any strategies. -->
+                    <!-- Need to check if there are no questions with isgoalplanningdata flag set to zero. -->
+                {% endif %}
+            {% else %}
+                There are no strategies created yet. You will find the detailed information about strategies when they are created and activated.
+            {% endif %}
+        {% endfor %}
 	    </div>
 
       </div>
@@ -267,10 +297,14 @@ $(function() {
 		{% endif %}
           {% endfor %}
 	{% endif %}
-          {% if user|is_physician %}
-	  
-	  <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a> 
-          {% endif %}
+        {% if user|is_physician %}
+            {% if at_least_1_goal == 'nogoal' %}
+                No goals
+            {% else %}
+                Goals exist
+                <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a>
+            {% endif %}
+        {% endif %}
         </div>
 
         <h4>	  
@@ -296,10 +330,14 @@ $(function() {
 	    {% endif %}
 
           {% endfor %}
-          {% if user|is_physician %}
-	  
-	  <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a> 
-          {% endif %}
+    {% if user|is_physician %}
+        {% if at_least_1_goal == 'nogoal' %}
+            No goals
+        {% else %}
+            Goals exist
+            <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a>
+        {% endif %}
+    {% endif %}
         </div>
       </div>
       <div class="col-md-12 col-sm-6">
