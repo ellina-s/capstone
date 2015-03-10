@@ -602,7 +602,7 @@ def new_strategy_planning(request, user_id):
         for k, v in response.items():
             question_data[str(k)] = v.pop()
 
-	print question_data
+	#print question_data
 	if question_data['text'] == '':
 		print 'These is no strategy planning data.'
 	else:
@@ -611,7 +611,20 @@ def new_strategy_planning(request, user_id):
 				  text=question_data['text'],
                                   description=question_data['description'],
                                   target=int(question_data['goal']),
-                                  patient=patient)
+                                  patient=patient,
+				  gasgoal=selected_strategy.gasgoal,
+				  importance=selected_strategy.importance,
+				  difficulty=selected_strategy.difficulty,
+				  baseline=question_data['baseline'],
+				  action=question_data['action'],
+				  timeline=question_data['timeline'],
+				  indicator=question_data['indicator'],
+				  scorepos2=question_data['scorepos2'],
+				  scorepos1=question_data['scorepos1'],
+				  scoreneg1=question_data['scoreneg1'],
+				  scoreneg2=question_data['scoreneg2'],
+				  activated=1,
+				  needsplanning=0)
                 boolean.save()
 		#delete selected_strategy since it has been replaced. this is not so good (NEED TO CHANGE)
 		selected_strategy.delete()

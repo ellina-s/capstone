@@ -299,17 +299,10 @@ $(function() {
           {% endfor %}
 	{% endif %}
         {% if user|is_physician %}
-            {% if at_least_1_goal == 'nogoal' %}
-                No goals
-            {% else %}
-                Goals exist
-            {% endif %}
-            
             {% if at_least_1_goal != 'nogoal' %}
-                Reverse test: goal exist
                 <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a>
             {% else %}
-                Reverse test: no goals exist
+                <!-- -->
             {% endif %}
         {% endif %}
         </div>
@@ -339,10 +332,9 @@ $(function() {
           {% endfor %}
     {% if user|is_physician %}
         {% if at_least_1_goal != 'nogoal' %}
-            Reverse test: Goal exist
             <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a>
         {% else %}
-            Reverse test: No goals
+            <!-- -->
         {% endif %}
     {% endif %}
         </div>
