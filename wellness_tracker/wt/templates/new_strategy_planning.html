@@ -26,37 +26,42 @@
     $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
     $("#cat-list > input").last().focus();
   }
+
+  // Initialize all tooltips on this page.
+  $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 </script>
 {% endblock %}
 
 {% block content %}
-<h2>{% firstof patient.get_full_name patient.username|title %} - New Strategy Planning</h2>
+<h2>Goal Attainment Wizard Step 4 - {% firstof patient.get_full_name patient.username|title %} - New Strategy Planning</h2><br>
 
 
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy_planning' patient.id %}" method="post">
- <h4><center>Strategy Planning Charter</center></h4>
- <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
- <h5><center>Strategy - {{ selected_strategy.title }}</center></h5>
- <h6><center>Importance - {{ selected_strategy.importance }} Difficulty - {{ selected_strategy.difficulty }}</center></h6>
+ <!-- <h4><center>Strategy Planning Charter</center></h4> -->
+ <h4><center>Goal - {{ selected_goal.goal1 }}</center></h4>
+ <h4><center>Strategy - {{ selected_strategy.title }}</center></h4>
+ <h5><center>Importance - {{ selected_strategy.importance }} out of 4, Difficulty - {{ selected_strategy.difficulty }} out of 4</center></h5>
 
   {% csrf_token %}
   <div class="form-group">
-    <label for="title" class="col-sm-2 control-label">Title</label>
+    <label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Give a concise title to this strategy">Title<sup>?</sup></label>
     <div class="col-sm-10">
-      <p class="help-block">{{ selected_strategy.title }}</p>
+	<input type="text" name="title" class="form-control" id="title" value="{{ selected_strategy.title }}">
     </div>
   </div>
   <div class="form-group">
-    <label for="question" class="col-sm-2 control-label">Question</label>
+    <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="The question that the patient is answering for this strategy">Question<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="text" class="form-control" id="question" placeholder="How many steps have you walked...">
+      <input type="text" name="text" class="form-control" id="question" placeholder="E.g. How many snacks have you had today...">
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label">Description</label>
+    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions">Description<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="description" class="form-control" id="description" placeholder="Answer on a scale of 1-10">
+      <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10">
     </div>
   </div>
   
@@ -64,42 +69,38 @@
 
           
 	   <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Baseline:</label>
+           <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="baseline" class="form-control" id="question" placeholder="Set Benchmark...">
-             
+             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline...">
            </div>
          </div>
 
 	  <div class="form-group">
-	    <label for="description" class="col-sm-2 control-label">Target</label>
+	    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this strategy?">Target<sup>?</sup></label>
 	    <div class="col-sm-10">
-	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Target value for this question">
+	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value...">
 	    </div>
 	  </div>
 
          <div class="New Patient Information">
            <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Timeline:</label>
+           <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set Timeline...">
-             <p class="help-block">Enter a timeline for the goal (In days)</a>
+             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set timeline in days...">
            </div>
          </div>
 
         <div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Indicator:</label>
+          <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this strategy">Indicator<sup>?</sup></label>
           <div class="col-sm-10">
-            <input type="text" name="indicator" class="form-control" id="question" placeholder="Set Indicator">
-            <p class="help-block">Enter an Indicator for the goal</p>
+            <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator...">
           </div>
          </div>
 
 	<div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Action:</label>
+          <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Specify actions that need to be taken to achieve this strategy. Conider the questions What? When? How?">Action<sup>?</sup></label>
           <div class="col-sm-10">
-            <input type="text" name="action" class="form-control" id="question" placeholder="Set Action">
-            <p class="help-block">Enter the action for the goal</p>
+            <input type="text" name="action" class="form-control" id="question" placeholder="Specify action...">
           </div>
          </div>
 
@@ -107,11 +108,10 @@
 <!-- ----------------------------------------------->
 
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select id="type" name="type" class="form-control">
         <option value="slider">Slider</option>
-       
         <option value="boolean">Yes / No</option>
         <option value="integer">Numerical</option>
       </select>
@@ -145,9 +145,9 @@
       </div>
     </div>
     <div id="integer" class="form-group" style="display: none;">
-      <label for="units" class="col-sm-2 control-label">Units</label>
+      <label for="units" class="col-sm-2 control-label" data-toggle="tooltip" title="Enter the units for this question">Units<sup>?</sup></label>
       <div class="col-sm-10">
-        <input type="text" name="units" id="units" class="form-control" placeholder="Kg, Hours, Snacks...">
+        <input type="text" name="units" id="units" class="form-control" placeholder="E.g. kg, hours, snacks...">
       </div>
     </div>
 
@@ -183,7 +183,15 @@
 		<td>+1</td>
 	</tr>
 	
-
+	<tr>
+		<td>Expected Outcome (Target)</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="target2" class="form-control" id="question" value="{{ selected_strategy.target }}">
+                </div>
+		</td>
+		<td>0</td>
+	</tr>
 
 	<tr>
 		<td>Slightly Worse than Expected Outcome</td>

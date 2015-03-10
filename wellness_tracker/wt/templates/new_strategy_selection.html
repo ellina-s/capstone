@@ -14,11 +14,11 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Strategy Selection - {% firstof patient.get_full_name patient.username|title %} - {{ selected_goal.goal1 }}</h2>
+<h2>Goal Attainment Wizard Strategy Selection - {% firstof patient.get_full_name patient.username|title %} - {{ selected_goal.goal1 }}</h2><br/>
 <!--<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>-->
+
     <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy_selection' patient.id %}" method="post">
         {% csrf_token %}
-	<br/>
 
     {% if status %}
         <script type="text/javascript">
@@ -28,6 +28,7 @@
     {% endif %}
 
 {% if gas_goal_strategies %}
+<center><h4>Please, select at least one strategy:</h4></center><br>
     {% for question in gas_goal_strategies %}
            <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Strategy Title:</label>
@@ -53,13 +54,17 @@
           </div>
          </div>
     {% endfor %}
+    <div class="submit text-center">
+        <input type="submit" class="btn btn-lg btn-success" value="Next"></input>
+    </div>
 
 {% else %}
-            <strong>There are no strategies present for this goal.</strong><br/>
+	<center><strong>There are no strategies present for this goal. Please, add some strategies in Step 3.</strong></center><br>
+	<div class="submit text-center">
+		<a href="{% url 'new_strategy' patient.id %}"><input type="button" class="btn btn-lg btn-success" value="Back to Step 3"></input></a>
+	</div>
 {% endif %}
 
-<div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
-  </div>
+
 </form>
 {% endblock %}

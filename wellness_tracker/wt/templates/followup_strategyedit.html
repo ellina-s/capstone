@@ -8,25 +8,6 @@
   {{ block.super }}
 {% endblock %}
 
-{% block script %}
-{{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
-{% endblock %}
-
 {% block content %}
 <h2>Follow Up Meeting - Edit Strategies
   {% if user|is_physician %}
@@ -127,6 +108,7 @@
 
 </br>
 
+<center><h5>Partially Defined Strategies:</h5></center><br>
 <!-- Display all prequestion strategies -->
 {% if prequestion_strategy_list %}
           
@@ -162,7 +144,7 @@
 {% endfor %}
             
 {% else %}
-            <!-- <strong>There are no prequestion strategies.</strong><br/> -->
+            <center><strong>There are no partially defined strategies.</strong></center><br/>
 {% endif %}
 
 </br>

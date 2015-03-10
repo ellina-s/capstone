@@ -12,42 +12,32 @@
 {{ block.super }}
 <script src="{% static 'jquery/jquery.js' %}"></script>
 <script>
+  // Initialize all tooltips on this page.
   $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 </script>
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step1 - {% firstof patient.get_full_name patient.username|title %}</h2>
-
-
-<h4><center>Goals Identification, Environmental Assessment and Main Goal Selection Charter</center></h4>
+<h2>Goal Attainment Wizard Step1 - {% firstof patient.get_full_name patient.username|title %}</h2><br/>
+<h4><center>Identify the goal and assess the environment</center></h4><br/>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_step1' patient.id %}" method="post">
   {% csrf_token %}
-         <div class="New Patient Information">
+         <div class="New Goal Information">
            <div class="form-group">
-           <label for="goal1" class="col-sm-3 control-label">Goal</label>
+           <label for="goal1" class="col-sm-3 control-label" data-toggle="tooltip" title="Give a concise title to the goal">Goal<sup>?</sup></label>
            <div class="col-sm-9">
-             <input type="text" name="goal1" class="form-control" id="question" placeholder="Become healthier...">
+             <input type="text" name="goal1" class="form-control" id="question" placeholder="E.g. Become healthier...">
              <p class="help-block">Enter a goal for the patient</a>
            </div>
          </div>
 
         <div class="form-group">
-          <label for="environmentalassessment1" class="col-sm-3 control-label">Environmental Assessment</label>
+          <label for="environmentalassessment1" class="col-sm-3 control-label" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment<sup>?</sup></label>
           <div class="col-sm-9">
-            <input type="text" name="environmentalassessment1" class="form-control" id="question" placeholder="Placeholder">
-            <p class="help-block">Describe the Enviroment</p>
+            <input type="text" name="environmentalassessment1" class="form-control" id="question" placeholder="Describe the environment...">
+            <p class="help-block">Describe the environment</p>
           </div>
          </div>
 
@@ -75,3 +65,4 @@
 
 
 {% endblock %}
+

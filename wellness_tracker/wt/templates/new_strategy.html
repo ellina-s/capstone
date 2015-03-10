@@ -9,37 +9,50 @@
   {{ block.super }}
 {% endblock %}
 
+{% block script %}
+{{ block.super }}
+<script>
+  // Initialize all tooltips on this page.
+  $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
+</script>
+{% endblock %}
 
 {% block content %}
-<h2>Goal Attainment New Strategy
+<h2>Goal Attainment Wizard Step 3 -  New Strategy
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
   {% endif %}
-</h2>
+</h2><br>
 
-<h4><center>Prioritization and Strategy Selection Charter</center></h4>
+<h4><center>Identify and prioritize a new strategy</center></h4>
 <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy' patient.id %}" method="post">
     {% csrf_token %}
 	<div class="form-group">
          
-	   <label for="goal" class="col-sm-3 control-label">Strategy Title:</label>
+	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Create a title for the strategy">Strategy Title<sup>?</sup></label>
            <div class="col-sm-9">
-             <input type="text" name="title" class="form-control" id="question" placeholder="Walking...">
-	     <p class="help-block">Create a title for the Strategy.</a>
+             <input type="text" name="title" class="form-control" id="question" placeholder="E.g. Walking...">
+	     <!-- <p class="help-block">Create a title for the Strategy.</a> -->
 	   </div>
+</div>
 
-	   <label for="goal" class="col-sm-3 control-label">Importance:</label>
+<div class="form-group">
+	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Specify importance of this strategy">Importance<sup>?</sup></label>
            <div class="col-sm-2">
              <input type="text" name="importance" class="form-control" id="importance" placeholder="1-4">
 	    </div>
 	   <div class="col-sm-7"><p class="help-block">1 = not important to 4 = extremely important</a></div>
-	   <label for="goal" class="col-sm-3 control-label">Difficulty:</label>
+</div>
+<div class="form-group">
+	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Specify difficulty of achieving this strategy">Difficulty<sup>?</sup></label>
            <div class="col-sm-2">
              <input type="text" name="difficulty" class="form-control" id="difficulty" placeholder="1-4">
 	    </div>
   	   <div class="col-sm-7"><p class="help-block">1 = not difficult to 4 = extremely difficult</a></div>
-	   
+	   </div>
 <!-- Drop Down Select Question -->
 <!--<div class="form-group">
     <label for="createanother" class="col-sm-3 control-label"></label>

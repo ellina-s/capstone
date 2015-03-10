@@ -15,11 +15,13 @@
 
 {% block content %}
 <h2>Goal Attainment Wizard Goal Selection - {% firstof patient.get_full_name patient.username|title %}</h2>
+
     <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_goal_selection' patient.id %}" method="post">
         {% csrf_token %}
 	<br/>
 
 {% if gas_goals %}
+<center><h4>Please, select the main goal:</h4></center><br/>
     {% for gasgoals in gas_goals %}
     <div class="form-group">
         <label for="goal" class="col-sm-3 control-label">Goal</label>
@@ -41,42 +43,17 @@
         </div>
     </div>
     {% endfor %}
-{% else %}
-            <strong>There are no goals present.</strong>
-{% endif %}
 
-
-<!-- Drop Down Select Question -->
-<!--
-<div class="form-group">
-    <label for="select" class="col-sm-3 control-label">Select the goal to use</label>
-    <div class="col-sm-9">
-      <select id="type" name="goalselect" class="form-control">
-{% if gas_goals %}
-          
-    {% for gasgoals in gas_goals %}
-                
-	<option value="{{ gasgoals.id }}">{{ gasgoals.goal1 }} - id:{{ gasgoals.id }}</option>
-    {% endfor %}
-            
-{% else %}
-            <strong>There are no goals present.</strong>
-{% endif %}
- 
-      </select>
+    <div class="submit text-center">
+        <input value="Next" name="button" type="submit" class="btn btn-lg btn-success"></input>
     </div>
-  </div>
 
-  	
-  </div> -->
+{% else %}
+    <center><strong>There are no goals to select from. Please, add some goals in Step 1.</strong></center><br>
+    <div class="submit text-center">
+        <a href="{% url 'gas_step1' patient.id %}"><input type="button" class="btn btn-lg btn-success" value="Back to Step 1"></input></a>
+    </div>
+{% endif %}
 
-<!--   Note:   some info from patient_list that i didnt like
-  {% for patient in patients %}
-  <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
-  {% endfor %} -->
-
-<div class="submit text-center">
-    <input value="Next" name="button" type="submit" class="btn btn-lg btn-success"></input>
-</div>
 </form>
 {% endblock %}

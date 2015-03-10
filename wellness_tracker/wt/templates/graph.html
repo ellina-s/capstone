@@ -255,6 +255,7 @@ $(function() {
                     Currently, there are no strategies created for this patient. Make sure to set up and activate a goal before setting up the strategies.
                     <!-- Note: this message does not show up for Jannis. She has an active goal (which works well and shows up), but doesn't have any strategies. -->
                     <!-- Need to check if there are no questions with isgoalplanningdata flag set to zero. -->
+                    <!-- This message is displayed when the list of questions is empty. Not displayed if the list contains anything (a goal or strategy with planning data), even only one of them. -->
                 {% endif %}
             {% else %}
                 There are no strategies created yet. You will find the detailed information about strategies when they are created and activated.
@@ -302,7 +303,13 @@ $(function() {
                 No goals
             {% else %}
                 Goals exist
+            {% endif %}
+            
+            {% if at_least_1_goal != 'nogoal' %}
+                Reverse test: goal exist
                 <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a>
+            {% else %}
+                Reverse test: no goals exist
             {% endif %}
         {% endif %}
         </div>
@@ -331,11 +338,11 @@ $(function() {
 
           {% endfor %}
     {% if user|is_physician %}
-        {% if at_least_1_goal == 'nogoal' %}
-            No goals
-        {% else %}
-            Goals exist
+        {% if at_least_1_goal != 'nogoal' %}
+            Reverse test: Goal exist
             <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a>
+        {% else %}
+            Reverse test: No goals
         {% endif %}
     {% endif %}
         </div>
