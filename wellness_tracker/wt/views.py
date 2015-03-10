@@ -519,8 +519,6 @@ def new_strategy_selection(request, user_id):
     for tempstrat in strategy_list:
 	tempstrat.needsplanning = 0
 	tempstrat.save()
-	
-	
 
     #Find all new (non active) strategies
     non_active_strategy_list = PreQuestion.objects.filter(gasgoal=selected_goal, activated='0')
@@ -533,8 +531,10 @@ def new_strategy_selection(request, user_id):
     #for plzprint in needsplanning_strategy_list:
 	#print plzprint.title
     
-    #Create dict
-    context_dict = {'gas_goal_strategies' : non_active_strategy_list, 'patient': patient, 'selected_goal': selected_goal}
+    no_selected_checkbox = False #default
+
+    #Create dictionary
+    context_dict = {'gas_goal_strategies' : non_active_strategy_list, 'patient': patient, 'selected_goal': selected_goal, 'status': no_selected_checkbox}
 
     #print request.POST
     if request.method == 'POST':
@@ -546,21 +546,29 @@ def new_strategy_selection(request, user_id):
 
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
-        t = str(response.get('type'))
-        question_data = {}
-        for k, v in response.items():
-	    for stratcheck in strategy_list:
-                if str(k) == str(stratcheck.id):
-		    if v.pop() == 'selected':
-	                print stratcheck.title
-			stratcheck.needsplanning = 1
-			stratcheck.activated = 0
-			stratcheck.save()
+
+	# Check if the list of items is empty
+	if not response.items():
+		#print 'Response list is empty'
+		no_selected_checkbox = True
+		# Update context dictionary
+		context_dict = {'gas_goal_strategies' : non_active_strategy_list, 'patient': patient, 'selected_goal': selected_goal, 'status': no_selected_checkbox}
+		return render(request, 'new_strategy_selection.html', context_dict)
+
+	# If the list of items is not empty:
+	if response.items():
+        	for k, v in response.items():
+	    		for stratcheck in strategy_list:
+                		if str(k) == str(stratcheck.id): # if the ID specified in k is the same as the ID of the strategy
+		    			if v.pop() == 'selected': # then, check if v.pop contains selected for that pair of k and v
+	                			#print stratcheck.title
+						stratcheck.needsplanning = 1 # and if it's true, then indicate that this strategy needs planning
+						stratcheck.activated = 0
+						stratcheck.save()
 
 	return render(request, 'new_strategy_planning_forward.html', context_dict)
 
     else:
-        
         return render(request, 'new_strategy_selection.html', context_dict)
 
 
@@ -2407,7 +2415,7 @@ def create_so(request):
         
         # Check that chk_patients exists in the response data.
         # It wouldn't exist, if user did not check any checkboxes.
-        # If it does, that add it, because it is missing from the call to getlist()
+        # If it does, then add it, because it is missing from the call to getlist()
         if 'chk_patients' in so_data:
             patients_ids.append(so_data['chk_patients'])
         else:
