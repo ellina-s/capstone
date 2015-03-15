@@ -24,6 +24,17 @@ $(function() {
   {% endif %}
 </h2>
 
+<ol class="breadcrumb">
+  <li>Step 1</li>
+  <li>Step 2</li>
+  <li>Step 3</li>
+  <li>Step 4</li>
+  <li>Step 5</li>
+  <li>Step 6</li>
+  <li class="active">Overall Summary</li>
+</ol>
+
+
 <h4><center><br>Goal Summary<br><br></center></h4>
 <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
 <dir class="form-horizontal col-md-6 col-md-offset-3">
@@ -111,7 +122,7 @@ $(function() {
     <h4><center><br>Strategy Summary<br><br></center></h4>
     {% for question in active_strategy_list %}
 
-   <h5><center>Strategy - {{ question.title }}</center></h5>
+   <h5><center>Strategy - {{ question.title }}</center></h5><br/>
 
    <div class="row">
 	<div class="col-md-5" style="text-align:right"><label for="goal">Strategy Title:</label></div>

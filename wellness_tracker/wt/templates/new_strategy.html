@@ -20,11 +20,20 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step 3 -  New Strategy
+<h2>Goal Attainment Wizard Step 4 -
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
-  {% endif %}
+  {% endif %} -  New Strategy
 </h2><br>
+
+<ol class="breadcrumb">
+  <li>Step 1</li>
+  <li>Step 2</li>
+  <li>Step 3</li>
+  <li class="active">Step 4 - Identify Strategies</li>
+  <li>Step 5</li>
+  <li>Step 6</li>
+</ol>
 
 <h4><center>Identify and prioritize a new strategy</center></h4>
 <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>

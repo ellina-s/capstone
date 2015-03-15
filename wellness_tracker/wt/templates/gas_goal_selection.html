@@ -14,7 +14,16 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Goal Selection - {% firstof patient.get_full_name patient.username|title %}</h2>
+<h2>Goal Attainment Wizard Step 2 - {% firstof patient.get_full_name patient.username|title %}</h2>
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'gas_step1' patient.id %}">Step 1</a></li>
+  <li class="active"> Step 2 - Select Goal</li>
+  <li>Step 3</li>
+  <li>Step 4</li>
+  <li>Step 5</li>
+  <li>Step 6</li>
+</ol>
 
     <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_goal_selection' patient.id %}" method="post">
         {% csrf_token %}
@@ -47,7 +56,7 @@
     <div class="submit text-center">
         <input value="Next" name="button" type="submit" class="btn btn-lg btn-success"></input>
     </div>
-
+</form>
 {% else %}
     <center><strong>There are no goals to select from. Please, add some goals in Step 1.</strong></center><br>
     <div class="submit text-center">
@@ -55,5 +64,5 @@
     </div>
 {% endif %}
 
-</form>
+
 {% endblock %}

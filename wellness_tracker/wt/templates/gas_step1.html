@@ -20,7 +20,17 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step1 - {% firstof patient.get_full_name patient.username|title %}</h2><br/>
+<h2>Goal Attainment Wizard Step 1 - {% firstof patient.get_full_name patient.username|title %}</h2><br/>
+
+<ol class="breadcrumb">
+  <li class="active">Step 1 - Identify Goals</li>
+  <li>Step 2</li>
+  <li>Step 3</li>
+  <li>Step 4</li>
+  <li>Step 5</li>
+  <li>Step 6</li>
+</ol>
+
 <h4><center>Identify the goal and assess the environment</center></h4><br/>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_step1' patient.id %}" method="post">
   {% csrf_token %}
@@ -28,8 +38,8 @@
            <div class="form-group">
            <label for="goal1" class="col-sm-3 control-label" data-toggle="tooltip" title="Give a concise title to the goal">Goal<sup>?</sup></label>
            <div class="col-sm-9">
-             <input type="text" name="goal1" class="form-control" id="question" placeholder="E.g. Become healthier...">
-             <p class="help-block">Enter a goal for the patient</a>
+             <input type="text" name="goal1" class="form-control" id="question" placeholder="E.g. Become healthier..."><br/>
+             <!-- <p class="help-block">Enter a goal for the patient</a> -->
            </div>
          </div>
 
@@ -37,7 +47,7 @@
           <label for="environmentalassessment1" class="col-sm-3 control-label" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment<sup>?</sup></label>
           <div class="col-sm-9">
             <input type="text" name="environmentalassessment1" class="form-control" id="question" placeholder="Describe the environment...">
-            <p class="help-block">Describe the environment</p>
+            <!-- <p class="help-block">Describe the environment</p> -->
           </div>
          </div>
 

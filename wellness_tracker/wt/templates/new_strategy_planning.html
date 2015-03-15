@@ -35,14 +35,22 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step 4 - {% firstof patient.get_full_name patient.username|title %} - New Strategy Planning</h2><br>
+<h2>Goal Attainment Wizard Step 6 - {% firstof patient.get_full_name patient.username|title %} - New Strategy Planning</h2><br>
 
+<ol class="breadcrumb">
+  <li>Step 1</li>
+  <li>Step 2</li>
+  <li>Step 3</li>
+  <li>Step 4</li>
+  <li>Step 5</li>
+  <li class="active">Step 6 - Plan the Strategy</li>
+</ol>
 
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy_planning' patient.id %}" method="post">
  <!-- <h4><center>Strategy Planning Charter</center></h4> -->
  <h4><center>Goal - {{ selected_goal.goal1 }}</center></h4>
  <h4><center>Strategy - {{ selected_strategy.title }}</center></h4>
- <h5><center>Importance - {{ selected_strategy.importance }} out of 4, Difficulty - {{ selected_strategy.difficulty }} out of 4</center></h5>
+ <h5><center>Importance - {{ selected_strategy.importance }} out of 4, Difficulty - {{ selected_strategy.difficulty }} out of 4</center></h5><br/>
 
   {% csrf_token %}
   <div class="form-group">

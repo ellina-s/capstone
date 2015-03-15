@@ -33,11 +33,21 @@
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step 2
+<h2>Goal Attainment Wizard Step 3
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
-  {% endif %} - {{ selected_goal.goal1 }}
+   - {{ selected_goal.goal1 }}
+  {% endif %}
 </h2>
+
+<ol class="breadcrumb">
+  <li>Step 1</li>
+  <li>Step 2</li>
+  <li class="active">Step 3 - Plan the Goal</li>
+  <li>Step 4</li>
+  <li>Step 5</li>
+  <li>Step 6</li>
+</ol>
 
 <h4><center><br>Goal's Planning - {{ selected_goal.goal1 }}<br><br></center></h4>
 
