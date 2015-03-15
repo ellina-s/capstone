@@ -8,6 +8,15 @@
   {{ block.super }}
 {% endblock %}
 
+{% block script %}
+<script>
+// Initialize all tooltips on this page.
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+})
+</script>
+{% endblock %}
+
 {% block content %}
 <h2>Goal Attainment Goal Summary
   {% if user|is_physician %}
@@ -20,63 +29,80 @@
 <dir class="form-horizontal col-md-6 col-md-offset-3">
           
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Goal:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal">Goal Title:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal.goal1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Environmental Assessment:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal.environmentalassessment1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Question:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="The question that the patient is answering for this goal">Question:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.text }}</div>
    </div>
 
+   <div class="row">
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Description of the question">Description:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.description }}</div>
+   </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Baseline:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="The patient's starting point in this goal">Baseline:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.baseline }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Target:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="The target outcome of this goal">Target:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.target }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Timeline:</label></div>
-	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.timeline }}</div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline:</label></div>
+	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.timeline }} days</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Indicator:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.indicator }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score M2:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Much more than expected">Gas Score M2:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos2 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score M1:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Slightly more than expected">Gas Score M1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score T (Target):</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Expected outcome">Gas Score T (Target):</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.target }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score L1:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Slightly less than expected">Gas Score L1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scoreneg1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score L2:</label></div>
+	<div class="col-md-5" style="text-align:right">
+	<label for="goal" data-toggle="tooltip" title="Much less than expected">Gas Score L2:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scoreneg2 }}</div>
    </div>
 
