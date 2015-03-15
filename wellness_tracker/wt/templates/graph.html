@@ -294,7 +294,8 @@ $(function() {
 	{% if at_least_1_goal == 'goalpresent'  %}
           {% for symptom in data %}
 		{% if symptom.isgoalplanningdata == 1 %} 
-          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
+          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">
+			<span class="badge">{{ symptom.displayedscore }}</span>{{ symptom.key }}</a>
 		{% endif %}
           {% endfor %}
 	{% endif %}
@@ -324,7 +325,8 @@ $(function() {
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
 	    {% if symptom.isgoalplanningdata == 0 %}
-              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
+              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">
+		<span class="badge">{{ symptom.displayedscore }}</span>{{ symptom.key }}</a>
 	    {% else %} 
 	      <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}" style="display: none">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
 	    {% endif %}
