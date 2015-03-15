@@ -2660,4 +2660,10 @@ def s_new_question(request):
 @user_passes_test(is_physician)
 def new_survey_question(request):
     return render (request, 'new_survey_question.html')
-    
+
+@user_passes_test(is_physician)
+def patient_remove(request, user_id):
+    print ' * Patient ID to be removed:'
+    print int(user_id)
+    pati = get_object_or_404(User, pk=int(user_id))
+    return render (request, 'patient_remove.html', {'patient': pati})

@@ -1,0 +1,17 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<h3>Are you sure you want to delete this patient?</h3>
+<hr />
+
+<div class="alert alert-danger">
+<h3><span class="glyphicon glyphicon-exclamation-sign"></span> This will delete all records on <strong>{% firstof patient.get_full_name patient.username|title %}</strong> and cannot be reverted.</h3>
+</div>
+
+    <div class="submit text-center">
+        <input type="submit" class="btn btn-lg btn-danger" value="Delete {% firstof patient.get_full_name patient.username|title %}"></input>
+        <a href="{% url 'patient_list' %}" class="btn btn-lg btn-success">Cancel</a>
+    </div>
+
+{% endblock %}
