@@ -8,30 +8,11 @@
   {{ block.super }}
 {% endblock %}
 
-{% block script %}
-{{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
-{% endblock %}
-
 {% block content %}
 <h2>Goal Attainment Overall Summary
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
-  {% endif %} - {{ selected_goal.goal1 }}
+  {% endif %}
 </h2>
 
 <h4><center><br>Goal Summary<br><br></center></h4>
@@ -75,37 +56,37 @@
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score +2:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score M2:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos2 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score +1:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score M1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scorepos1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score 0 (Target):</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score T (Target):</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.target }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score -1:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score L1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scoreneg1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score -2:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score L2:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ selected_goal_question.scoreneg2 }}</div>
    </div>
 </br>
 
 <!-- Display Strategies -->
 {% if active_strategy_list %}
-          
+    <h4><center><br>Strategy Summary<br><br></center></h4>
     {% for question in active_strategy_list %}
 
-         <h5><center>Strategy - {{ question.title }}</center></h5>
+   <h5><center>Strategy - {{ question.title }}</center></h5>
 
    <div class="row">
 	<div class="col-md-5" style="text-align:right"><label for="goal">Strategy Title:</label></div>
@@ -139,31 +120,36 @@
 
    <div class="row">
 	<div class="col-md-5" style="text-align:right"><label for="goal">Importance:</label></div>
-	<div class="col-md-7" style="color:#737373">{{ question.importance }}</div>
+	<div class="col-md-7" style="color:#737373">{{ question.importance }} out of 4</div>
    </div>
 
    <div class="row">
 	<div class="col-md-5" style="text-align:right"><label for="goal">Difficulty:</label></div>
-	<div class="col-md-7" style="color:#737373">{{ question.difficulty }}</div>
+	<div class="col-md-7" style="color:#737373">{{ question.difficulty }} out of 4</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score +2:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score M2:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ question.scorepos2 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score +1:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score M1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ question.scorepos1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score -1:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">Gas Score T (Target):</label></div>
+	<div class="col-md-7" style="color:#737373">{{ question.target }}</div>
+   </div>
+
+   <div class="row">
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score L1:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ question.scoreneg1 }}</div>
    </div>
 
    <div class="row">
-	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score -2:</label></div>
+	<div class="col-md-5" style="text-align:right"><label for="goal">GAS Score L2:</label></div>
 	<div class="col-md-7" style="color:#737373">{{ question.scoreneg2 }}</div>
    </div>
 </br>
