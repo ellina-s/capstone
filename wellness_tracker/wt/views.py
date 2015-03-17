@@ -140,7 +140,7 @@ def create_patient(request):
 
         status['patient_created'] = True #set the flag to True if SO is successfully created
 
-        email_flag = True
+        email_flag = False
         if (email_flag):
             # Send an email
             #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
@@ -2476,7 +2476,7 @@ def create_so(request):
 
         status_dictionary['so_created'] = True #set the flag to True if SO is successfully created
 
-        email_flag = True
+        email_flag = False
         if (email_flag):
             # Send an email
             #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
