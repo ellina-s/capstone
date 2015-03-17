@@ -11,36 +11,35 @@
 
 {% block script %}
 {{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Strategy Selection - {% firstof patient.get_full_name patient.username|title %} - {{ selected_goal.goal1 }}</h2>
-<!--<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>-->
+<h2>Goal Attainment Wizard Step 5 - {% firstof patient.get_full_name patient.username|title %} - Select Strategies</h2><br/>
+
+<ol class="breadcrumb">
+  <li style="color:#9e9e9e">Step 1</li>
+  <li style="color:#9e9e9e">Step 2</li>
+  <li style="color:#9e9e9e">Step 3</li>
+  <li style="color:#9e9e9e">Step 4</li>
+  <li>Step 5 - Select Strategies</li>
+  <li style="color:#9e9e9e">Step 6</li>
+</ol>
+
+<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5><br/>
+
     <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy_selection' patient.id %}" method="post">
         {% csrf_token %}
-	<br/>
 
+    {% if status %}
+        <script type="text/javascript">
+            $.notify.defaults({ globalPosition: "top center" });
+            $.notify("No strategy selected. Please, select at least one strategy.", "error");
+        </script>
+    {% endif %}
 
 {% if gas_goal_strategies %}
-          
+<center><h4>Please, select at least one strategy:</h4></center><br>
     {% for question in gas_goal_strategies %}
-
-         
            <div class="form-group">
            <label for="goal" class="col-sm-3 control-label">Strategy Title:</label>
            <div class="col-sm-8">
@@ -48,32 +47,34 @@
            </div>
            <div class="col-sm-1">
 	     <label class="checkbox">
-	       <input type="checkbox" name="{{ question.id }}" value="selected">
+            {% if forloop.first %}
+                <input type="checkbox" name="{{ question.id }}" value="selected" checked>
+            {% else %}
+                <input type="checkbox" name="{{ question.id }}" value="selected">
+            {% endif %}
 	     </label>
            </div>
-        
-
           <label for="question" class="col-sm-3 control-label">Importance:</label>
           <div class="col-sm-9">
-            <p class="help-block">{{ question.importance }}</p>
+            <p class="help-block">{{ question.importance }} out of 4</p>
           </div>
-        
-
-
           <label for="question" class="col-sm-3 control-label">Difficulty:</label>
           <div class="col-sm-9">
-            <p class="help-block">{{ question.difficulty }}<br><br></p>
+            <p class="help-block">{{ question.difficulty }} out of 4<br><br></p>
           </div>
          </div>
     {% endfor %}
-            
+    <div class="submit text-center">
+        <input type="submit" class="btn btn-lg btn-success" value="Next"></input>
+    </div>
+
 {% else %}
-            <strong>There are no strategies present for this goal.</strong><br/>
+	<center><strong>There are no strategies present for this goal. Please, add strategies in Step 4.</strong></center><br>
+	<div class="submit text-center">
+		<a href="{% url 'new_strategy' patient.id %}"><input type="button" class="btn btn-lg btn-success" value="Back to Step 4"></input></a>
+	</div>
 {% endif %}
 
 
-<div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
-  </div>
 </form>
 {% endblock %}

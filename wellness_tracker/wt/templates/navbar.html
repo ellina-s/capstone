@@ -21,8 +21,6 @@
       <li><a href="{% url 'patient_list' %}">Patients</a></li>
       <li><a href="{% url 'create_patient' %}">Create Patient</a></li>
       <li><a href="{% url 'create_so' %}">Significant Other</a></li>
-
-      <li><a href="{% url 'manage_surveys' %}">Surveys</a></li>
       <li><a href="{% url 'profile' %}">Profile</a></li>
       
       {% elif user|is_significant_other %}
@@ -36,7 +34,7 @@
       {% endif %}
     </ul>
     <ul class="nav navbar-nav navbar-right">
-      <li><a href="#">[ {{ user.username }} ]</a></li>
+      <li><a href="{% url 'profile' %}">[ {{ user.username }} ]</a></li>
       {% if user|is_physician %}
       <li><a href="{% url 'admin:index' %}">admin</a></li>
       {% endif %}

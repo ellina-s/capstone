@@ -11,89 +11,58 @@
 
 {% block script %}
 {{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Goal Selection - {% firstof patient.get_full_name patient.username|title %}</h2>
+<h2>Goal Attainment Wizard Step 2 - {% firstof patient.get_full_name patient.username|title %}</h2>
+
+<ol class="breadcrumb">
+  <li><a href="{% url 'gas_step1' patient.id %}">Step 1</a></li>
+  <li> Step 2 - Select Goal</li>
+  <li style="color:#9e9e9e">Step 3</li>
+  <li style="color:#9e9e9e">Step 4</li>
+  <li style="color:#9e9e9e">Step 5</li>
+  <li style="color:#9e9e9e">Step 6</li>
+</ol>
+
     <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'gas_goal_selection' patient.id %}" method="post">
         {% csrf_token %}
 	<br/>
 
-
 {% if gas_goals %}
-          
+<center><h4>Please, select the main goal:</h4></center><br/>
     {% for gasgoals in gas_goals %}
-
     <div class="form-group">
-           <label for="goal" class="col-sm-3 control-label">Goal</label>
-           <div class="col-sm-8">
+        <label for="goal" class="col-sm-3 control-label">Goal</label>
+        <div class="col-sm-8">
              <p class="help-block">{{ gasgoals.goal1 }}</p>
-           </div>
-           <div class="col-sm-1">
-	     <label class="radio">
-	       <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}">
-	     </label>
-           </div>
-       
-          <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
-          <div class="col-sm-9">
+        </div>
+        <div class="col-sm-1">
+        <label class="radio">
+        {% if forloop.first %}
+            <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}" checked>
+        {% else %}
+            <input type="radio" name="goalselect" id="optionsRadios" value="{{ gasgoals.id }}">
+        {% endif %}
+        </label>
+        </div>
+        <label for="question" class="col-sm-3 control-label">Environmental Assessment</label>
+        <div class="col-sm-9">
             <p class="help-block">{{ gasgoals.environmentalassessment1 }}<br><br><br></p>
-          </div>
-         </div>
-    {% endfor %}
-            
-{% else %}
-            <strong>There are no goals present.</strong>
-{% endif %}
-
-
-<!-- Drop Down Select Question -->
-<!--
-<div class="form-group">
-    <label for="select" class="col-sm-3 control-label">Select the goal to use</label>
-    <div class="col-sm-9">
-      <select id="type" name="goalselect" class="form-control">
-{% if gas_goals %}
-          
-    {% for gasgoals in gas_goals %}
-                
-	<option value="{{ gasgoals.id }}">{{ gasgoals.goal1 }} - id:{{ gasgoals.id }}</option>
-    {% endfor %}
-            
-{% else %}
-            <strong>There are no goals present.</strong>
-{% endif %}
- 
-      </select>
+        </div>
     </div>
-  </div>
+    {% endfor %}
 
-  	
-  </div> -->
-
-<!--   Note:   some info from patient_list that i didnt like
-  {% for patient in patients %}
-  <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
-  {% endfor %} -->
-
-</div>
-<div class="submit text-center">
-    <input value="Next" name="button" type="submit" class="btn btn-lg btn-success"></input>
-  </div>
+    <div class="submit text-center">
+        <input value="Next" name="button" type="submit" class="btn btn-lg btn-success"></input>
+    </div>
 </form>
+{% else %}
+    <center><strong>There are no goals to select from. Please, add some goals in Step 1.</strong></center><br>
+    <div class="submit text-center">
+        <a href="{% url 'gas_step1' patient.id %}"><input type="button" class="btn btn-lg btn-success" value="Back to Step 1"></input></a>
+    </div>
+{% endif %}
+
+
 {% endblock %}

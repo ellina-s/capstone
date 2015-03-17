@@ -10,21 +10,6 @@
 
 {% block script %}
 {{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
 {% endblock %}
 
 {% block content %}
@@ -61,7 +46,7 @@
           
     {% for gasgoal in banked_goals_list %}
    <div class="row">
-	<div class="col-md-4"><label for="goal">Banked Goal:</label></div>
+	<div class="col-md-4"><label for="goal">Deactivated Goal:</label></div>
 	<div class="col-md-5" style="color:#737373">{{ gasgoal.goal1 }}</div>
 	<div class="col-md-3">
 	    <input value="Edit and Activate" name="{{ gasgoal.id }}" type="submit" class="btn btn-lg btn-info" style="padding:5px 10px; margin-bottom:2px"></input>
@@ -72,7 +57,7 @@
 {% endfor %}
             
 {% else %}
-            <strong>There are no banked goals present.</strong><br/>
+            <strong>There are no banked/deactivated goals present.</strong><br/>
 {% endif %}
 </br>
 <div class="submit text-center">

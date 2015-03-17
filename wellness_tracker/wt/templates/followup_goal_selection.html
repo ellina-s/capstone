@@ -11,21 +11,6 @@
 
 {% block script %}
 {{ block.super }}
-<script src="{% static 'jquery/jquery.js' %}"></script>
-<script>
-  $(function() {
-    $( "#type" ).change(function() {
-      $(".conditional-questions > div").hide();
-      $(".conditional-questions #" + $(this).val()).show();
-    });
-    $("#type").prop('selectedIndex', -1);
-  });
-  function add_category() {
-    var num = $("#cat-list > input").length + 1;
-    $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
-    $("#cat-list > input").last().focus();
-  }
-</script>
 {% endblock %}
 
 {% block content %}
@@ -58,7 +43,7 @@
     {% endfor %}
             
 {% else %}
-            <strong>There are no goals present.</strong>
+            <strong>There are no goals to select from.</strong>
 {% endif %}
 
 

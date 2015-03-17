@@ -70,7 +70,7 @@
     </div>
   </div>
   <div class="form-group">
-    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question">Description<sup>?</sup>:</label></a>
+    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions">Description<sup>?</sup>:</label></a>
     <div class="col-sm-10">
       <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10">
     </div>
@@ -102,13 +102,6 @@
           <a href="#"><label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator that will be used to track and evaluate the performance in this goal">Indicator<sup>?</sup>:</label></a>
           <div class="col-sm-10">
             <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator...">
-          </div>
-         </div>
-
-	<div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Action:</label>
-          <div class="col-sm-10">
-            <input type="text" name="action" class="form-control" id="question" placeholder="Specify actions...">
           </div>
          </div>
 
@@ -167,45 +160,55 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>Much More than Expeted Outcome</td>
+		<td>Much more than expected</td>
 	        <td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos2" class="form-control" id="question" placeholder="">
                 </div>
                 </td>
-		<td>+2</td>
+		<td>M2</td>
 	</tr>
 
 	<tr>
-		<td>Slightly better than Expected Outcome</td>
+		<td>Slightly more than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos1" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
-		<td>+1</td>
+		<td>M1</td>
 	</tr>
-	
 
+	<!-- The value from this input is not recorded, because this is the same as target.
+	Instead, the value of the target is used througout the app. -->
+	<tr>
+		<td>Expected outcome (Target)</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="same-as-target" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>T</td>
+	</tr>
 
 	<tr>
-		<td>Slightly Worse than Expected Outcome</td>
+		<td>Slightly less than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg1" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
-		<td>-1</td>
+		<td>L1</td>
 	</tr>
 
 	<tr>
-		<td>Much less than Expected Outcome</td>
+		<td>Much less than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg2" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
-		<td>-2</td>
+		<td>L2</td>
 	</tr>
 	</tbody>
 </table>
@@ -231,7 +234,7 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question">Description<sup>?</sup></label>
+    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions">Description<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="description" class="form-control" id="description" value="{{ selected_strategy.description }}">
     </div>
@@ -265,15 +268,6 @@
             <input type="text" name="indicator" class="form-control" id="question" value="{{ selected_strategy.indicator }}">
           </div>
          </div>
-
-	<div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Action</label>
-          <div class="col-sm-10">
-            <input type="text" name="action" class="form-control" id="question" value="{{ selected_strategy.action }}">
-          </div>
-         </div>
-
-
 
 
 <!-- ------------------------------------------------for Freeform Entry -->
@@ -352,53 +346,53 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>Much More than Expeted Outcome</td>
+		<td>Much more than expected</td>
 	        <td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos2" class="form-control" id="question" value="{{ selected_strategy.scorepos2 }}">
                 </div>
                 </td>
-		<td>+2</td>
+		<td>M2</td>
 	</tr>
 
 	<tr>
-		<td>Slightly better than Expected Outcome</td>
+		<td>Slightly more than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos1" class="form-control" id="question" value="{{ selected_strategy.scorepos1 }}">
                 </div>
 		</td>
-		<td>+1</td>
+		<td>M1</td>
 	</tr>
-	
+
 	<tr>
-		<td>Target</td>
+		<td>Expected Outcome (Target)</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="target2" class="form-control" id="question" value="{{ selected_strategy.target }}">
                 </div>
 		</td>
-		<td>0</td>
+		<td>T</td>
 	</tr>
 
 	<tr>
-		<td>Slightly Worse than Expected Outcome</td>
+		<td>Slightly less than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg1" class="form-control" id="question" value="{{ selected_strategy.scoreneg1 }}">
                 </div>
 		</td>
-		<td>-1</td>
+		<td>L1</td>
 	</tr>
 
 	<tr>
-		<td>Much less than Expected Outcome</td>
+		<td>Much less than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg2" class="form-control" id="question" value="{{ selected_strategy.scoreneg2 }}">
                 </div>
 		</td>
-		<td>-2</td>
+		<td>L2</td>
 	</tr>
 	</tbody>
 </table>

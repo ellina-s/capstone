@@ -1,5 +1,16 @@
 {% extends 'base.html' %}
 
+{% block css %}
+ {{ block.super }}
+<style>
+  .customtable{
+      width: 100%;
+      max-width: 100%;
+  }
+</style>
+{% endblock %}
+
+
 {% block content %}
 <h1>Patient List</h1>
 <hr />
@@ -10,7 +21,38 @@
 
 <div class="list-group">
   {% for patient in patients %}
+<div class='patientclass'>
   <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
+</div>
   {% endfor %}
 </div>
+
+<!-- 
+<strong><p style="color:#737373">A table containing links to delete a patient</p></strong>
+
+<table class="customtable">
+	<thead>
+	<tr>
+		<th></th>
+		<th></th>
+	</tr>
+	</thead>
+	<tbody>
+
+<div class="list-group">
+  {% for patient in patients %}
+	<tr>
+		<td style="width:65%">
+        <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
+        </td>
+		<td style="width:35%">
+        <a href="{% url 'patient_remove' patient.user.id %}" class="list-group-item" style="color:#afafaf"><span class="glyphicon glyphicon-remove text-danger"></span>Delete</a>
+        </td>
+	</tr>
+  {% endfor %}
+</div>
+	</tbody>
+</table>
+-->
+
 {% endblock %}

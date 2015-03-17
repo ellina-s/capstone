@@ -24,96 +24,88 @@
     $("#cat-list").append('<input type="text" id="cat' + num + '" name="cat' + num + '" class="form-control" placeholder="Category ' + num + '">');
     $("#cat-list > input").last().focus();
   }
+
+  // Initialize all tooltips on this page.
+  $(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+  })
 </script>
 {% endblock %}
 
 {% block content %}
-<h2>Goal Attainment Wizard Step 2
+<h2>Goal Attainment Wizard Step 3
   {% if user|is_physician %}
    - {% firstof patient.get_full_name patient.username|title %}
-  {% endif %} - {{ selected_goal.goal1 }}
+   - {{ selected_goal.goal1 }}
+  {% endif %}
 </h2>
 
-<h4><center><br>Goal's Planning Charter<br><br></center></h4>
-<h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>
-<!-- <h5><center>Goal - {{ selected_goal.goal1 }}</center></h5>-->
+<ol class="breadcrumb">
+  <li style="color:#9e9e9e">Step 1</li>
+  <li style="color:#9e9e9e">Step 2</li>
+  <li>Step 3 - Plan the Goal</li>
+  <li style="color:#9e9e9e">Step 4</li>
+  <li style="color:#9e9e9e">Step 5</li>
+  <li style="color:#9e9e9e">Step 6</li>
+</ol>
+
+<h4><center><br>Goal's Planning - {{ selected_goal.goal1 }}<br><br></center></h4>
+
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'planning' patient.id %}" method="post">
     {% csrf_token %}
 
    <div class="form-group">
-    <label for="title" class="col-sm-2 control-label">Title</label>
+    <label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Give a concise title to this goal">Title<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}">
     </div>
   </div>
   <div class="form-group">
-    <label for="question" class="col-sm-2 control-label">Question</label>
+    <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="The patient will be answering this question to track their progress">Question<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="text" class="form-control" id="question" placeholder="How many steps have you walked...">
+      <input type="text" name="text" class="form-control" id="question" placeholder="E.g. How many steps have you walked...">
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
-<div class="form-group">
-    <label for="question" class="col-sm-2 control-label">Importance</label>
-    <div class="col-sm-10">
-      <input type="text" name="importance" class="form-control" id="question" placeholder="Answer from 1 to 4">
-    </div>
-  </div>
-<div class="form-group">
-    <label for="question" class="col-sm-2 control-label">Difficulty</label>
-    <div class="col-sm-10">
-      <input type="text" name="difficulty" class="form-control" id="question" placeholder="Answer from 1 to 4">
-    </div>
-  </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label">Description</label>
+    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question, give any hints or instructions">Description<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="description" class="form-control" id="description" placeholder="">
+      <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10">
     </div>
   </div>
           
 	   <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Baseline:</label>
+           <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="baseline" class="form-control" id="question" placeholder="Set Benchmark...">
+             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline...">
              
            </div>
          </div>
 
 	  <div class="form-group">
-	    <label for="description" class="col-sm-2 control-label">Target</label>
+	    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this goal?">Target<sup>?</sup></label>
 	    <div class="col-sm-10">
-	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Target value for this question">
+	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value...">
 	    </div>
 	  </div>
 
          <div class="New Patient Information">
            <div class="form-group">
-           <label for="goal" class="col-sm-2 control-label">Timeline:</label>
+           <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set Timeline...">
-             <p class="help-block">Enter a timeline for the goal (In days)</p>
+             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set timeline in days...">
            </div>
          </div>
 
         <div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Indicator:</label>
+          <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator that will be used to track and evaluate the performance in this goal">Indicator<sup>?</sup></label>
           <div class="col-sm-10">
-            <input type="text" name="indicator" class="form-control" id="question" placeholder="Set Indicator">
-            <p class="help-block">Enter an Indicator for the goal</p>
-          </div>
-         </div>
-
-	<div class="form-group">
-          <label for="question" class="col-sm-2 control-label">Action:</label>
-          <div class="col-sm-10">
-            <input type="text" name="action" class="form-control" id="question" placeholder="Set Action">
-            <p class="help-block">Enter the action for the goal</p>
+            <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator...">
           </div>
          </div>
 
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label">Type</label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select id="type" name="type" class="form-control">
         <option value="slider">Slider</option>
@@ -150,9 +142,9 @@
       </div>
     </div>
     <div id="integer" class="form-group" style="display: none;">
-      <label for="units" class="col-sm-2 control-label">Units</label>
+      <label for="units" class="col-sm-2 control-label" data-toggle="tooltip" title="Enter the units for this question">Units<sup>?</sup></label>
       <div class="col-sm-10">
-        <input type="text" name="units" id="units" class="form-control" placeholder="Kg, Hours, Snacks...">
+        <input type="text" name="units" id="units" class="form-control" placeholder="E.g. kg, hours, snacks...">
       </div>
     </div>
 
@@ -167,45 +159,55 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>Much More than Expeted Outcome</td>
+		<td>Much more than expected</td>
 	        <td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos2" class="form-control" id="question" placeholder="">
                 </div>
                 </td>
-		<td>+2</td>
+		<td>M2</td>
 	</tr>
 
 	<tr>
-		<td>Slightly better than Expected Outcome</td>
+		<td>Slightly more than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos1" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
-		<td>+1</td>
+		<td>M1</td>
+	</tr>
+
+	<!-- The value from this input is not recorded, because this is the same as target.
+     	Instead, the value of the target is used througout the app. -->
+	<tr>
+		<td>Expected Outcome (Target)</td>
+		<td>
+		<div class="col-sm-9">
+                <input type="text" name="same-as-target" class="form-control" id="question" placeholder="">
+                </div>
+		</td>
+		<td>T</td>
 	</tr>
 	
-
-
 	<tr>
-		<td>Slightly Worse than Expected Outcome</td>
+		<td>Slightly less than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg1" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
-		<td>-1</td>
+		<td>L1</td>
 	</tr>
 
 	<tr>
-		<td>Much less than Expected Outcome</td>
+		<td>Much less than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg2" class="form-control" id="question" placeholder="">
                 </div>
 		</td>
-		<td>-2</td>
+		<td>L2</td>
 	</tr>
 	</tbody>
 </table>
