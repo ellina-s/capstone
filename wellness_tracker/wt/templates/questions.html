@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block content %}
-<h2>Daily Wellness Test!</h2>
+<h2>Daily Wellness Check-In!</h2>
 {% if formset.total_form_count %}
 <form id="question-form" action="{% url 'questions' %}" method="post">
   {% csrf_token %}
@@ -55,6 +55,6 @@
   </div>
 </form>
 {% else %}
-<span class="help-block">You have no questions!<br />Please talk to your doctor about creating some attributes to track.</span>
+<span class="help-block">You have no questions set up for you yet.<br />Please talk to your doctor about creating some attributes to track.</span>
 {% endif %}
 {% endblock %}

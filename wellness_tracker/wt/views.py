@@ -880,26 +880,26 @@ def graph(request, user_id=None):
 	if (question.scorepos2 - question.scoreneg2) <= 0:
 	     #+2 - (-2) is negative, start +2 and add to get to -2
 	    if mostrecentscore <= question.scorepos2:
-		question.displayedscore = 'M2'
+		question.displayedscore = 'B2'
 	    elif mostrecentscore <= question.scorepos1:
-		question.displayedscore = 'M1'
+		question.displayedscore = 'B1'
 	    elif mostrecentscore <= question.target:
 		question.displayedscore = 'T'
 	    elif mostrecentscore <= question.scoreneg1:
-		question.displayedscore = 'L1'
+		question.displayedscore = 'W1'
 	    else:
-		question.displayedscore = 'L2'
+		question.displayedscore = 'W2'
 	else:
 	    if mostrecentscore >= question.scorepos2:
-		question.displayedscore = 'M2'
+		question.displayedscore = 'B2'
 	    elif mostrecentscore >= question.scorepos1:
-		question.displayedscore = 'M1'
+		question.displayedscore = 'B1'
 	    elif mostrecentscore >= question.target:
 		question.displayedscore = 'T'
 	    elif mostrecentscore >= question.scoreneg1:
-		question.displayedscore = 'L1'
+		question.displayedscore = 'W1'
 	    else:
-		question.displayedscore = 'L2'
+		question.displayedscore = 'W2'
 	question.save()     
     #end Logic for gasscore
 
