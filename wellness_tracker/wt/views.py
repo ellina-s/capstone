@@ -1185,7 +1185,7 @@ def followup_goaledit(request, user_id):
 	    #Done - checking for "finish" button pressed
 
 	    #checking for "edit" button pressed (edit select goal)
-	    if str(v) == "[u'Edit']":
+	    if str(v) == "[u'Edit Goal']":
 		pageforward = 'followup_goal_planning_forward.html'
 		for each_strategy in strategy_list:
 		    if each_strategy.isgoalplanningdata == 1:
