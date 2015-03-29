@@ -16,9 +16,6 @@ from django.core.mail import send_mail
 from django.core.mail import EmailMessage
 from django.db import IntegrityError
 from smtplib import SMTPException
-# Import custom forms
-from wt.forms import PasswordForm
-from django import forms
 # Import http redirect
 from django.http import HttpResponseRedirect
 from django.core.exceptions import PermissionDenied
@@ -2364,54 +2361,53 @@ def followup_overall_summary(request, user_id):
 # This view handles the password change.
 def profile(request):
     user = request.user
-    errors_dictionary = {} # a dictionary to hold errors that will be passed to the template
+    status_dictionary = {} # a dictionary to hold status
 
     # if this is a POST request we need to process the form data
     if request.method == 'POST':
-        # create a form instance and populate it with data from the request:
-        form = PasswordForm(request.POST)
-        # check whether it's valid:
-        if form.is_valid():
-            old_password = form.cleaned_data['old_password']
-            new_password = form.cleaned_data['new_password']
-            confirm_new_password = form.cleaned_data['confirm_new_password']
-            
-            #Validate that the old_password field is correct.
-            if user.check_password(old_password):
-                #print " * Old password is correct"
-                errors_dictionary['old_pass_flag'] = False
-                if new_password == confirm_new_password:
-                    #print " * New passwords match YAY"
-                    errors_dictionary['new_pass_flag'] = False
-                    user.set_password(new_password)
-                    user.save()
+        # Retrieve response data
+        response = dict(request.POST)
+        response.pop('csrfmiddlewaretoken')
+        data = {}
+        for k, v in response.items():
+            data[str(k)] = v.pop()
+        
+        old_password = data['old_password']
+        new_password = data['new_password']
+        confirm_new_password = data['confirm_new_password']
+        
+        # Check that the old_password field is correct
+        if user.check_password(old_password):
+            #print " * Old password is correct"
+            status_dictionary['old_pass_flag'] = False
+            if new_password == confirm_new_password:
+                #print " * New passwords match YAY"
+                status_dictionary['new_pass_flag'] = False
+                user.set_password(new_password)
+                user.save()
 
-                    update_success = {}
-                    update_success['flag'] = True
-                    empty_form = PasswordForm() # return an empty form to prevent displaying password data
-                    # render a template for successful password update:
-                    return render(request, 'profile.html', {'form': empty_form, 'profile_user': user,
-                                                            'any_errors': errors_dictionary,
-                                                            'update_success': update_success })
-                else:
-                    #print " * New passwords do not match"
-                    errors_dictionary['new_pass_flag'] = True
+                status_dictionary['changed_flag'] = True
+                # render a template for successful password update:
+                return render(request, 'profile.html', { 'profile_user': user,
+                                                            'status': status_dictionary })
             else:
-                #print " * Old password is not correct"
-                errors_dictionary['old_pass_flag'] = True
-                if new_password != confirm_new_password:
-                    #print ' * New passwords do not match'
-                    errors_dictionary['new_pass_flag'] = True
+                #print " * New passwords do not match"
+                status_dictionary['new_pass_flag'] = True
+        else:
+            #print " * Old password is not correct"
+            status_dictionary['old_pass_flag'] = True
+            if new_password != confirm_new_password:
+                #print ' * New passwords do not match'
+                status_dictionary['new_pass_flag'] = True
 
-            # render a template with form, user data, and errors dictionaries:
-            return render(request, 'profile.html', {'form': form, 'profile_user': user, 'any_errors': errors_dictionary})
+        # render a template with form, user data, and errors dictionaries:
+        return render(request, 'profile.html', {'profile_user': user, 'status': status_dictionary })
 
-    # if a GET (or any other method), create a blank form
-    else:
-        form = PasswordForm()
-    
+    # if a GET (or any other method)
+
     #print " * Rendering the bottom-most return statement"
-    return render(request, 'profile.html', {'form': form, 'profile_user': user})
+    return render(request, 'profile.html', {'profile_user': user})
+
 
 
 # Add a significant other
