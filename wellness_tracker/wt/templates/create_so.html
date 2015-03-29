@@ -5,89 +5,72 @@
 
 {% block title %}{{ block.super }} - Create Significant Other{% endblock %}
 
+{% block script %}
+{{ block.super }}
+<script src="{% static 'bootstrap-validator-master/dist/validator.js' %}"></script>
+{% endblock %}
+
 {% block content %}
 <h2>Create a Significant Other</h2>
 <hr />
 
-
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_so' %}" method="post">
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_so' %}" method="post" data-toggle="validator">
 {% csrf_token %}
 
   <div class="New Significant Other">
 
     {% if status.no_patient %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("No patient selected. Please select a patient.", "error");
-        </script>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <b>No patient selected. Please select a patient.</b>
+        </div>
     {% endif %}
     
     {% if status.so_created %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Successfully added a significant other account", "success");
-        </script>
+        <div class="alert alert-success" role="alert">
+            <span class="glyphicon glyphicon-ok-sign"></span>
+            <b>Successfully created an account for a significant other.</b>
+        </div>
     {% endif %}
-    
-    {% if status.missing_info %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Missing a username, password, or email.", "error");
-        </script>
-    {% endif %}
-    
+
     {% if status.duplicate_username %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Duplicate username. Please select another username.", "error");
-        </script>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <b>Duplicate username. Please select another username.</b>
+        </div>
     {% endif %}
     
     {% if status.smtp_error %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Email error", "error");
-        </script>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <b>Error: email not sent.</b>
+        </div>
+        
     {% endif %}
 
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Name</label>
     <div class="col-sm-9">
-      <input type="text" name="userid" class="form-control" id="userid" placeholder="Type in username">
+      <input type="text" name="userid" class="form-control" id="userid" placeholder="Type in username" maxlength="32" required>
       <p class="help-block">Create a user name for the significant other</a>
     </div>
   </div>
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Email</label>
     <div class="col-sm-9">
-      <input type="text" name="useremail" class="form-control" id="useremail" placeholder="Type in user email">
+      <input type="text" name="useremail" class="form-control" id="useremail" placeholder="Type in user email" maxlength="128" required>
       <p class="help-block">Enter an email address of the significant other</a>
     </div>
   </div>
   <div class="form-group">
     <label for="question" class="col-sm-3 control-label">Password</label>
     <div class="col-sm-9">
-      <input type="password" name="password" class="form-control" id="password" placeholder="Type in password">
+      <input type="password" name="password" class="form-control" id="password" placeholder="Type in password" maxlength="32" required>
       <p class="help-block">Make sure the user can easily remember the password</p>
     </div>
   </div>
 
   </div>
-  
-<!-- Drop Down Patients List -->
-<!---
-<div class="form-group">
-    <label for="choosepatient" class="col-sm-3 control-label"></label>
-    <div class="col-sm-9"><p>Select a patient for whom the significant other is created for:</p>
-      <select id="type" name="choosepatient" class="form-control">
-          <option value="none">Select a patient...</option>
-          {% for patient in patients %}
-          <option value="{{patient.user.id}}">{% firstof patient.user.get_full_name patient.user.username|title %}</option>
-          {% endfor %}
-      </select>
-    </div>
-</div>
--->
 
 <!-- Patient List Checkboxes -->
 <div class="form-group">
