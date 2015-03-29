@@ -44,12 +44,6 @@
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy' patient.id %}" method="post" data-toggle="validator">
     {% csrf_token %}
 
-	{% if status.formerror %}
-	<div class="alert alert-danger">
-		<h3>Error in the data entered in the form. Please ensure that the title is not too long.</h3>
-	</div>
-	{% endif %}
-
 	<div class="form-group">
          
 	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Create a title for the strategy">Strategy Title<sup>?</sup></label>
