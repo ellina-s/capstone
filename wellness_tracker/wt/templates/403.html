@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}{{ block.super }} - Page not found{% endblock %}
+
+{% block script %}
+{{ block.super }}
+
+{% endblock %}
+
+{% block content %} 
+<h2>403 - Forbidden</h2>
+<hr />
+<h3>Permission to this page is denied.</h3>
+{% endblock %}

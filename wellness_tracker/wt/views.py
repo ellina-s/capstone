@@ -21,6 +21,7 @@ from wt.forms import PasswordForm
 from django import forms
 # Import http redirect
 from django.http import HttpResponseRedirect
+from django.core.exceptions import PermissionDenied
 
 from numpy import mean, std
 from preserialize.serialize import serialize
@@ -80,7 +81,11 @@ def questions(request):
 # _________ Physician's list of patients _________
 @user_passes_test(is_physician)
 def patient_list(request):
-    patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    try:
+        patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    except Physician.DoesNotExist as e:
+        print e
+        raise PermissionDenied
     return render(request, 'patient_list.html', {'patients': patients})
 
 # _________ Significant Other's list of patients _________
@@ -98,6 +103,14 @@ def create_patient(request):
     status['smtp_error'] = False # default
     status['missing_info'] = False #default
     status['patient_created'] = False #default
+    
+    # Check if the request user is a physician. If not, then raise 403 error.
+    try:
+        currentdoctors = Physician.objects.get(user=request.user)
+    except Physician.DoesNotExist as e:
+        print e
+        raise PermissionDenied
+    
     if request.method == 'POST':
         response = dict(request.POST)
         response.pop('csrfmiddlewaretoken')
@@ -2405,7 +2418,12 @@ def profile(request):
 @user_passes_test(is_physician)
 def create_so(request):
     # Retrieve patients
-    patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    try:
+        patients = Patient.objects.filter(physicians=Physician.objects.get(user=request.user))
+    except Physician.DoesNotExist as e:
+        print e
+        raise PermissionDenied
+
     status_dictionary={}
     if request.method == 'POST':
         # Retrieve a list of patients IDs that were selected via checkboxes
