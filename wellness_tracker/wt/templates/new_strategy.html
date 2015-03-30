@@ -44,14 +44,7 @@
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'new_strategy' patient.id %}" method="post" data-toggle="validator">
     {% csrf_token %}
 
-	{% if status.formerror %}
-	<div class="alert alert-danger">
-		<h3>Error in the data entered in the form. Please ensure that the title is not too long.</h3>
-	</div>
-	{% endif %}
-
 	<div class="form-group">
-         
 	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Create a title for the strategy">Strategy Title<sup>?</sup></label>
            <div class="col-sm-9">
              <input type="text" name="title" class="form-control" id="question" placeholder="E.g. Walking..." maxlength="32" required>
@@ -60,21 +53,22 @@
 </div>
 
 <div class="form-group">
-	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Specify importance of this strategy">Importance<sup>?</sup></label>
-           <div class="col-sm-2">
-             <input type="text" name="importance" class="form-control" id="importance" placeholder="1-4" maxlength="1" pattern="[1-4]+" data-error="Specify a number on the scale 1 to 4" required>
-             <div class="help-block with-errors"></div>
-	    </div>
-	   <div class="col-sm-7"><p class="help-block">1 = not important to 4 = extremely important</a></div>
-</div>
-<div class="form-group">
 	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Specify difficulty of achieving this strategy">Difficulty<sup>?</sup></label>
            <div class="col-sm-2">
-             <input type="text" name="difficulty" class="form-control" id="difficulty" placeholder="1-4" maxlength="1" pattern="[1-4]+" data-error="Specify a number on the scale 1 to 4" required>
+             <input type="text" name="difficulty" class="form-control" id="difficulty" placeholder="1-4" maxlength="1" pattern="[1-4]+" data-error="Please enter a number." required>
              <div class="help-block with-errors"></div>
 	    </div>
   	   <div class="col-sm-7"><p class="help-block">1 = not difficult to 4 = extremely difficult</a></div>
 	   </div>
+<div class="form-group">
+	   <label for="goal" class="col-sm-3 control-label" data-toggle="tooltip" title="Specify how ready the patient is to work on this strategy">Readiness<sup>?</sup></label>
+           <div class="col-sm-2">
+             <input type="text" name="importance" class="form-control" id="importance" placeholder="1-4" maxlength="1" pattern="[1-4]+" data-error="Please enter a number." required>
+             <div class="help-block with-errors"></div>
+	    </div>
+	   <div class="col-sm-7"><p class="help-block">1 = not at all to 4 = fully ready</a></div>
+</div>
+
 <!-- Drop Down Select Question -->
 <!--<div class="form-group">
     <label for="createanother" class="col-sm-3 control-label"></label>

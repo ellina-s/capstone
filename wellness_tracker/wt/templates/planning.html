@@ -63,14 +63,14 @@
     </div>
   </div>
   <div class="form-group">
-    <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="The patient will be answering this question to track their progress">Question<sup>?</sup></label>
+    <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="The patient will be answering this question to track their progress on this goal">Question<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="text" class="form-control" id="question" placeholder="E.g. How many steps have you walked..." maxlength="128" required>
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question, give any hints or instructions">Description<sup>?</sup></label>
+    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions to guide the patient in answering this question.">Description<sup>?</sup></label>
     <div class="col-sm-10">
       <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10" maxlength="512" required>
       <div class="help-block with-errors"></div>
@@ -80,7 +80,7 @@
 	   <div class="form-group">
            <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline..." maxlength="7" pattern="[0-9]+" data-error="Specify a baseline in digits." required>
+             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline..." maxlength="7" pattern="[0-9]+" data-error="Specify the baseline in digits." required>
              <div class="help-block with-errors"></div>
            </div>
          </div>
@@ -88,7 +88,7 @@
 	  <div class="form-group">
 	    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this goal?">Target<sup>?</sup></label>
 	    <div class="col-sm-10">
-	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value..." maxlength="7" pattern="[0-9]+" data-error="Specify a target in digits." required>
+	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value..." maxlength="7" pattern="[0-9]+" data-error="Specify the target in digits." required>
 	      <div class="help-block with-errors"></div>
         </div>
 	  </div>
@@ -103,7 +103,7 @@
          </div>
 
         <div class="form-group">
-          <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator that will be used to track and evaluate the performance in this goal">Indicator<sup>?</sup></label>
+          <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup></label>
           <div class="col-sm-10">
             <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator..." maxlength="512" required>
             <div class="help-block with-errors"></div>
@@ -166,23 +166,23 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>Much more than expected</td>
+		<td>Much better than expected</td>
 	        <td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos2" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
                 </td>
-		<td>M2</td>
+		<td>B2</td>
 	</tr>
 
 	<tr>
-		<td>Slightly more than expected</td>
+		<td>Slightly better than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scorepos1" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
-		<td>M1</td>
+		<td>B1</td>
 	</tr>
 
 	<!-- The value from this input is not recorded, because this is the same as target.
@@ -198,23 +198,23 @@
 	</tr>
 	
 	<tr>
-		<td>Slightly less than expected</td>
+		<td>Slightly worse than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg1" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
-		<td>L1</td>
+		<td>W1</td>
 	</tr>
 
 	<tr>
-		<td>Much less than expected</td>
+		<td>Much worse than expected</td>
 		<td>
 		<div class="col-sm-9">
                 <input type="text" name="scoreneg2" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
-		<td>L2</td>
+		<td>W2</td>
 	</tr>
 	</tbody>
 </table>

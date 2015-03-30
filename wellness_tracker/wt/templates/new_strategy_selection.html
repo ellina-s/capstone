@@ -35,6 +35,10 @@
             $.notify.defaults({ globalPosition: "top center" });
             $.notify("No strategy selected. Please, select at least one strategy.", "error");
         </script>
+        <div class="alert alert-danger" role="alert">
+            <center><span class="glyphicon glyphicon-exclamation-sign"></span>
+            <b>No strategy selected. Please, select at least one strategy.</b></center>
+        </div>
     {% endif %}
 
 {% if gas_goal_strategies %}
@@ -54,13 +58,13 @@
             {% endif %}
 	     </label>
            </div>
-          <label for="question" class="col-sm-3 control-label">Importance:</label>
-          <div class="col-sm-9">
-            <p class="help-block">{{ question.importance }} out of 4</p>
-          </div>
           <label for="question" class="col-sm-3 control-label">Difficulty:</label>
           <div class="col-sm-9">
-            <p class="help-block">{{ question.difficulty }} out of 4<br><br></p>
+            <p class="help-block">{{ question.difficulty }} out of 4</p>
+          </div>
+          <label for="question" class="col-sm-3 control-label">Readiness:</label>
+          <div class="col-sm-9">
+            <p class="help-block">{{ question.importance }} out of 4<br><br></p>
           </div>
          </div>
     {% endfor %}
