@@ -207,7 +207,7 @@ $(function() {
     <div class="modal-content">
       <div class="modal-header">
         <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-        <h4 class="modal-title" id="myModalLabel">Strategy - More Information</h4>
+        <h4 class="modal-title" id="myModalLabel">Strategies - More Information</h4>
       </div>
       <div class="modal-body">
 	    <div class="col-md-offset-1">
@@ -220,10 +220,10 @@ $(function() {
 			{{ eachquestion.text }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 			{{ eachquestion.description }}<br>
-		  <a href="#"><label data-toggle="tooltip" title="Importance of this strategy">Importance<sup>?</sup>:</label></a>
-			{{ eachquestion.importance }} out of 4<br>
 		  <a href="#"><label data-toggle="tooltip" title="Difficulty of achieving this strategy">Difficulty<sup>?</sup>:</label></a>
 			{{ eachquestion.difficulty }} out of 4<br>
+		  <a href="#"><label data-toggle="tooltip" title="Readiness for this strategy">Readiness<sup>?</sup>:</label></a>
+			{{ eachquestion.importance }} out of 4<br>
 		  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this strategy">Baseline<sup>?</sup>:</label></a>
 			{{ eachquestion.baseline }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="The target outcome of this strategy">Target<sup>?</sup>:</label></a>
@@ -345,9 +345,9 @@ $(function() {
         <h4>Data Analysis</h4>
         <div id="data-analysis" class="list-group">
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
-	{% if user|is_physician %}
+	<!-- {% if user|is_physician %}
 	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
-	{% endif %}
+	{% endif %} -->
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
           <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>
         </div>
