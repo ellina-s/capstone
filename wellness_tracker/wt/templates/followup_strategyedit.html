@@ -22,7 +22,7 @@
 </ol>
 
 </br>
-<center><h4>Selected Goal - {{ selected_goal.goal1 }}</h4></center>
+<center><h4>Current Goal - {{ selected_goal.goal1 }}</h4></center>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_strategyedit' patient.id %}" method="post">
 {% csrf_token %}
     </br>   

@@ -22,6 +22,7 @@
 <!-- Breadcrumbs -->
 <ol class="breadcrumb">
   <li class="active">Goal Edit</li>
+  <li><a href="{% url 'followup_strategyedit' patient.id %}">Strategy Edit</a></li>
 </ol>
 
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goaledit' patient.id %}" method="post">
@@ -57,7 +58,7 @@
 {% endfor %}
             
 {% else %}
-            <strong>There are no banked/deactivated goals present.</strong><br/>
+            <center><strong>There are no banked/deactivated goals present.</strong></center>
 {% endif %}
 </br>
 <div class="submit text-center">

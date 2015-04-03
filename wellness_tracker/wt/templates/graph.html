@@ -129,7 +129,7 @@ $(function() {
 	  {% if at_least_1_goal == 'nogoal' %}
 	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
 	  {% else %}
-	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Decision Making</a></center>
+	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Follow-Up Assessment</a></center>
 	  {% endif %}
 	</div>
 	{% endif %}
@@ -158,9 +158,9 @@ $(function() {
 			  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 				{{ eachquestion.description }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this goal">Baseline<sup>?</sup>:</label></a>
-				{{ eachquestion.baseline }}<br>
+				{{ eachquestion.baseline }} {{ eachquestion.indicator }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="The target outcome of this goal">Target<sup>?</sup>:</label></a>
-				{{ eachquestion.target }}<br>
+				{{ eachquestion.target }} {{ eachquestion.indicator }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
 				{{ eachquestion.timeline }} days<br>
 			  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup>:</label></a>
@@ -225,9 +225,9 @@ $(function() {
 		  <a href="#"><label data-toggle="tooltip" title="Readiness for this strategy">Readiness<sup>?</sup>:</label></a>
 			{{ eachquestion.importance }} out of 4<br>
 		  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this strategy">Baseline<sup>?</sup>:</label></a>
-			{{ eachquestion.baseline }}<br>
+			{{ eachquestion.baseline }} {{ eachquestion.indicator }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="The target outcome of this strategy">Target<sup>?</sup>:</label></a>
-			{{ eachquestion.target }}<br>
+			{{ eachquestion.target }} {{ eachquestion.indicator }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
 			{{ eachquestion.timeline }} days<br>
 		  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this strategy">Indicator<sup>?</sup>:</label></a>
@@ -347,9 +347,9 @@ $(function() {
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
 	<!-- {% if user|is_physician %}
 	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
-	{% endif %} -->
+	{% endif %}
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
-          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>
+          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a> -->
         </div>
       </div>
     </div>
