@@ -43,9 +43,7 @@
 </h2>
 
 <h4><center><br>Goal - {{ selected_goal.goal1 }}<br><br></center></h4>
-<!-- <h4><center><br>Goal's Planning Charter<br><br></center></h4>
-<h5><center></center></h5> -->
-<!-- <h5><center></center></h5>-->
+
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_planning' patient.id %}" method="post" data-toggle="validator">
     {% csrf_token %}
 
@@ -285,7 +283,6 @@
           </div>
          </div>
 
-
 <!-- ------------------------------------------------for Freeform Entry -->
 {% if type_selected_strategy == 'freeform' %}
 <div class="form-group">
@@ -348,9 +345,7 @@
     </div>
 {% endif %}
 
-
 <!--Bootstrap Table, should scale with mobile devices-->
-
 
 <table>
 	<thead>
@@ -412,9 +407,11 @@
 	</tr>
 	</tbody>
 </table>
-<!-- ------------------------------------------------------------------END - Depending on type of question -->
+<!--------------------------------------------------------------------END - Depending on type of question -->
 {% endif %}
-   </div>
+
+</div>
+
 <div class="submit">
     <input value="Save" type="submit" class="btn btn-lg btn-success"></input>
     <!-- Button trigger modal -->
@@ -441,7 +438,5 @@
     </div>
 </div>
 
-
-  
 </form>
 {% endblock %}

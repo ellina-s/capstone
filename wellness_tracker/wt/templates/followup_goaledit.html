@@ -44,7 +44,6 @@
    </div>
 
 {% if banked_goals_list %}
-          
     {% for gasgoal in banked_goals_list %}
    <div class="row">
 	<div class="col-md-4"><label for="goal">Deactivated Goal:</label></div>
@@ -54,9 +53,8 @@
 	    <input value="Edit" name="edit{{ gasgoal.id }}" type="submit" class="btn btn-info" style="padding:5px 10px; margin-bottom:2px; display:none;"></input>
 	</div>
    </div>
-
 {% endfor %}
-            
+
 {% else %}
             <center><strong>There are no banked/deactivated goals present.</strong></center>
 {% endif %}
@@ -65,62 +63,6 @@
     <input value="Create New Goal" name="ext" type="submit" class="btn btn-lg btn-success"></input>
     <input value="Graph" name="ext" type="submit" class="btn btn-lg btn-success"></input>
   </div>
-
 </br>
-
-<!-- Original radio method, not used anymore
-User selection code
-
-    <div class="form-group">
-     <label for="goal" class="col-sm-5 control-label">What would you like to do?</label>
-    </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-6 control-label">Keep selected Goal:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="keep" >
-	     </label>
-             </div>
-	   </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-6 control-label">Edit selected goal:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="edit">
-	     </label>
-             </div>
-	   </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-6 control-label">Select new goal from banked goals:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="select">
-	     </label>
-             </div>
-	   </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-6 control-label">Create new goal:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="create">
-	     </label>
-             </div>
-	   </div>
-
-  {% if navselecterror == 'error' %}
-      <div class="alert alert-danger">
-        <strong>Error</strong> Please select an option above.
-      </div>
-  {% endif %}
-
-
-
-  <div class="submit text-center">
-    <input value="Next ->" name="ext" type="submit" class="btn btn-lg btn-success"></input>
-  </div> -->
 </form>
 {% endblock %}
