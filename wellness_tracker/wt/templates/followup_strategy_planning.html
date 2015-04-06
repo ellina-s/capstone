@@ -40,10 +40,9 @@
 
 
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_strategy_planning' patient.id %}" method="post" data-toggle="validator">
- <!-- <h4><center>Strategy Planning</center></h4> -->
- <h4><center>Goal - {{ selected_goal.goal1 }}</center></h4>
- <h4><center>Strategy - {{ selected_strategy.title }}</center></h4>
- <h5><center>Difficulty - {{ selected_strategy.difficulty }} out of 4, Readiness - {{ selected_strategy.importance }} out of 4</center></h5><br/>
+  <h4><center>Goal - {{ selected_goal.goal1 }}</center></h4>
+  <h4><center>Strategy - {{ selected_strategy.title }}</center></h4>
+  <h5><center>Difficulty - {{ selected_strategy.difficulty }} out of 4, Readiness - {{ selected_strategy.importance }} out of 4</center></h5><br/>
 
   {% csrf_token %}
 
@@ -70,7 +69,7 @@
       <div class="help-block with-errors"></div>
     </div>
   </div>
-          
+
 	   <div class="form-group">
            <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup></label>
            <div class="col-sm-10">
@@ -285,9 +284,6 @@
           </div>
          </div>
 
-
-
-
 <!-- ------------------------------------------------for Freeform Entry -->
 {% if type_selected_strategy == 'freeform' %}
 <div class="form-group">
@@ -350,9 +346,7 @@
     </div>
 {% endif %}
 
-
 <!--Bootstrap Table, should scale with mobile devices-->
-
 
 <table>
 	<thead>
@@ -415,10 +409,34 @@
 	</tbody>
 </table>
 <!-- ------------------------------------------------------------------END - Depending on type of question -->
-{% endif %}  
+{% endif %}
   </div>
+
   <div class="submit text-center">
     <input value="Save" type="submit" class="btn btn-lg btn-success"></input>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#myModal">
+        Cancel
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Cancel the changes?</h4>
+        </div>
+        <div class="modal-body">
+            Any changes that you entered for this strategy will not be saved.
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <a href="{% url 'followup_strategyedit' patient.id %}"><button type="button" class="btn btn-danger">Cancel changes</button></a>
+        </div>
+        </div>
+    </div>
+    </div> <!-- end of modal -->
   </div>
+
 </form>
 {% endblock %}

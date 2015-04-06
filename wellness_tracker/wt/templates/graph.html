@@ -75,12 +75,6 @@ $(function() {
 {% else %}
     Wellness Graph
 {% endif %}
-
- <!-- 
-  {% if user|is_physician %}
-  <a href="{% url 'gas_step1' graph_user.id %}">Goal Attainment </a>
-  <a href="{% url 'followup_goaledit' graph_user.id %}">Follow Up Meeting </a>
-  {% endif %} -->
  
 </h2>
 
@@ -96,9 +90,6 @@ $(function() {
     Please, contact your physician to start the goal attaining process.</h4>
     {% endif %}
 {% endif %}
-<!-- else statement, uncomment and add endif at the end
-<h4> Goal - {{ selected_goal.goal1 }}</h4>
- -->
 
     {% if user|is_physician %}
         <div class="strategy-questions">
@@ -109,8 +100,6 @@ $(function() {
         {% endfor %}
         </div>
     {% endif %}
-
-
 
 <div class="row">
   <div id="graph" class="text-left col-md-9 gui-container">
@@ -127,15 +116,15 @@ $(function() {
 	<div id="links" class="list-group">
 	  
 	  {% if at_least_1_goal == 'nogoal' %}
-	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
+	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-primary btn-lg">Goal Attainment Wizard</a></center></br>
 	  {% else %}
-	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Decision Making</a></center>
+	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-primary btn-lg">Follow-Up Assessment</a></center>
 	  {% endif %}
 	</div>
 	{% endif %}
 
 
-<!-- Goal Popup inforamtion -->
+<!-- Goal Popup information -->
 <!-- Modal -->
 <div class="modal fade" id="goalModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -158,9 +147,9 @@ $(function() {
 			  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 				{{ eachquestion.description }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this goal">Baseline<sup>?</sup>:</label></a>
-				{{ eachquestion.baseline }}<br>
+				{{ eachquestion.baseline }} {{ eachquestion.indicator }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="The target outcome of this goal">Target<sup>?</sup>:</label></a>
-				{{ eachquestion.target }}<br>
+				{{ eachquestion.target }} {{ eachquestion.indicator }}<br>
 			  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
 				{{ eachquestion.timeline }} days<br>
 			  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup>:</label></a>
@@ -180,12 +169,12 @@ $(function() {
         {% empty %}
             {% if user|is_physician %}
                 {% if at_least_1_goal == 'nogoal' %}
-                    This patient has no goals created or activated. To start the goal attaining process, click the Goal Attainment Wizard button.
+                    This patient has no goals created or activated. <br/>To begin, click the <span "color:#333"><b>Goal Attainment Wizard</b></span> button.
                 {% else %}
-                    The goal set up was not finished. To finish, click the Decision Making or Edit Goals buttons.
+                    The goal set up was not finished. To finish, click the Edit Goals button.
                 {% endif %}
             {% else %}
-                There are no goals created or activated yet. You will find the detailed information about the goal when it is created and activated.
+                There are no goals created or activated yet. <br/>You will find the detailed information about the goal when it is created and activated.
             {% endif %}
 		{% endfor %}
 	    </div>
@@ -193,14 +182,13 @@ $(function() {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <!--<button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
   </div>
 </div>
-<!--End Goal popup inforamtion -->
+<!--End Goal popup information -->
 
-<!-- Strategy Popup inforamtion -->
+<!-- Strategy Popup information -->
 <!-- Modal -->
 <div class="modal fade" id="strategyModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
   <div class="modal-dialog">
@@ -225,9 +213,9 @@ $(function() {
 		  <a href="#"><label data-toggle="tooltip" title="Readiness for this strategy">Readiness<sup>?</sup>:</label></a>
 			{{ eachquestion.importance }} out of 4<br>
 		  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this strategy">Baseline<sup>?</sup>:</label></a>
-			{{ eachquestion.baseline }}<br>
+			{{ eachquestion.baseline }} {{ eachquestion.indicator }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="The target outcome of this strategy">Target<sup>?</sup>:</label></a>
-			{{ eachquestion.target }}<br>
+			{{ eachquestion.target }} {{ eachquestion.indicator }}<br>
 		  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
 			{{ eachquestion.timeline }} days<br>
 		  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this strategy">Indicator<sup>?</sup>:</label></a>
@@ -250,15 +238,12 @@ $(function() {
         {% empty %}
             {% if user|is_physician %}
                 {% if at_least_1_goal == 'nogoal' %}
-                    There are no strategies created for this patient. To begin, click on the Goal Attainment Wizard button.
+                    No strategies created for this patient. <br/>To begin, click the <span style="color:#333"><b>Goal Attainment Wizard</b></span> button.
                 {% else %}
                     Currently, there are no strategies created for this patient. Make sure to set up and activate a goal before setting up the strategies.
-                    <!-- Note: this message does not show up for Jannis. She has an active goal (which works well and shows up), but doesn't have any strategies. -->
-                    <!-- Need to check if there are no questions with isgoalplanningdata flag set to zero. -->
-                    <!-- This message is displayed when the list of questions is empty. Not displayed if the list contains anything (a goal or strategy with planning data), even only one of them. -->
                 {% endif %}
             {% else %}
-                There are no strategies created yet. You will find the detailed information about strategies when they are created and activated.
+                No strategies created yet. <br/>You will find the detailed information about strategies when they are created and activated.
             {% endif %}
         {% endfor %}
 	    </div>
@@ -266,7 +251,6 @@ $(function() {
       </div>
       <div class="modal-footer">
         <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-        <!--<button type="button" class="btn btn-primary">Save changes</button> -->
       </div>
     </div>
   </div>
@@ -277,14 +261,10 @@ $(function() {
 	  <div class="dropdown">
 	Goal
 	    <button class="pull-right btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
-	    
 	      <span class="caret"></span>
 	    </button>
 	    <ul class="pull-right dropdown-menu" role="menu" aria-labelledby="dropdownMenu1">
 	      <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#goalModal">More Information</a></li>
-	      <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Create</a></li>
-	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Edit</a></li>
-	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Select</a></li> -->
 	    </ul>
 	  </div>
 	</h4>
@@ -308,7 +288,7 @@ $(function() {
         {% endif %}
         </div>
 
-        <h4>	  
+        <h4>
 	  <div class="dropdown">
 	Strategies
 	    <button class="pull-right btn btn-default dropdown-toggle" type="button" id="dropdownMenu1" data-toggle="dropdown" aria-expanded="true">
@@ -317,9 +297,6 @@ $(function() {
 	    </button>
 	    <ul class="pull-right dropdown-menu" role="menu" aria-labelledby="dropdownMenu2">
 	      <li role="presentation"><a role="menuitem" tabindex="-1" data-toggle="modal" data-target="#strategyModal">More Information</a></li>
-	      <!-- <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Create</a></li>
-	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Edit</a></li>
-	      <li role="presentation"><a role="menuitem" tabindex="-1" href="#">Select</a></li> -->
 	    </ul>
 	  </div></h4>
         <div id="symptoms" class="list-group">
@@ -347,9 +324,9 @@ $(function() {
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
 	<!-- {% if user|is_physician %}
 	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
-	{% endif %} -->
+	{% endif %}
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
-          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>
+          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a> -->
         </div>
       </div>
     </div>

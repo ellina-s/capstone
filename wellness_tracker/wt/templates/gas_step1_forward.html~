@@ -1,7 +1,0 @@
-<!DOCTYPE html>
-<html>
-    <body>
-	<meta HTTP-EQUIV="REFRESH" content="0; url={% url 'followup_strategy_selection' patient.id %}">
-
-    </body>
-</html>

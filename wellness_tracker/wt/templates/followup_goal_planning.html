@@ -43,9 +43,7 @@
 </h2>
 
 <h4><center><br>Goal - {{ selected_goal.goal1 }}<br><br></center></h4>
-<!-- <h4><center><br>Goal's Planning Charter<br><br></center></h4>
-<h5><center></center></h5> -->
-<!-- <h5><center></center></h5>-->
+
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_planning' patient.id %}" method="post" data-toggle="validator">
     {% csrf_token %}
 
@@ -285,7 +283,6 @@
           </div>
          </div>
 
-
 <!-- ------------------------------------------------for Freeform Entry -->
 {% if type_selected_strategy == 'freeform' %}
 <div class="form-group">
@@ -348,9 +345,7 @@
     </div>
 {% endif %}
 
-
 <!--Bootstrap Table, should scale with mobile devices-->
-
 
 <table>
 	<thead>
@@ -412,11 +407,36 @@
 	</tr>
 	</tbody>
 </table>
-<!-- ------------------------------------------------------------------END - Depending on type of question -->
+<!--------------------------------------------------------------------END - Depending on type of question -->
 {% endif %}
-   </div>
-<div class="submit text-center">
+
+</div>
+
+<div class="submit">
     <input value="Save" type="submit" class="btn btn-lg btn-success"></input>
-  </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#myModal">
+        Cancel
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Cancel the changes?</h4>
+        </div>
+        <div class="modal-body">
+            Any changes that you entered for this goal will not be saved.
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <a href="{% url 'followup_goaledit' patient.id %}"><button type="button" class="btn btn-danger">Cancel changes</button></a>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+
 </form>
 {% endblock %}

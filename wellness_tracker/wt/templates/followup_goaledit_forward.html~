@@ -1,7 +1,0 @@
-<!DOCTYPE html>
-<html>
-    <body>
-	<meta HTTP-EQUIV="REFRESH" content="0; url={% url 'user_graph' patient.id %}">
-
-    </body>
-</html>

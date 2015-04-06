@@ -1270,7 +1270,7 @@ def followup_goal_create(request, user_id):
 	    #Done - checking for "Create Another Goal" button pressed
 
 	    #checking for "Save + Continue" button pressed
-	    if str(v) == "[u'Save + Continue']":
+	    if str(v) == "[u'Save']":
 		pageforward = 'savecontinue'
 	    #Done - checking for "Create New Goal" button pressed
 
