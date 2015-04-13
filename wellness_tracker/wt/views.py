@@ -39,12 +39,6 @@ def home(request):
 
 def questions(request):
     #patient = get_object_or_404(User, pk=int(user_id))
-    #Find selected goal
-    #gas_goals_list = GASGoals.objects.filter(patient=patient)
-    #for tempGASGoals in gas_goals_list:
-	#print tempGASGoals.select
-        #if tempGASGoals.activated == 1:
-	    #selected_goal = tempGASGoals
 
     if request.method == "POST":
         AnswerFormSet2 = modelformset_factory(Answer, form=AnswerForm)
@@ -153,7 +147,6 @@ def create_patient(request):
         email_flag = False
         if (email_flag):
             # Send an email
-            #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
             email = EmailMessage('Your Account on Welness Tracker',
                 'Dear ' + new_patient_data['userid'] + '\n\nThis is a message from the Wellness Tracker. You have been signed up for the Wellness Tracker. Here are the details of you account:\n\nYour username: ' + new_patient_data['userid'] + '\nYour password: ' + new_patient_data['password'] + '\n\nSincerely,\nWellness Tracker Team',
                 'wtdev.testing@gmail.com',
@@ -935,21 +928,15 @@ def graph(request, user_id=None):
     #print 'Should be all just question data'
     #print new_grouped_answers2
 
-    #print 'Unordered grouped answers'
-    #print grouped_answers
-
-
-
     ordered_grouped_answers = grouped_answers
-    #print 'Ordered Grouped Answers'
-    #print ordered_grouped_answers
+
     #end new
 
     # A list to hold strategy questions (text fields)
     strategy_questions_list = []
     #counter for a list of strategy questions
     icount = 0
-    print 'The order the Strategies read (issue with displaying on graph correcly? Try)'
+    #print 'The order the Strategies read (issue with displaying on graph correcly? Try)'
     # Build nvd3 json
     data = []
     base = 1
@@ -967,7 +954,7 @@ def graph(request, user_id=None):
         stdev = std(values)
 	
 
-	print k
+	#print k
 	#print values
 	
 	#find displayedscore of each question (compare title of question). Note: Bad way to do it since there could be another
@@ -1016,7 +1003,7 @@ def graph(request, user_id=None):
         avg = mean(values)
         stdev = std(values)
 
-	print k
+	#print k
 	#print values
 	
 	#find displayedscore of each question (compare title of question). Note: Bad way to do it since there could be another
@@ -1175,7 +1162,7 @@ def followup_goaledit(request, user_id):
 	        for each_goal in gas_goals_list:
 		    if str(k) == str(each_goal.id):
 			#print 'deactivated' + selected_strategy.id
-			print 'Edit and Activate pressed for:'+each_goal.goal1+'(id:' + str(each_goal.id)+')'
+			#print 'Edit and Activate pressed for:'+each_goal.goal1+'(id:' + str(each_goal.id)+')'
 			#Deactivate all goals and activate edit/activate pressed
 		        for tempGASGoals in gas_goals_list:
 			    tempGASGoals.activated = 0
@@ -1403,7 +1390,7 @@ def followup_goal_planning(request, user_id):
     gas_goals_list = GASGoals.objects.filter(patient=patient)
     
     for tempGASGoals in gas_goals_list:
-	print tempGASGoals.goal1
+	#print tempGASGoals.goal1
         if tempGASGoals.activated == 1:
 	    selected_goal = tempGASGoals
     found_strategy_yes = 'noneavailable'
@@ -1461,10 +1448,8 @@ def followup_goal_planning(request, user_id):
 	selected_goal.environmentalassessment1=question_data['environmentalassessment1']
 	selected_goal.save()
 
-	if question_data['text'] == '':
-	    print 'These is no followup strategy planning data.'
-	elif type_selected_strategy == 'freeform':
-	    print 'Updating Freeform strategy'
+	if type_selected_strategy == 'freeform':
+	    #print 'Updating Freeform strategy'
 	    selected_strategy.title=question_data['title']
 	    selected_strategy.text=question_data['text']
 	    selected_strategy.description=question_data['description']
@@ -1484,7 +1469,7 @@ def followup_goal_planning(request, user_id):
 	    selected_strategy.save()
 
 	elif type_selected_strategy == 'boolean':
-	    print 'Updating Boolean strategy'
+	    #print 'Updating Boolean strategy'
 	    selected_strategy.title=question_data['title']
 	    selected_strategy.text=question_data['text']
 	    selected_strategy.description=question_data['description']
@@ -1503,7 +1488,7 @@ def followup_goal_planning(request, user_id):
 	    selected_strategy.save()
 
 	elif type_selected_strategy == 'slider':
-	    print 'Updating Slider strategy'
+	    #print 'Updating Slider strategy'
 	    selected_strategy.title=question_data['title']
 	    selected_strategy.text=question_data['text']
 	    selected_strategy.description=question_data['description']
@@ -2498,7 +2483,6 @@ def create_so(request):
         email_flag = False
         if (email_flag):
             # Send an email
-            #email = EmailMessage('Django Subject', 'Body goes here', 'wtdev.testing@gmail.com', ['capstone59.wt@gmail.com'] )
             email = EmailMessage('Wellness Tracker -- Your New Account',
                 'Dear ' + so_data['userid'] + '\n\nThis is a message from Wellness Tracker. You have been signed up for the Wellness Tracker as a significant other. Here are the details of you account:\n\nYour username: ' + so_data['userid'] + '\nYour password: ' + so_data['password'] + '\n\nSincerely,\nWellness Tracker Team',
                 'wtdev.testing@gmail.com',
