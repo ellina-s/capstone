@@ -48,7 +48,7 @@ class GASGoals(models.Model):
     activated = models.IntegerField(default=0,
                                     null=False,
                                     blank=False,
-                                    help_text='Is this gold selected?')
+                                    help_text='Is this goal selected?')
     baseline = models.IntegerField(default=0,
                                    null=False,
                                    blank=False,
@@ -64,7 +64,7 @@ class GASGoals(models.Model):
     indicator = models.CharField(max_length=512,
 				 null=True,
                                  blank=True,
-				 help_text='How will we know if the gold has been reached')
+				 help_text='How will we know if the goal has been reached')
     scorepos2 = models.IntegerField(default=0,
                                     null=False,
                                     blank=False,
@@ -109,7 +109,7 @@ class PreQuestion(models.Model):
     activated = models.IntegerField(default=0,
                                     null=False,
                                     blank=False,
-                                    help_text='Is this gold selected?')
+                                    help_text='Is this goal selected?')
     needsplanning = models.IntegerField(default=0,
                                         null=False,
                                         blank=False,
@@ -193,7 +193,7 @@ class Question(ShowFieldType, PolymorphicModel):
     activated = models.IntegerField(default=0,
                                     null=False,
                                     blank=False,
-                                    help_text='Is this gold selected?')
+                                    help_text='Is this goal selected?')
     needsplanning = models.IntegerField(default=0,
                                         null=False,
                                         blank=False,

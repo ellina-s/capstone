@@ -1131,7 +1131,6 @@ def followup_goaledit_forward(request, user_id):
 @user_passes_test(is_physician)
 def followup_goaledit(request, user_id):
     patient = get_object_or_404(User, pk=int(user_id))
-    #Jennifer Lawrence
     #Find selected goal
     gas_goals_list = GASGoals.objects.filter(patient=patient)
     for tempGASGoals in gas_goals_list:
