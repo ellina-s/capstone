@@ -34,12 +34,6 @@ urlpatterns = patterns( '',
     url( r'^followup_strategy_create/(?P<user_id>\d+)/', views.followup_strategy_create, name='followup_strategy_create'),
     url( r'^followup_strategy_selection/(?P<user_id>\d+)/', views.followup_strategy_selection, name='followup_strategy_selection'),
     url( r'^followup_strategy_planning/(?P<user_id>\d+)/', views.followup_strategy_planning, name='followup_strategy_planning'),
-    url( r'^manage_surveys/', views.manage_surveys, name='manage_surveys'),
-    url( r'^create_survey/', views.create_survey, name='create_survey'),
-    url( r'^edit_survey/', views.edit_survey, name='edit_survey'),
-    url( r'^survey_overview/(?P<survey_id>\d+)/', views.survey_overview, name='survey_overview'),
-    url( r'^s_new_question/', views.s_new_question, name='s_new_question'),
-    url( r'^new_survey_question/', views.new_survey_question, name='new_survey_question'),
     url( r'^start_gas/', views.start_gas, name='start_gas'),
     url( r'^patient_remove/(?P<user_id>\d+)/', views.patient_remove, name='patient_remove')
 )
