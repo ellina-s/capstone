@@ -34,6 +34,5 @@ urlpatterns = patterns( '',
     url( r'^followup_strategy_create/(?P<user_id>\d+)/', views.followup_strategy_create, name='followup_strategy_create'),
     url( r'^followup_strategy_selection/(?P<user_id>\d+)/', views.followup_strategy_selection, name='followup_strategy_selection'),
     url( r'^followup_strategy_planning/(?P<user_id>\d+)/', views.followup_strategy_planning, name='followup_strategy_planning'),
-    url( r'^start_gas/', views.start_gas, name='start_gas'),
-    url( r'^patient_remove/(?P<user_id>\d+)/', views.patient_remove, name='patient_remove')
+    url( r'^start_gas/', views.start_gas, name='start_gas')
 )

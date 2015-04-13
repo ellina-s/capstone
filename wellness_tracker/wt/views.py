@@ -2507,10 +2507,3 @@ def create_so(request):
     
     return render(request, 'create_so.html', {'patients': patients, 'status': status_dictionary})
 
-@user_passes_test(is_physician)
-def patient_remove(request, user_id):
-    print ' * Patient ID to be removed:'
-    print int(user_id)
-    pati = get_object_or_404(User, pk=int(user_id))
-    return render (request, 'patient_remove.html', {'patient': pati})
-
