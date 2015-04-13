@@ -56,13 +56,18 @@ function show_question(caller){
     $(".strategy-questions > div").hide();
     $(".strategy-questions #" + strategy_tag).show();
 }
+
+// Initialize all tooltips on this page.
+$(function() {
+    $('[data-toggle="tooltip"]').tooltip()
+})
 </script>
 {% endblock %}
 
 {% block content %}
 <h2>
 
-{% if user|is_physician %}
+{% if user|is_physician or user|is_significant_other %}
     Follow-up Graph
     {% if user != graph_user %}
     - {% firstof graph_user.get_full_name graph_user.username|title %}
@@ -81,7 +86,15 @@ function show_question(caller){
 
 <hr />
 {% if selected_goal == '-1' %}
-<h4>There are no goals created or selected for this patient.</h4>
+    {% if user|is_physician %}
+    <h4><p>Looks like this patient has no goals created or selected.</p>
+    Click the Goal Attainment Wizard button to start the goal attaining process.</h4>
+    {% elif user|is_significant_other %}
+    <h4><p>Looks like this patient doesn't have any goals set up yet.</p></h4>
+    {% else %}
+    <h4><p>Looks like you don't have any goals set up yet.</p>
+    Please, contact your physician to start the goal attaining process.</h4>
+    {% endif %}
 {% endif %}
 <!-- else statement, uncomment and add endif at the end
 <h4> Goal - {{ selected_goal.goal1 }}</h4>
@@ -90,7 +103,7 @@ function show_question(caller){
     {% if user|is_physician %}
         <div class="strategy-questions">
         {% for item in strategy_questions %}
-            <div id="{{item.key}}" style="display: none;">Strategy Question: {{item.thequestion}}</div>
+            <div id="{{item.key}}" style="display: none;">Question: {{item.thequestion}}</div>
         {% empty %}
         <!-- No strategies for this goals-->
         {% endfor %}
@@ -116,7 +129,7 @@ function show_question(caller){
 	  {% if at_least_1_goal == 'nogoal' %}
 	  <center><a href="{% url 'gas_step1' graph_user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
 	  {% else %}
-	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Decision Making</a></center>
+	  <center><a href="{% url 'followup_goaledit' graph_user.id %}" class="btn btn-info btn-lg">Assessment</a></center>
 	  {% endif %}
 	</div>
 	{% endif %}
@@ -140,34 +153,40 @@ function show_question(caller){
 			  <h4><strong>
 			  <label>Goal:</label>
 				{{ eachquestion.title }}</strong></h4>
-			  <label>Question:</label>
+			  <a href="#"><label data-toggle="tooltip" title="The question that the patient is answering for this goal">Question<sup>?</sup>:</label></a>
 				{{ eachquestion.text }}<br>
-			  <label>Description:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 				{{ eachquestion.description }}<br>
-			  <label>Importance:</label>
-				{{ eachquestion.importance }}<br>
-			  <label>Difficulty:</label>
-				{{ eachquestion.difficulty }}<br>
-			  <label>Baseline:</label>
+			  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this goal">Baseline<sup>?</sup>:</label></a>
 				{{ eachquestion.baseline }}<br>
-			  <label>Target:</label>
+			  <a href="#"><label data-toggle="tooltip" title="The target outcome of this goal">Target<sup>?</sup>:</label></a>
 				{{ eachquestion.target }}<br>
-			  <label>Timeline:</label>
-				{{ eachquestion.timeline }}<br>
-			  <label>Indicator:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
+				{{ eachquestion.timeline }} days<br>
+			  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup>:</label></a>
 				{{ eachquestion.indicator }}<br>
-			  <label>Gas Score +2:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much more than expected">GAS Score M2:</label></a>
 				{{ eachquestion.scorepos2 }}<br>
-			  <label>Gas Score +1:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly more than expected">GAS Score M1:</label></a>
 				{{ eachquestion.scorepos1 }}<br>
-			  <label>Gas Score 0:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Expected outcome (target)">GAS Score T:</label></a>
 				{{ eachquestion.target }}<br>
-			  <label>Gas Score -1:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly less than expected">GAS Score L1:</label></a>
 				{{ eachquestion.scoreneg1 }}<br>
-			  <label>Gas Score -2:</label>
+			  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much less than expected">GAS Score L2:</label></a>
 				{{ eachquestion.scoreneg2 }}<br>
 			</div>
 		{% endif %}
+        {% empty %}
+            {% if user|is_physician %}
+                {% if at_least_1_goal == 'nogoal' %}
+                    This patient has no goals created or activated. To start the goal attaining process, click the Goal Attainment Wizard button.
+                {% else %}
+                    The goal set up was not finished. To finish, click the Decision Making or Edit Goals buttons.
+                {% endif %}
+            {% else %}
+                There are no goals created or activated yet. You will find the detailed information about the goal when it is created and activated.
+            {% endif %}
 		{% endfor %}
 	    </div>
 
@@ -197,36 +216,51 @@ function show_question(caller){
 		<div>
 		  <h4><strong>
 			{{ eachquestion.title }}</strong></h4>
-		  <label>Question:</label>
+		  <a href="#"><label data-toggle="tooltip" title="The question that the patient is answering for this strategy">Question<sup>?</sup>:</label></a>
 			{{ eachquestion.text }}<br>
-		  <label>Description:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Description of the question">Description<sup>?</sup>:</label></a>
 			{{ eachquestion.description }}<br>
-		  <label>Importance:</label>
-			{{ eachquestion.importance }}<br>
-		  <label>Difficulty:</label>
-			{{ eachquestion.difficulty }}<br>
-		  <label>Baseline:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Importance of this strategy">Importance<sup>?</sup>:</label></a>
+			{{ eachquestion.importance }} out of 4<br>
+		  <a href="#"><label data-toggle="tooltip" title="Difficulty of achieving this strategy">Difficulty<sup>?</sup>:</label></a>
+			{{ eachquestion.difficulty }} out of 4<br>
+		  <a href="#"><label data-toggle="tooltip" title="The patient's starting point in this strategy">Baseline<sup>?</sup>:</label></a>
 			{{ eachquestion.baseline }}<br>
-		  <label>Target:</label>
+		  <a href="#"><label data-toggle="tooltip" title="The target outcome of this strategy">Target<sup>?</sup>:</label></a>
 			{{ eachquestion.target }}<br>
-		  <label>Timeline:</label>
-			{{ eachquestion.timeline }}<br>
-		  <label>Indicator:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Time to reach the target">Timeline<sup>?</sup>:</label></a>
+			{{ eachquestion.timeline }} days<br>
+		  <a href="#"><label data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this strategy">Indicator<sup>?</sup>:</label></a>
 			{{ eachquestion.indicator }}<br>
-		  <label>Gas Score +2:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Actions to be taken to achieve this strategy">Actions<sup>?</sup>:</label></a>
+			{{ eachquestion.action }}<br>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much more than expected">GAS Score M2:</label></a>
 			{{ eachquestion.scorepos2 }}<br>
-		  <label>Gas Score +1:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly more than expected">GAS Score M1:</label></a>
 			{{ eachquestion.scorepos1 }}<br>
-		  <label>Gas Score 0:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Expected outcome (target)">GAS Score T:</label></a>
 			{{ eachquestion.target }}<br>
-		  <label>Gas Score -1:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Slightly less than expected">GAS Score L1:</label></a>
 			{{ eachquestion.scoreneg1 }}<br>
-		  <label>Gas Score -2:</label>
+		  <a href="#"><label data-toggle="tooltip" title="Goal Attainment Scaling Score - Much less than expected">GAS Score L2:</label></a>
 			{{ eachquestion.scoreneg2 }}<br><hr>
 
 		</div>
 		{% endif %}
-	        {% endfor %}
+        {% empty %}
+            {% if user|is_physician %}
+                {% if at_least_1_goal == 'nogoal' %}
+                    There are no strategies created for this patient. To begin, click on the Goal Attainment Wizard button.
+                {% else %}
+                    Currently, there are no strategies created for this patient. Make sure to set up and activate a goal before setting up the strategies.
+                    <!-- Note: this message does not show up for Jannis. She has an active goal (which works well and shows up), but doesn't have any strategies. -->
+                    <!-- Need to check if there are no questions with isgoalplanningdata flag set to zero. -->
+                    <!-- This message is displayed when the list of questions is empty. Not displayed if the list contains anything (a goal or strategy with planning data), even only one of them. -->
+                {% endif %}
+            {% else %}
+                There are no strategies created yet. You will find the detailed information about strategies when they are created and activated.
+            {% endif %}
+        {% endfor %}
 	    </div>
 
       </div>
@@ -258,16 +292,20 @@ function show_question(caller){
 <!-- End Goal dropdown menus more information -->
         <div id="symptoms" class="list-group">
 	{% if at_least_1_goal == 'goalpresent'  %}
-          <!--{% for symptom in data %}
+          {% for symptom in data %}
 		{% if symptom.isgoalplanningdata == 1 %} 
-          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
+          	    <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">
+			<span class="badge">{{ symptom.displayedscore }}</span>{{ symptom.key }}</a>
 		{% endif %}
           {% endfor %}
-	{% endif %}-->
-          {% if user|is_physician %}
-	  
-	  <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a> 
-          {% endif %}
+	{% endif %}
+        {% if user|is_physician %}
+            {% if at_least_1_goal != 'nogoal' %}
+                <a href="{% url 'followup_goaledit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Goals</a>
+            {% else %}
+                <!-- -->
+            {% endif %}
+        {% endif %}
         </div>
 
         <h4>	  
@@ -286,28 +324,33 @@ function show_question(caller){
 	  </div></h4>
         <div id="symptoms" class="list-group">
           {% for symptom in data %}
-	    <!--{% if symptom.isgoalplanningdata == 0 %}-->
-              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">{{ symptom.displayedscore }} {{ symptom.key }}</a>
-	    <!--{% else %} 
-	      <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}" style="display: none">{{ symptom.displayedscore }} {{ symptom.key }}</a>
-	    {% endif %}	   -->
+	    {% if symptom.isgoalplanningdata == 0 %}
+              <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}">
+		<span class="badge">{{ symptom.displayedscore }}</span>{{ symptom.key }}</a>
+	    {% else %} 
+	      <a href="#" onClick="show_question(this)" class="symptom list-group-item inactive" id="{{symptom.datatag}}" data-tag="{{symptom.datatag}}" style="display: none">{{ symptom.key }} | {{ symptom.displayedscore }} |</a>
+	    {% endif %}
 
           {% endfor %}
-          {% if user|is_physician %}
-	  
-	  <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a> 
-          {% endif %}
+    {% if user|is_physician %}
+        {% if at_least_1_goal != 'nogoal' %}
+            <a href="{% url 'followup_strategyedit' graph_user.id %}" class="list-group-item inactive"><i class="glyphicon glyphicon-edit text-success" style="margin-right: 10px;"></i>Edit Strategies</a>
+        {% else %}
+            <!-- -->
+        {% endif %}
+    {% endif %}
         </div>
       </div>
       <div class="col-md-12 col-sm-6">
         <h4>Data Analysis</h4>
         <div id="data-analysis" class="list-group">
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
-	{% if user|is_physician %}
+	  <a href="#" id="base" class="list-group-item inactive">Baseline</a>
+	<!--{% if user|is_physician %}
 	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
 	{% endif %}
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
-          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>
+          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>-->
         </div>
       </div>
     </div>

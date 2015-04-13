@@ -40,7 +40,7 @@
 {% endblock %}
 
 {% block content %}
-<h2>Daily Wellness Test!</h2>
+<h2>Daily Wellness Check In!</h2>
 {% if formset.total_form_count %}
 <form id="question-form" action="{% url 'questions' %}" method="post">
   {% csrf_token %}

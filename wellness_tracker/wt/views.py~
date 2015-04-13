@@ -966,7 +966,6 @@ def graph(request, user_id=None):
 	    if k == eachquestion.title:
 		displayedscoretemp = eachquestion.displayedscore
 		isgoalplanningdata = eachquestion.isgoalplanningdata
-		base = eachquestion.baseline
 		#populate a list with strategy questions
 		sub_question = {}
 		sub_question['key'] = "line-" + str(icount)
@@ -1015,7 +1014,6 @@ def graph(request, user_id=None):
 	    if k == eachquestion.title:
 		displayedscoretemp = eachquestion.displayedscore
 		isgoalplanningdata = eachquestion.isgoalplanningdata
-		base = eachquestion.baseline
 		#populate a list with strategy questions
 		sub_question = {}
 		sub_question['key'] = "line-" + str(icount)
