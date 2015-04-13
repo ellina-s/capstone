@@ -323,13 +323,20 @@ $(function() {
         <h4>Data Analysis</h4>
         <div id="data-analysis" class="list-group">
           <a href="#" id="targ" class="list-group-item inactive">Target</a>
+<<<<<<< HEAD
 	  <a href="#" id="base" class="list-group-item inactive">Baseline</a>
 	<!--{% if user|is_physician %}
 	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
 	{% endif %}
           <a href="#" id="avg" class="list-group-item inactive">Average</a>
           <a href="#" id="std" class="list-group-item inactive">Standard Dev</a>-->
-
+=======
+	<!-- {% if user|is_physician %}
+	  <a href="#" id="gas" class="list-group-item inactive">GAS Score</a>
+	{% endif %}
+          <a href="#" id="avg" class="list-group-item inactive">Average</a>
+          <a href="#" id="std" class="list-group-item inactive">Standard Dev</a> -->
+>>>>>>> 71858ab494a3b3e417ee82eb2d8632b2434d4dde
         </div>
       </div>
     </div>
