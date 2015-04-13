@@ -2,7 +2,7 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - GAS Follow Up Meeting Edit Strategies{% endblock %}
+{% block title %}{{ block.super }} - Follow Up Meeting Edit Strategies{% endblock %}
 
 {% block css %}
   {{ block.super }}
@@ -22,18 +22,16 @@
 </ol>
 
 </br>
-<center><h4>Selected Goal - {{ selected_goal.goal1 }}</h4></center>
+<center><h4>Current Goal - {{ selected_goal.goal1 }}</h4></center>
 <form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_strategyedit' patient.id %}" method="post">
 {% csrf_token %}
     </br>   
 <center><h5>Current Active Strategies:</h5></center>
 <!-- Display activated strategies -->
 {% if selected_freeform_strategy_list %}
-          
-    {% for selectedstrat in selected_freeform_strategy_list %} 
 
-
-   <div class="row">
+    {% for selectedstrat in selected_freeform_strategy_list %}
+    <div class="row">
 	<div class="col-md-2"><label for="goal">Title:</label></div>
 	<div class="col-md-5" style="color:#737373">{{ selectedstrat.title }}</div>
 	<div class="col-md-5">
@@ -42,23 +40,21 @@
 	</div>
     </div>
 
-   <div class="row">
+    <div class="row">
 	<div class="col-md-2"><label for="goal">Question:</label></div>
 	<div class="col-md-10" style="color:#737373">{{ selectedstrat.text }}</div>
-   </div>
+    </div>
 
-   <div class="row">
+    <div class="row">
 	<div class="col-md-2"><label for="goal">Difficulty:</label></div>
 	<div class="col-md-3"style="color:#737373">{{ selectedstrat.difficulty }} out of 4</div>
 	<div class="col-md-1"></div>
-	<div class="col-md-3"><label for="goal">Importance:</label></div>
+	<div class="col-md-3"><label for="goal">Readiness:</label></div>
 	<div class="col-md-3" style="color:#737373">{{ selectedstrat.importance }} out of 4</div>
-   </div>
-
+    </div>
 </br>
-
 {% endfor %}
-            
+
 {% else %}
             <center><strong>There are no active strategies.</strong></center><br/>
 {% endif %}
@@ -72,11 +68,9 @@
 <center><h5>Deactivated Strategies:</h5></center>
 <!-- Display all non active strategies -->
 {% if nonactive_freeform_strategy_list %}
-          
+
     {% for nonactivestrat in nonactive_freeform_strategy_list %} 
-
-
-        <div class="row">
+    <div class="row">
 	<div class="col-md-2"><label for="goal">Title:</label></div>
 	<div class="col-md-5" style="color:#737373">{{ nonactivestrat.title }}</div>
 	<div class="col-md-5">
@@ -85,7 +79,7 @@
 	</div>
     </div>
 
-   <div class="row">
+    <div class="row">
 	<div class="col-md-2"><label for="goal">Question:</label></div>
 	<div class="col-md-10" style="color:#737373">{{ nonactivestrat.text }}</div>
    </div>
@@ -94,14 +88,12 @@
 	<div class="col-md-2"><label for="goal">Difficulty:</label></div>
 	<div class="col-md-3"style="color:#737373">{{ nonactivestrat.difficulty }} out of 4</div>
     <div class="col-md-1"></div>
-	<div class="col-md-3"><label for="goal">Importance:</label></div>
+	<div class="col-md-3"><label for="goal">Readiness:</label></div>
 	<div class="col-md-3" style="color:#737373">{{ nonactivestrat.importance }} out of 4</div>
-   </div>
-
+    </div>
 </br>
-
 {% endfor %}
-            
+
 {% else %}
             <center><strong>There are no deactivated strategies.</strong></center>
 {% endif %}
@@ -111,9 +103,8 @@
 <center><h5>Partially Defined Strategies:</h5></center><br>
 <!-- Display all prequestion strategies -->
 {% if prequestion_strategy_list %}
-          
-    {% for prequestionstrat in prequestion_strategy_list %} 
 
+    {% for prequestionstrat in prequestion_strategy_list %} 
 	<div class="row">
 	<div class="col-md-2"><label for="goal">Title:</label></div>
 	<div class="col-md-5" style="color:#737373">{{ prequestionstrat.title }}</div>
@@ -127,76 +118,21 @@
 	<div class="col-md-2"><label for="goal">Difficulty:</label></div>
 	<div class="col-md-3"style="color:#737373">{{ prequestionstrat.difficulty }} out of 4</div>
 	<div class="col-md-1"></div>
-	<div class="col-md-3"><label for="goal">Importance:</label></div>
+	<div class="col-md-3"><label for="goal">Readiness:</label></div>
 	<div class="col-md-3" style="color:#737373">{{ prequestionstrat.importance }} out of 4</div>
    </div>
 </br>
-
-
-<!-- 
-   <div class="form-group">
-     <label for="goal" class="col-sm-4 control-label">Question:</label>
-     <div class="col-sm-8">
-       <p class="help-block">{{ prequestionstrat.text }}</p>
-     </div>
-   </div> -->
-
 {% endfor %}
-            
+
 {% else %}
             <center><strong>There are no partially defined strategies.</strong></center><br/>
 {% endif %}
 
 </br>
 <div class="submit text-center">
-    <input value="Create New Strategy" name="ext" type="submit" class="btn btn-lg btn-success" style="margin-bottom:2px; "></input>
-    <input value="Graph" name="ext" type="submit" class="btn btn-lg btn-success" style="margin-bottom:2px; "></input>
-  </div>
+    <input value="Create New Strategy" name="ext" type="submit" class="btn btn-lg btn-success" style="margin-bottom:4px; "></input>
+    <input value="Graph" name="ext" type="submit" class="btn btn-lg btn-success" style="margin-bottom:4px; margin-left:5px;"></input>
+</div>
 
-<!-- User selection code -->
-
-   <!-- <div class="form-group">
-     <label for="goal" class="col-sm-5 control-label">What would you like to do?</label>
-    </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-8 control-label">Keep all selected strategies without change:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="keep" >
-	     </label>
-             </div>
-	   </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-8 control-label">Select and edit from all strategies above:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="select">
-	     </label>
-             </div>
-	   </div>
-
-           <div class="form-group">
-             <label for="goal" class="col-sm-8 control-label">Create new then select and edit from all strategies:</label>
-	     <div class="col-sm-1">
-	       <label class="radio">
-	       <input type="radio" name="navselect" id="optionsRadios" value="create">
-	     </label>
-             </div>
-	   </div>
-
-
-  {% if navselecterror == 'error' %}
-      <div class="alert alert-danger">
-        <strong>Error:</strong> Please select an option above.
-      </div>
-  {% endif %}
-
-
-
-  <div class="submit text-center">
-    <input type="submit" class="btn btn-lg btn-success"></input>
-  </div> -->
 </form>
 {% endblock %}

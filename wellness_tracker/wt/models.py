@@ -32,7 +32,7 @@ class SignificantOther(models.Model):
         return self.user.username
 
 class GASGoals(models.Model):
-    goal1 = models.CharField(max_length=128,
+    goal1 = models.CharField(max_length=32,
                              null=False,
                              blank=False,
 			     help_text='Decription of the Goal')

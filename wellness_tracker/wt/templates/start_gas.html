@@ -10,17 +10,18 @@
 {% endblock %}
 
 {% block content %}
-<h2>Start Goal Attainment Scale for {% firstof patient.user.get_full_name patient.user.username|title %}?</h2>
+
+{% if status.patient_created %}
+    <div class="alert alert-success" role="alert">
+        <center><span class="glyphicon glyphicon-ok-sign"></span>
+        <b>Account has been created successfully!</b></center>
+    </div>
+{% endif %}
+
+<br><center><h2>Start Goal Attainment Scale for {% firstof patient.user.get_full_name patient.user.username|title %}?</h2></center>
 <hr />
 
 <center><a href="{% url 'gas_step1' patient.user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
 <center><a href="{% url 'patient_list' %}" class="btn btn-lg btn-success">Back to Patient's List</a></center>
-
-{% if status.patient_created %}
-    <script type="text/javascript">
-        $.notify.defaults({ globalPosition: "top center" });
-        $.notify("Patient has been created successfully", "success");
-    </script>
-{% endif %}
 
 {% endblock %}

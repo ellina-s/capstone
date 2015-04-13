@@ -2,7 +2,7 @@
 {% load static %}
 {% load wt_extras %}
 
-{% block title %}{{ block.super }} - GAS Follow Up Meeting Goal Planning{% endblock %}
+{% block title %}{{ block.super }} - Follow-Up Meeting Goal Planning{% endblock %}
 
 {% block css %}
   {{ block.super }}
@@ -12,6 +12,7 @@
 {{ block.super }}
 <script src="{% static 'jquery/jquery.js' %}"></script>
 <script type="text/javascript" src="/static/bootstrap/js/bootstrap.js"></script>
+<script src="{% static 'bootstrap-validator-master/dist/validator.js' %}"></script>
 
 <script>
   $(function() {
@@ -42,10 +43,8 @@
 </h2>
 
 <h4><center><br>Goal - {{ selected_goal.goal1 }}<br><br></center></h4>
-<!-- <h4><center><br>Goal's Planning Charter<br><br></center></h4>
-<h5><center></center></h5> -->
-<!-- <h5><center></center></h5>-->
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_planning' patient.id %}" method="post">
+
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'followup_goal_planning' patient.id %}" method="post" data-toggle="validator">
     {% csrf_token %}
 
 <!-- if no goal question, create one -->
@@ -53,40 +52,45 @@
 <div class="form-group">
     <a href="#"><label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Give a concise title to this goal">Title<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}">
+      <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}" placeholder="Enter a concise title..." maxlength="32" required>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
 <div class="form-group">
     <a href="#"><label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <input type="text" name="environmentalassessment1" class="form-control" id="title" value="{{ selected_goal.environmentalassessment1 }}">
+      <input type="text" name="environmentalassessment1" class="form-control" id="title" value="{{ selected_goal.environmentalassessment1 }}" placeholder="Describe the environment..." maxlength="512" required>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
   <div class="form-group">
     <a href="#"><label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Question that the patient is answering for this goal">Question<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <input type="text" name="text" class="form-control" id="question" placeholder="E.g. How many steps have you walked">
+      <input type="text" name="text" class="form-control" id="question" placeholder="E.g. How many steps have you walked" maxlength="128" required>
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
   <div class="form-group">
-    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions">Description<sup>?</sup>:</label></a>
+    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions to guide the patient in answering this question.">Description<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10">
+      <input type="text" name="description" class="form-control" id="description" placeholder="E.g. Answer on a scale of 1-10" maxlength="512" required>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
 
 	   <div class="form-group">
            <a href="#"><label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup>:</label></a>
            <div class="col-sm-10">
-             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline...">
+             <input type="text" name="baseline" class="form-control" id="question" placeholder="Enter the current baseline..." maxlength="7" pattern="[0-9]+" data-error="Specify the baseline in digits." required>
+             <div class="help-block with-errors"></div>
            </div>
          </div>
 
 	  <div class="form-group">
 	    <a href="#"><label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this goal?">Target<sup>?</sup>:</label></a>
 	    <div class="col-sm-10">
-	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value...">
+	      <input type="text" name="goal" class="form-control" id="goal" placeholder="Set the target value..." maxlength="7" pattern="[0-9]+" data-error="Specify the target in digits." required>
+          <div class="help-block with-errors"></div>
 	    </div>
 	  </div>
 
@@ -94,25 +98,28 @@
            <div class="form-group">
            <a href="#"><label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline<sup>?</sup>:</label></a>
            <div class="col-sm-10">
-             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set timeline in days...">
+             <input type="text" name="timeline" class="form-control" id="question" placeholder="Set timeline in days..." maxlength="4" pattern="[0-9]+" data-error="Specify the number of days (in digits)." required>
+             <div class="help-block with-errors"></div>
            </div>
          </div>
 
         <div class="form-group">
-          <a href="#"><label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator that will be used to track and evaluate the performance in this goal">Indicator<sup>?</sup>:</label></a>
+          <a href="#"><label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup>:</label></a>
           <div class="col-sm-10">
-            <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator...">
+            <input type="text" name="indicator" class="form-control" id="question" placeholder="Specify indicator..." maxlength="512" required>
+            <div class="help-block with-errors"></div>
           </div>
          </div>
 
 <div class="form-group">
-    <a href="#"><label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup>:</label></a>
+    <a href="#"><label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Select the type of the question">Question Type<sup>?</sup>:</label></a>
     <div class="col-sm-10">
-      <select id="type" name="type" class="form-control">
+      <select id="type" name="type" class="form-control" data-error="Please select a type of the question." required>
         <option value="slider">Slider</option>
         <option value="boolean">Yes / No</option>
         <option value="integer">Numerical</option>
       </select>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
   <div class="conditional-questions">
@@ -121,15 +128,15 @@
       <div class="row text-center">
         <div class="col-sm-4">
           <label for="slider-min_value">Lower Bound</label>
-          <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="0">
+          <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="0" placeholder="E.g. 0" maxlength="7">
         </div>
         <div class="col-sm-4">
           <label for="slider-max_value">Uppper Bound</label>
-          <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="100">
+          <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="100" placeholder="E.g. 100" maxlength="7">
         </div>
         <div class="col-sm-4">
           <label for="slider-increment">Increment</label>
-          <input type="text" name="increment" id="slider-increment" class="form-control text-center" value="5">
+          <input type="text" name="increment" id="slider-increment" class="form-control text-center" value="5" placeholder="E.g. 5" maxlength="7">
         </div>
       </div>
     </div>
@@ -145,7 +152,7 @@
     <div id="integer" class="form-group" style="display: none;">
       <a href="#"><label for="units" class="col-sm-2 control-label" data-toggle="tooltip" title="Enter the units for this question">Units<sup>?</sup></label></a>
       <div class="col-sm-10">
-        <input type="text" name="units" id="units" class="form-control" placeholder="E.g. kg, hours, snacks...">
+        <input type="text" name="units" id="units" class="form-control" placeholder="E.g. kg, hours, snacks..." maxlength="32">
       </div>
     </div>
 
@@ -160,23 +167,23 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>Much more than expected</td>
+		<td>Much better than expected</td>
 	        <td>
 		<div class="col-sm-9">
-                <input type="text" name="scorepos2" class="form-control" id="question" placeholder="">
+                <input type="text" name="scorepos2" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
                 </td>
-		<td>M2</td>
+		<td>B2</td>
 	</tr>
 
 	<tr>
-		<td>Slightly more than expected</td>
+		<td>Slightly better than expected</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="scorepos1" class="form-control" id="question" placeholder="">
+                <input type="text" name="scorepos1" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
-		<td>M1</td>
+		<td>B1</td>
 	</tr>
 
 	<!-- The value from this input is not recorded, because this is the same as target.
@@ -185,30 +192,30 @@
 		<td>Expected outcome (Target)</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="same-as-target" class="form-control" id="question" placeholder="">
+                <input type="text" name="same-as-target" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
 		<td>T</td>
 	</tr>
 
 	<tr>
-		<td>Slightly less than expected</td>
+		<td>Slightly worse than expected</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="scoreneg1" class="form-control" id="question" placeholder="">
+                <input type="text" name="scoreneg1" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
-		<td>L1</td>
+		<td>W1</td>
 	</tr>
 
 	<tr>
-		<td>Much less than expected</td>
+		<td>Much worse than expected</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="scoreneg2" class="form-control" id="question" placeholder="">
+                <input type="text" name="scoreneg2" class="form-control" id="question" placeholder="" maxlength="7">
                 </div>
 		</td>
-		<td>L2</td>
+		<td>W2</td>
 	</tr>
 	</tbody>
 </table>
@@ -217,63 +224,69 @@
 <div class="form-group">
     <label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Give a concise title to this goal">Title<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}">
+      <input type="text" name="title" class="form-control" id="title" value="{{ selected_goal.goal1 }}" placeholder="Enter a concise title..." maxlength="32" required>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
 <div class="form-group">
     <label for="title" class="col-sm-2 control-label" data-toggle="tooltip" title="Any factors that help or impede achieving this goal">Environmental Assessment<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="environmentalassessment1" class="form-control" id="title" value="{{ selected_goal.environmentalassessment1 }}">
+      <input type="text" name="environmentalassessment1" class="form-control" id="title" value="{{ selected_goal.environmentalassessment1 }}" placeholder="Describe the environment..." maxlength="512" required>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
   <div class="form-group">
     <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Question that the patient is answering for this goal">Question<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="text" class="form-control" id="question"  value="{{ selected_strategy.text }}">
+      <input type="text" name="text" class="form-control" id="question"  value="{{ selected_strategy.text }}" placeholder="Enter the question..." maxlength="128" required>
       <p class="help-block">Type the question that you would like to appear to the user.</p>
     </div>
   </div>
   <div class="form-group">
-    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions">Description<sup>?</sup></label>
+    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="Describe the question. Give any hints or instructions to guide the patient in answering this question.">Description<sup>?</sup></label>
     <div class="col-sm-10">
-      <input type="text" name="description" class="form-control" id="description" value="{{ selected_strategy.description }}">
+      <input type="text" name="description" class="form-control" id="description" value="{{ selected_strategy.description }}" placeholder="Describe the question..." maxlength="512" required>
+      <div class="help-block with-errors"></div>
     </div>
   </div>
           
 	   <div class="form-group">
            <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the current baseline situation of the patient?">Baseline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="baseline" class="form-control" id="question" value="{{ selected_strategy.baseline }}">
+             <input type="text" name="baseline" class="form-control" id="question" value="{{ selected_strategy.baseline }}" placeholder="Enter the current baseline..." maxlength="7" pattern="[0-9]+" data-error="Specify a baseline in digits." required>
+             <div class="help-block with-errors"></div>
            </div>
          </div>
 
 	  <div class="form-group">
 	    <label for="description" class="col-sm-2 control-label" data-toggle="tooltip" title="What is the target outcome of this goal?">Target<sup>?</sup></label>
 	    <div class="col-sm-10">
-	      <input type="text" name="goal" class="form-control" id="goal" value="{{ selected_strategy.target }}">
-	    </div>
+	      <input type="text" name="goal" class="form-control" id="goal" value="{{ selected_strategy.target }}" placeholder="Set the target value..." maxlength="7" pattern="[0-9]+" data-error="Specify a target in digits." required>
+	      <div class="help-block with-errors"></div>
+        </div>
 	  </div>
 
          <div class="New Patient Information">
            <div class="form-group">
            <label for="goal" class="col-sm-2 control-label" data-toggle="tooltip" title="Time to reach the target (in days)">Timeline<sup>?</sup></label>
            <div class="col-sm-10">
-             <input type="text" name="timeline" class="form-control" id="question" value="{{ selected_strategy.timeline }}">
+             <input type="text" name="timeline" class="form-control" id="question" value="{{ selected_strategy.timeline }}" placeholder="Set timeline in days..." maxlength="4" pattern="[0-9]+" data-error="Specify the number of days (in digits)." required>
+             <div class="help-block with-errors"></div>
            </div>
          </div>
 
         <div class="form-group">
           <label for="question" class="col-sm-2 control-label" data-toggle="tooltip" title="Indicator for tracking and evaluating the performance in this goal">Indicator<sup>?</sup></label>
           <div class="col-sm-10">
-            <input type="text" name="indicator" class="form-control" id="question" value="{{ selected_strategy.indicator }}">
+            <input type="text" name="indicator" class="form-control" id="question" value="{{ selected_strategy.indicator }}" placeholder="Specify indicator..." maxlength="512" required>
+            <div class="help-block with-errors"></div>
           </div>
          </div>
-
 
 <!-- ------------------------------------------------for Freeform Entry -->
 {% if type_selected_strategy == 'freeform' %}
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="The type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select value= "Numerical" selected="slider" id="type" name="type" class="form-control">
         <option selected="selected" value="integer">Numerical</option>
@@ -284,7 +297,7 @@
     <div id="integer" class="form-group" style="display: none;">
       <label for="units" class="col-sm-2 control-label" data-toggle="tooltip" title="Enter the units for this question">Units<sup>?</sup></label>
       <div class="col-sm-10">
-        <input type="text" name="units" id="units" class="form-control" value="{{ selected_strategy.units }}">
+        <input type="text" name="units" id="units" class="form-control" value="{{ selected_strategy.units }}" placeholder="E.g. kg, hours, snacks..." maxlength="32">
       </div>
     </div>
 {% endif %}
@@ -292,7 +305,7 @@
 <!-- ------------------------------------------------for Boolean Entry -->
 {% if type_selected_strategy == 'boolean' %}
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="The type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select value="hi" id="type" name="type" class="form-control">
         <option value="boolean" selected="selected">Yes / No</option>
@@ -304,7 +317,7 @@
 <!-- ------------------------------------------------for Slider Entry -->
 {% if type_selected_strategy == 'slider' %}
 <div class="form-group">
-    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="Choose the type of the question">Question Type<sup>?</sup></label>
+    <label for="question_type" class="col-sm-2 control-label" data-toggle="tooltip" title="The type of the question">Question Type<sup>?</sup></label>
     <div class="col-sm-10">
       <select value="slider" selected="slider" id="type" name="type" class="form-control">
         <option value="slider">Slider</option>
@@ -317,24 +330,22 @@
       <div class="row text-center">
         <div class="col-sm-4">
           <label for="slider-min_value">Lower Bound</label>
-          <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="{{ selected_strategy.min_value }}">
+          <input type="text" name="min_value" id="slider-min_value" class="form-control text-center" value="{{ selected_strategy.min_value }}" placeholder="E.g. 0" maxlength="7">
         </div>
         <div class="col-sm-4">
           <label for="slider-max_value">Uppper Bound</label>
-          <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="{{ selected_strategy.max_value }}">
+          <input type="text" name="max_value" id="slider-max_value" class="form-control text-center" value="{{ selected_strategy.max_value }}" placeholder="E.g. 100" maxlength="7">
         </div>
         <div class="col-sm-4">
           <label for="slider-increment">Increment</label>
-          <input type="text" name="increment" id="slider-increment" class="form-control text-center" value="{{ selected_strategy.increment }}">
+          <input type="text" name="increment" id="slider-increment" class="form-control text-center" value="{{ selected_strategy.increment }}" placeholder="E.g. 5" maxlength="7">
         </div>
       </div>
     </div>
     </div>
 {% endif %}
 
-
 <!--Bootstrap Table, should scale with mobile devices-->
-
 
 <table>
 	<thead>
@@ -346,61 +357,86 @@
 	</thead>
 	<tbody>
 	<tr>
-		<td>Much more than expected</td>
+		<td>Much better than expected</td>
 	        <td>
 		<div class="col-sm-9">
-                <input type="text" name="scorepos2" class="form-control" id="question" value="{{ selected_strategy.scorepos2 }}">
+                <input type="text" name="scorepos2" class="form-control" id="question" value="{{ selected_strategy.scorepos2 }}" maxlength="7">
                 </div>
                 </td>
-		<td>M2</td>
+		<td>B2</td>
 	</tr>
 
 	<tr>
-		<td>Slightly more than expected</td>
+		<td>Slightly better than expected</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="scorepos1" class="form-control" id="question" value="{{ selected_strategy.scorepos1 }}">
+                <input type="text" name="scorepos1" class="form-control" id="question" value="{{ selected_strategy.scorepos1 }}" maxlength="7">
                 </div>
 		</td>
-		<td>M1</td>
+		<td>B1</td>
 	</tr>
 
 	<tr>
 		<td>Expected Outcome (Target)</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="target2" class="form-control" id="question" value="{{ selected_strategy.target }}">
+                <input type="text" name="target2" class="form-control" id="question" value="{{ selected_strategy.target }}" maxlength="7">
                 </div>
 		</td>
 		<td>T</td>
 	</tr>
 
 	<tr>
-		<td>Slightly less than expected</td>
+		<td>Slightly worse than expected</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="scoreneg1" class="form-control" id="question" value="{{ selected_strategy.scoreneg1 }}">
+                <input type="text" name="scoreneg1" class="form-control" id="question" value="{{ selected_strategy.scoreneg1 }}" maxlength="7">
                 </div>
 		</td>
-		<td>L1</td>
+		<td>W1</td>
 	</tr>
 
 	<tr>
-		<td>Much less than expected</td>
+		<td>Much worse than expected</td>
 		<td>
 		<div class="col-sm-9">
-                <input type="text" name="scoreneg2" class="form-control" id="question" value="{{ selected_strategy.scoreneg2 }}">
+                <input type="text" name="scoreneg2" class="form-control" id="question" value="{{ selected_strategy.scoreneg2 }}" maxlength="7">
                 </div>
 		</td>
-		<td>L2</td>
+		<td>W2</td>
 	</tr>
 	</tbody>
 </table>
-<!-- ------------------------------------------------------------------END - Depending on type of question -->
+<!--------------------------------------------------------------------END - Depending on type of question -->
 {% endif %}
-   </div>
-<div class="submit text-center">
+
+</div>
+
+<div class="submit">
     <input value="Save" type="submit" class="btn btn-lg btn-success"></input>
-  </div>
+    <!-- Button trigger modal -->
+    <button type="button" class="btn btn-danger btn-lg" data-toggle="modal" data-target="#myModal">
+        Cancel
+    </button>
+    <!-- Modal -->
+    <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+        <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+            <h4 class="modal-title" id="myModalLabel">Cancel the changes?</h4>
+        </div>
+        <div class="modal-body">
+            Any changes that you entered for this goal will not be saved.
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+            <a href="{% url 'followup_goaledit' patient.id %}"><button type="button" class="btn btn-danger">Cancel changes</button></a>
+        </div>
+        </div>
+    </div>
+    </div>
+</div>
+
 </form>
 {% endblock %}

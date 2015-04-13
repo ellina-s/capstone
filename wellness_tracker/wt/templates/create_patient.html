@@ -10,74 +10,65 @@
   <link rel="stylesheet" href="{% static 'new_question.css' %}">
 {% endblock %}
 
+{% block script %}
+{{ block.super }}
+<script src="{% static 'bootstrap-validator-master/dist/validator.js' %}"></script>
+{% endblock %}
 
 {% block content %}
 <h2>Create Patient</h2>
 <hr />
 
 
-<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_patient' %}" method="post">
+<form class="form-horizontal col-md-6 col-md-offset-3" action="{% url 'create_patient' %}" method="post" data-toggle="validator">
 {% csrf_token %}
 
 <div class="New Patient Information">
-    
-    {% if status.missing_info %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Missing a username, password, or email.", "error");
-        </script>
-    {% endif %}
-    
+
     {% if status.duplicate_username %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Duplicate username. Please select another username.", "error");
-        </script>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <b>Duplicate username. Please select another username.</b>
+        </div>
     {% endif %}
     
     {% if status.smtp_error %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Email error", "error");
-        </script>
+        <div class="alert alert-danger" role="alert">
+            <span class="glyphicon glyphicon-exclamation-sign"></span>
+            <b>Error: email not sent.</b>
+        </div>
     {% endif %}
     
     {% if status.patient_created %}
-        <script type="text/javascript">
-            $.notify.defaults({ globalPosition: "top center" });
-            $.notify("Patient has been created successfully", "success");
-        </script>
+        <div class="alert alert-success" role="alert">
+            <span class="glyphicon glyphicon-ok-sign"></span>
+            <b>Patient has been created successfully!</b>
+        </div>
     {% endif %}
 
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Name</label>
     <div class="col-sm-9">
-      <input type="text" name="userid" class="form-control" id="userid" placeholder="Type in username">
-      <p class="help-block">Create a user name for the new patient</p>
+      <input type="text" name="userid" class="form-control" id="userid" placeholder="Type in username" maxlength="32" required>
+      <p class="help-block">Enter a username for the new patient</p>
     </div>
   </div>
 <div class="form-group">
     <label for="title" class="col-sm-3 control-label">User Email</label>
     <div class="col-sm-9">
-      <input type="text" name="useremail" class="form-control" id="useremail" placeholder="Type in user email">
+      <input type="text" name="useremail" class="form-control" id="useremail" placeholder="Type in user email" maxlength="64" required>
       <p class="help-block">Enter an email address of the new patient</p>
     </div>
   </div>
   <div class="form-group">
     <label for="question" class="col-sm-3 control-label">Password</label>
     <div class="col-sm-9">
-      <input type="password" name="password" class="form-control" id="password" placeholder="Type in password">
+      <input type="password" name="password" class="form-control" id="password" placeholder="Type in password" maxlength="32" required>
       <p class="help-block">Make sure the patient can easily remember the password</p>
     </div>
   </div>
 
-  	
   </div>
-
-<!--   Note:   some info from patient_list that i didnt like
-  {% for patient in patients %}
-  <a href="{% url 'user_graph' patient.user.id %}" class="list-group-item">{% firstof patient.user.get_full_name patient.user.username|title %}</a>
-  {% endfor %} -->
 
 </div>
 <div class="submit text-center">
