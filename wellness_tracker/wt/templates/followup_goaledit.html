@@ -32,7 +32,7 @@
         <div class="col-md-4"><label for="goal">Current Active Goal:</label></div>
 	<div class="col-md-5" style="color:#737373">{{ selected_goal.goal1 }}</div>
 	<div class="col-md-3">
-	    <input value="Edit Goal" name="edit{{ selected_goal.id }}" type="submit" class="btn btn-lg btn-info" style="padding:5px 10px; margin-bottom:2px; "></input><br>
+	    <input value="Edit Goal" name="edit{{ selected_goal.id }}" type="submit" class="btn btn-lg btn-primary" style="padding:5px 10px; margin-bottom:2px; "></input><br>
 	    <input value="Edit Strategies" name="select{{ selected_goal.id }}" type="submit" class="btn btn-lg btn-success" style="padding:5px 10px; margin-bottom:2px;"></input>
 	</div>
    </div>
@@ -49,15 +49,16 @@
 	<div class="col-md-4"><label for="goal">Deactivated Goal:</label></div>
 	<div class="col-md-5" style="color:#737373">{{ gasgoal.goal1 }}</div>
 	<div class="col-md-3">
-	    <input value="Edit and Activate" name="{{ gasgoal.id }}" type="submit" class="btn btn-lg btn-info" style="padding:5px 10px; margin-bottom:2px"></input>
-	    <input value="Edit" name="edit{{ gasgoal.id }}" type="submit" class="btn btn-info" style="padding:5px 10px; margin-bottom:2px; display:none;"></input>
+	    <input value="Edit and Activate" name="{{ gasgoal.id }}" type="submit" class="btn btn-lg btn-primary" style="padding:5px 10px; margin-bottom:2px"></input>
+	    <input value="Edit" name="edit{{ gasgoal.id }}" type="submit" class="btn btn-primary" style="padding:5px 10px; margin-bottom:2px; display:none;"></input>
 	</div>
    </div>
 {% endfor %}
 
 {% else %}
-            <center><strong>There are no banked/deactivated goals present.</strong></center>
+            <center><strong>There are no deactivated goals present.</strong></center>
 {% endif %}
+
 </br>
 <div class="submit text-center">
     <input value="Create New Goal" name="ext" type="submit" class="btn btn-lg btn-success" style="margin-bottom:4px;"></input>

@@ -21,7 +21,7 @@
 <br><center><h2>Start Goal Attainment Scale for {% firstof patient.user.get_full_name patient.user.username|title %}?</h2></center>
 <hr />
 
-<center><a href="{% url 'gas_step1' patient.user.id %}" class="btn btn-info btn-lg">Goal Attainment Wizard</a></center></br>
+<center><a href="{% url 'gas_step1' patient.user.id %}" class="btn btn-primary btn-lg">Goal Attainment Wizard</a></center></br>
 <center><a href="{% url 'patient_list' %}" class="btn btn-lg btn-success">Back to Patient's List</a></center>
 
 {% endblock %}
